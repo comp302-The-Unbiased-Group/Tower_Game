@@ -2,5 +2,5 @@ package application;
 
 public class test {
 	int bora;
-	int b1;
+	int b21;
 }
