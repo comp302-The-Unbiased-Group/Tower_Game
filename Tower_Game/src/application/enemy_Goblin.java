@@ -13,3 +13,4 @@ public class enemy_Goblin extends Enemy {
 	        return "Goblin";
 	    }
 
+}

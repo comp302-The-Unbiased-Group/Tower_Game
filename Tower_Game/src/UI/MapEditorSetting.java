@@ -11,7 +11,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-Emren
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +28,5 @@ public class MapEditorSetting extends BorderPane {
     	
     }
 }
- main
+ 
 
