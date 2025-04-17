@@ -32,6 +32,35 @@ public abstract class Enemy {
         updateSpritePosition();
     }
     
+    public void update(double deltaTime) {
+    	
+        if (hasReachedEnd()) return;
+
+        Point2D target = path.get(currentTargetIndex);
+        Point2D direction = target.subtract(position);
+
+        
+        if (direction.magnitude() < 1) {
+          
+            currentTargetIndex++;
+            if (!hasReachedEnd()) {
+                target = path.get(currentTargetIndex);
+                direction = target.subtract(position);
+            } else {
+                onReachEnd();
+                return;
+            }
+            
+        }
+        if (direction.magnitude() > 0) { //normalize direction
+        	
+            Point2D velocity = direction.normalize().multiply(speed * deltaTime);
+            position = position.add(velocity);
+            updateSpritePosition();
+        }
+      }
+
+    
     private void updateSpritePosition() {
     	
         sprite.setTranslateX(position.getX());
