@@ -1,54 +1,79 @@
 package application;
+import javafx.geometry.Point2D;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import java.util.List;
 
 
-public class Enemy {
+public abstract class Enemy {
 	
-	int armor;
-	int speed;
-	int health;
-	
-	
-	
-	 public Enemy(int armor, int speed, int health) {
-		 
-	        this.armor = armor;
-	        this.speed = speed;
-	        this.health = health;
-	    }
-	
-	 
-	public int getArmor() {
-		return armor;
-	}
-	
-	
-	public void setArmor(int armor) {
+	protected int armor;
+	protected double speed;
+	protected int maxHealth;
+	protected int currentHealth;
+    protected ImageView sprite;
+	protected List<Point2D> path;
+	protected int currentTargetIndex = 0; //path index
+    protected Point2D position; 
+
+    public Enemy(int hp, int armor, double speed, String imagePath, List<Point2D> path) {
+    	
+        this.maxHealth = hp;
+        this.currentHealth = hp;
         this.armor = armor;
-    }
-	
-	
-	public int getSpeed() {
-        return speed;
-    }
-	
-	
-	 public void setSpeed(int speed) {
-	        this.speed = speed;
-	    }
-	 
-	 
-	 public int getHealth() {
-	        return health;
-	    }
+        this.speed = speed;
+        this.path = path;
+        this.position = path.get(0);
 
+        Image img = new Image(getClass().getResourceAsStream(imagePath));
+        this.sprite = new ImageView(img);
+        this.sprite.setFitWidth(40);
+        this.sprite.setFitHeight(40);
+        updateSpritePosition();
+    }
+    
+    private void updateSpritePosition() {
+    	
+        sprite.setTranslateX(position.getX());
+        sprite.setTranslateY(position.getY());
+    }
+    
+    public boolean isDead() {
+        return currentHealth <= 0;
+    }
+
+    public ImageView getSprite() {
+        return sprite;
+    }
+
+    public Point2D getPosition() {
+        return position;
+    }
+
+    public abstract String getType();
+    
+    public boolean hasReachedEnd() { //CHECK IF REACHED END
+		return currentTargetIndex >= path.size();
+	}
+    
+    public double getHealthBar() { //UI HEALTH BAR
+        return (double) currentHealth / maxHealth;
+    }
+    
+    public boolean isInRange(Point2D towerPos, double range) { //CHECK IF IN RANGE
+    	
+        return towerPos.distance(position) <= range;
+    }
+    
+    public void onDeath() {
+    	
+    	//enemy is dead 
+    	//work in progress
+    }
 	 
-	 public void setHealth(int health) {
-	        this.health = health;
-	    }
-	
-	 
-	 public boolean isDead() {  
-		 return health <= 0;
-	 }
-	 
+    public void onReachEnd() {
+    	
+    	//enemy reached end
+		//work in progress
+    }
 } 
