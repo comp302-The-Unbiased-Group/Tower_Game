@@ -22,6 +22,18 @@ public class GameScreen extends Pane {
     private List<Tower> towers;
     private Map map;
     private Canvas canvas;
+    
+    public GameScreen(Stage stage) {
+    	
+    
+        setPrefSize(1280, 720);
+        canvas = new Canvas(1280, 720);
+        getChildren().add(canvas);
+
+        towers = new ArrayList<>();
+        map = new Map(20, 15);
+        Player player = new Player(100, 20);
+    }
 }
 
   
