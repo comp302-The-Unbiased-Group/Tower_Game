@@ -1,6 +1,7 @@
 package application;
 	
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.event.*;
 import javafx.geometry.Insets;
@@ -14,7 +15,8 @@ public class Main extends Application {
 	
 	Button startNewGame;
 	Button editMap;
-	Button setting;
+	Button options;
+	Button quit;
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -25,35 +27,46 @@ public class Main extends Application {
 		try {
 			primaryStage.setTitle("Tower Defense");
 			
-			startNewGame = new Button("Start New Game");
-            editMap = new Button("Edit Map");
-            setting = new Button("Settings");
-			
-			startNewGame.setMinWidth(150);
-            editMap.setMinWidth(150);
-            setting.setMinWidth(150);
+			startNewGame = new Button("NEW GAME");
+            editMap = new Button("MAP EDITOR");
+            options = new Button("OPTIONS");
+            quit = new Button("QUIT");
             
-            VBox layout = new VBox(20);
+            
+            startNewGame.setId("startNewGame");
+            editMap.setId("editMap");
+            options.setId("setting");
+            quit.setId("quit");
+            
+            VBox layout = new VBox(15);
             layout.setAlignment(Pos.CENTER);
-            
-            
             layout.setPadding(new Insets(20));
+            layout.getChildren().addAll(startNewGame, editMap, options, quit);
             
+            Image mainScreenImage = new Image("file:Tower_Game/KuTowerDefence1.jpg");
             
-            layout.getChildren().addAll(startNewGame, editMap, setting);
-			
-			Scene scene = new Scene(layout, 400, 400);
-			primaryStage.setScene(scene);
-			primaryStage.show();
+            BackgroundImage mImage = new BackgroundImage(
+                mainScreenImage,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                new BackgroundSize(100, 100, true, true, false, true)
+            );
+            
+            StackPane root = new StackPane();
+            root.setBackground(new Background(mImage));
+            root.getChildren().add(layout);
+            
+            Scene scene = new Scene(root, 800, 600);
+            scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+            primaryStage.setScene(scene);
+            primaryStage.show();
 			
 			
 			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
-
-		
 		
 	}
 
