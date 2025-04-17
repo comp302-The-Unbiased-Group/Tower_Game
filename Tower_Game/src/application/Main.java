@@ -1,4 +1,5 @@
 package application;
+import UI.*;
 	
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -25,6 +26,13 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+
+			BorderPane root = new BorderPane();
+			Scene scene = new Scene(root,1280,720);
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setScene(scene);
+			primaryStage.show();
+
 			primaryStage.setTitle("Tower Defense");
 			
 			startNewGame = new Button("NEW GAME");
@@ -64,6 +72,7 @@ public class Main extends Application {
 			
 			
 			
+ main
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
