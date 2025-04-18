@@ -12,7 +12,6 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 3, 0.3, 0, 2);
 }
 
-
 .button:hover {
     -fx-text-fill: #f0f0f0;
     -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.7), 0, 0, 0, 2);
@@ -27,9 +26,4 @@
     -fx-translate-y: 1px;
     -fx-rotate: 0deg;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 5, 0.5, 0, 3);
-}
-
-
-.button:hover {
-    -fx-animation: bounce 0.5s ease infinite;
 }
