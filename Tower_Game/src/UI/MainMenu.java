@@ -14,10 +14,8 @@ public class MainMenu extends StackPane {
     Button editMap;
     Button options;
     Button quit;
-    
 
     public MainMenu(Stage primaryStage) {
-    	
         startNewGame = new Button("NEW GAME");
         editMap = new Button("MAP EDITOR");
         options = new Button("OPTIONS");
@@ -27,7 +25,6 @@ public class MainMenu extends StackPane {
         editMap.setId("editMap");
         options.setId("setting");
         quit.setId("quit");
-        
 
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
