@@ -1,58 +1,34 @@
 package application;
-import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
 
 import java.util.List;
 
 public abstract class Tower {
+    public int x, y;
+    protected int range;
+    protected int cost;
+    protected int fire_rate;
 
-	protected Point2D position;
-	protected double range;
-	protected int damage;
-	protected double cd = 0;
-	protected ImageView sprite;
-	protected double fireRate;
-	
-	public Tower(Point2D position, double range, int damage, double fireRate, String imagePath) {
-		this.position = position;
-		this.range = range;
-		this.damage = damage;
-		this.fireRate = fireRate;
+    public Tower(int x, int y, int range, int cost, int fire_rate) {
+        this.x = x;
+        this.y = y;
+        this.range = range;
+        this.cost = cost;
+        this.fire_rate = fire_rate;
+    }
 
-		Image img = new Image(getClass().getResourceAsStream(imagePath));
-		sprite = new ImageView(img);
-		sprite.setFitWidth(40);
-		sprite.setFitHeight(40);
-        sprite.setTranslateX(position.getX());
-        sprite.setTranslateY(position.getY());
-	
-	}
-	
-	
-	
-	
-	
-	
-	protected void attack(Enemy enemy) {  //Attack enemy -- add animation later
-		int trueDamage = damage - enemy.armor;
-		enemy.currentHealth -= trueDamage;
-	}
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	 public ImageView getSprite() {
-	        return sprite;
-	    }
+    public abstract void attack(List<Enemy> enemies);
 
-	    public Point2D getPosition() {
-	        return position;
-	    }
-	
+    public boolean range_tower(Enemy enemy) {
+        double dx = enemy.getPosition().x - x;
+        double dy = enemy.getPosition().y - y;
+        return Math.sqrt(dx * dx + dy * dy) <= range;
+    }
 }
+
+	
+	
+	
+	
+	
+	
