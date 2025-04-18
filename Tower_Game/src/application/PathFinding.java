@@ -1,4 +1,4 @@
-package application;
+/*package application;
 
 import java.awt.Point;
 
@@ -73,4 +73,4 @@ public class PathFinding {
 	
 	
 
-}
+}*/

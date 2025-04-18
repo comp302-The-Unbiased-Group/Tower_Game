@@ -1,8 +1,9 @@
 package UI;
-
+import application.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
@@ -26,13 +27,21 @@ public class MainMenu extends StackPane {
         options.setId("setting");
         quit.setId("quit");
 
+       
+        startNewGame.setOnAction(e -> {
+            
+
+            GameScreen game = new GameScreen(primaryStage); 
+            Scene gameScene = new Scene(game, 1280, 720);
+            primaryStage.setScene(gameScene);
+        });
+
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(startNewGame, editMap, options, quit);
 
         Image mainScreenImage = new Image("file:Tower_Game/KuTowerDefence1.jpg");
-
         BackgroundImage mImage = new BackgroundImage(
             mainScreenImage,
             BackgroundRepeat.NO_REPEAT,
@@ -45,6 +54,8 @@ public class MainMenu extends StackPane {
         root.setBackground(new Background(mImage));
         root.getChildren().add(layout);
 
-        this.getChildren().add(root); 
+        this.getChildren().add(root);
     }
 }
+
+

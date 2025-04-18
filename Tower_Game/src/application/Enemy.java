@@ -1,108 +1,89 @@
 package application;
-import javafx.geometry.Point2D;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+
+
+import java.awt.Point;
 import java.util.List;
 
 
 public abstract class Enemy {
 	
-	protected int armor;
-	protected double speed;
-	protected int maxHealth;
-	protected int currentHealth;
-    protected ImageView sprite;
-	protected List<Point2D> path;
-	protected int currentTargetIndex = 0; //path index
-    protected Point2D position; 
+    protected int hp;
+    protected int max_hp;
+    protected double speed;
+    protected Point position;
+    protected int gold_value;
+    protected int path_index;
+    protected List<Point> path;
 
-    public Enemy(int hp, int armor, double speed, String imagePath, List<Point2D> path) {
-    	
-        this.maxHealth = hp;
-        this.currentHealth = hp;
-        this.armor = armor;
-        this.speed = speed;
+    public Enemy(List<Point> path, int hp, double speed, int gold_value) {
         this.path = path;
-        this.position = path.get(0);
-
-        Image img = new Image(getClass().getResourceAsStream(imagePath));
-        this.sprite = new ImageView(img);
-        this.sprite.setFitWidth(40);
-        this.sprite.setFitHeight(40);
-        updateSpritePosition();
+        this.hp = hp;
+        this.max_hp = hp;
+        this.speed = speed;
+        this.gold_value = gold_value;
+        this.path_index = 0;
+        this.position = new Point(path.get(0)); // start at first path point
     }
     
-    public void update(double deltaTime) {
+    //controls movement behavior of enemy
+    public void move() {
     	
-        if (hasReachedEnd()) return;
-
-        Point2D target = path.get(currentTargetIndex);
-        Point2D direction = target.subtract(position);
-
+    	// if reached the last point, stop moving
+    	boolean reached_last_point = (path_index + 1 >= path.size());
+        if ( reached_last_point) {
+        	return;
+        }
         
-        if (direction.magnitude() < 1) {
-          
-            currentTargetIndex++;
-            if (!hasReachedEnd()) {
-                target = path.get(currentTargetIndex);
-                direction = target.subtract(position);
-            } else {
-                onReachEnd();
-                return;
-            }
-            
+        // get next target point
+        Point target = path.get(path_index + 1);
+        
+        // calculate direction vector (x and y direction distances)
+        double distance_x = target.x - position.x;
+        double distance_y = target.y - position.y;
+        
+        // Euclidean distance to target
+        double squared_x = distance_x * distance_x;
+        double squared_y = distance_y * distance_y;
+
+        double distance = Math.sqrt(squared_x + squared_y);
+        
+     // if close enough, snap to target and move to next path point
+        if (distance < speed) {
+            position.setLocation(target);
+            path_index++;
+        } else {
+        	// else, move a small step in the direction of the target
+            double direction_x = (distance_x / distance); //direction vectors,they are unit vectors
+            double direction_y = (distance_y / distance);
+            position.translate((int) (direction_x * speed), (int) (direction_y * speed));
         }
-        if (direction.magnitude() > 0) { //normalize direction
-        	
-            Point2D velocity = direction.normalize().multiply(speed * deltaTime);
-            position = position.add(velocity);
-            updateSpritePosition();
-        }
-      }
-
-    
-    private void updateSpritePosition() {
-    	
-        sprite.setTranslateX(position.getX());
-        sprite.setTranslateY(position.getY());
-    }
-    
-    public boolean isDead() {
-        return currentHealth <= 0;
     }
 
-    public ImageView getSprite() {
-        return sprite;
+    public void take_damage(int damage) {
+        hp -= damage;
     }
 
-    public Point2D getPosition() {
+    public boolean is_alive() {
+        return hp > 0;
+    }
+
+    public boolean reached_end() {
+        return path_index >= path.size() - 1;
+    }
+
+    public Point getPosition() {
         return position;
     }
 
-    public abstract String getType();
-    
-    public boolean hasReachedEnd() { //CHECK IF REACHED END
-		return currentTargetIndex >= path.size();
-	}
-    
-    public double getHealthBar() { //UI HEALTH BAR
-        return (double) currentHealth / maxHealth;
+    public int getGoldValue() {
+        return gold_value;
     }
-    
-    public boolean isInRange(Point2D towerPos, double range) { //CHECK IF IN RANGE
-    	
-        return towerPos.distance(position) <= range;
+
+    public int getHp() {
+        return hp;
     }
-    
-    public void onDeath() {
-    	
-    	//enemy is dead 
-    	//work in progress
+
+    public int getMaxHp() {
+        return max_hp;
     }
-	 
-    public void onReachEnd() {
-    	
-    	//enemy reached end
-		//work in progress
-    }
-} 
+}
