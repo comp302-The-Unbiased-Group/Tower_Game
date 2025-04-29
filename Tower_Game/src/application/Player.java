@@ -28,5 +28,9 @@ public class Player {
     public int get_gold() {
         return gold;
     }
+    
+    public void test_func() {
+    	
+    }
 
 }
