@@ -22,7 +22,8 @@ public abstract class Tower {
     public boolean range_tower(Enemy enemy) {
         double dx = enemy.getPosition().x - x;
         double dy = enemy.getPosition().y - y;
-        return Math.sqrt(dx * dx + dy * dy) <= range;
+        double distance = Math.sqrt((dx * dx) + (dy * dy));
+        return distance <= range;
     }
 }
 
