@@ -3,7 +3,9 @@ import application.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.stage.Stage;
@@ -35,6 +37,16 @@ public class MainMenu extends StackPane {
             Scene gameScene = new Scene(game, 1280, 720);
             primaryStage.setScene(gameScene);
         });
+        
+        quit.setOnAction(new EventHandler <ActionEvent>() {
+        	public void handle(ActionEvent arg0) {
+        		Platform.exit();
+        	}
+        });
+        
+        
+        
+        
 
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);

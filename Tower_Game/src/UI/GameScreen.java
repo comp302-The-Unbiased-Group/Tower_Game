@@ -2,16 +2,27 @@ package UI;
 import application.*;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.scene.shape.Rectangle;
+
+import javafx.scene.image.Image;
 
 public class GameScreen extends Pane {
 
@@ -24,6 +35,12 @@ public class GameScreen extends Pane {
     private List<Tower> towers;
     private Map map;
     private Canvas canvas;
+    
+    Button pause;
+    ImageView pauseIcon;
+    ImageView resumeIcon;
+    boolean isPaused = false;
+    StackPane createPause;
 
     public GameScreen(Stage stage) {
 
@@ -31,6 +48,7 @@ public class GameScreen extends Pane {
         setPrefSize(1280, 720);
         canvas = new Canvas(1280, 720);
         getChildren().add(canvas);
+        setupUI();
 
         towers = new ArrayList<>();
         map = new Map(20, 15); // 20 tiles wide, 15 tiles tall
@@ -82,13 +100,67 @@ public class GameScreen extends Pane {
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                manage_game.updateGame();
-                draw();
+                if (!isPaused) {
+                    manage_game.updateGame();
+                }
+                draw(); 
             }
         };
         timer.start();
     }
+    
 
+    
+    //PAUSE GAME STARTS
+    private void setupUI() {
+        getChildren().clear();
+        getChildren().add(canvas);
+
+        if (pause == null) {
+            Image pauseImage = new Image("file:Tower_Game/UI/pause_button.png");
+            pauseIcon = new ImageView(pauseImage);
+            Image resumeImage = new Image("file:Tower_Game/UI/resume_button.png");
+            resumeIcon = new ImageView(resumeImage);
+            
+            pauseIcon.setFitWidth(30);
+            pauseIcon.setFitHeight(30);
+            resumeIcon.setFitWidth(30);
+            resumeIcon.setFitHeight(30);
+            
+            pause = new Button();
+            pause.setGraphic(pauseIcon);
+            pause.getStyleClass().add("pause-button");
+            pause.setLayoutX(1280 - 50);
+            pause.setLayoutY(10);
+            
+            pause.setPadding(Insets.EMPTY);
+            pause.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+            pause.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        }
+
+        if (createPause == null) {
+            Rectangle overlay = new Rectangle(1280, 720, Color.rgb(0, 0, 0, 0.5));
+            createPause = new StackPane(overlay);
+            createPause.setVisible(false);
+            createPause.getStyleClass().add("pause-overlay");
+            createPause.setMouseTransparent(true);
+        }
+
+        getChildren().addAll(pause, createPause);
+        
+        pause.setOnAction(new EventHandler <ActionEvent>() {
+        	public void handle(ActionEvent arg0) {
+        		 isPaused = !isPaused;
+        	     createPause.setVisible(isPaused);
+        	     pause.setGraphic(isPaused ? resumeIcon : pauseIcon);
+        	}
+        });
+    } // PAUSE GAME ENDS
+    
+    
+    
+    
+    
     // drawing map, towers, enemies, health bars, HUD
     private void draw() {
         GraphicsContext g = canvas.getGraphicsContext2D();
@@ -147,14 +219,15 @@ public class GameScreen extends Pane {
 
         // display player gold and lives
         g.setFill(Color.BLACK);
-
+        
         String goldText = "Gold: " + manage_game.player.get_gold();
         String livesText = "Lives: " + manage_game.player.get_lives();
 
         
-        double textX = canvas.getWidth() - 120; // 120 is padding to the left from the right edge
+        double textX = 20; // 120 is padding to the left from the right edge
 
         g.fillText(goldText, textX, 30);   // y=30 for first line
         g.fillText(livesText, textX, 50);  // y=50 for second line
     }
 }
+

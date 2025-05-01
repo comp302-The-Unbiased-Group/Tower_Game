@@ -16,9 +16,11 @@ public class Main extends Application {
    public void start(Stage primaryStage) {
        MainMenu menu = new MainMenu(primaryStage);
        Scene scene = new Scene(menu, 900, 700);
+       scene.getStylesheets().add(getClass().getResource("../UI/application.css").toExternalForm());
        primaryStage.setTitle("KU Tower Defense");
        primaryStage.setScene(scene);
        primaryStage.show();
+       
    }
 
    public static void main(String[] args) {

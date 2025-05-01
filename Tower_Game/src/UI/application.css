@@ -33,3 +33,13 @@
 .button:hover {
     -fx-animation: bounce 0.5s ease infinite;
 }
+
+.pause-button {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.pause-button > .graphic-container {
+    -fx-padding: 0;
+}
