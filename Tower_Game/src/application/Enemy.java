@@ -14,6 +14,7 @@ public abstract class Enemy {
     protected int gold_value;
     protected int path_index;
     protected List<Point> path;
+    protected boolean fastMode = false; //for toggle enemy speed in the game
 
     public Enemy(List<Point> path, int hp, double speed, int gold_value) {
         this.path = path;
@@ -58,6 +59,21 @@ public abstract class Enemy {
             position.translate((int) (direction_x * speed), (int) (direction_y * speed));
         }
     }
+    
+    public void toggleSpeed() {
+    	
+    	if (fastMode) {
+    		
+    		speed /= 2; //slow down the enemy
+    		
+    	}else { 
+    		
+    		speed  *= 2; //speed up the enemy	
+    	}
+    	fastMode = !fastMode; //reset the speed toggle
+    	    }
+    
+    
 
     public void take_damage(int damage) {
         hp -= damage;
