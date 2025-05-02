@@ -43,6 +43,12 @@ public class MainMenu extends StackPane {
         		Platform.exit();
         	}
         });
+
+         options.setOnMouseClicked(event -> {
+            OptionScreen optionScreen = new OptionScreen(primaryStage);
+            Scene optionScene = optionScreen.newScene();
+            primaryStage.setScene(optionScene);
+        });
         
         
         
@@ -67,7 +73,11 @@ public class MainMenu extends StackPane {
         root.getChildren().add(layout);
 
         this.getChildren().add(root);
-    }
+    } 
+    public Scene newScene() {
+		
+		return new Scene(this, 580, 580);
+	}
 }
 
 
