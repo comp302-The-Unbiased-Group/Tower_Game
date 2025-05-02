@@ -20,12 +20,12 @@ public class Manage_game {
         wave_manager.setupWaves();
     }
 
-    public void updateGame() {
+    public void updateGame(double speedMultiplier) {
     	
         wave_manager.update(enemies);
         
         for (Enemy enemy : enemies) {
-            enemy.move();
+            enemy.move(speedMultiplier);
         }
         for (Tower tower : towers) {
             tower.attack(enemies);

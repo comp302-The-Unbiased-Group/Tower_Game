@@ -27,7 +27,7 @@ public abstract class Enemy {
     }
     
     //controls movement behavior of enemy
-    public void move() {
+    public void move(double speedMultiplier) {
     	
     	// if reached the last point, stop moving
     	boolean reached_last_point = (path_index + 1 >= path.size());
@@ -49,14 +49,14 @@ public abstract class Enemy {
         double distance = Math.sqrt(squared_x + squared_y);
         
      // if close enough, snap to target and move to next path point
-        if (distance < speed) {
+        if (distance < speed * speedMultiplier ) {
             position.setLocation(target);
             path_index++;
         } else {
         	// else, move a small step in the direction of the target
             double direction_x = (distance_x / distance); //direction vectors,they are unit vectors
             double direction_y = (distance_y / distance);
-            position.translate((int) (direction_x * speed), (int) (direction_y * speed));
+            position.translate((int) (direction_x * (speed * speedMultiplier)), (int) (direction_y * (speed * speedMultiplier)));
         }
     }
     
