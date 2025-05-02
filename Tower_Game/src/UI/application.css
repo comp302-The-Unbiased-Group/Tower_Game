@@ -43,3 +43,16 @@
 .pause-button > .graphic-container {
     -fx-padding: 0;
 }
+
+.hud {
+    -fx-background-color: rgba(0, 0, 0, 0.5);
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+}
+
+.hud-text {
+    -fx-fill: white;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, black, 2, 0.5, 1, 1);
+}

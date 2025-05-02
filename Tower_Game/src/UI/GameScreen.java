@@ -6,13 +6,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -21,7 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.scene.shape.Rectangle;
-
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.image.Image;
 
 public class GameScreen extends Pane {
@@ -36,11 +40,21 @@ public class GameScreen extends Pane {
     private Map map;
     private Canvas canvas;
     
+    //For pause
     Button pause;
     ImageView pauseIcon;
     ImageView resumeIcon;
+    ImageView slotIcon;
     boolean isPaused = false;
     StackPane createPause;
+    
+    // For HUD(gold life shield)
+    ImageView coinIcon;
+    ImageView heartIcon;
+    ImageView shieldIcon;
+    Text goldText;
+    Text livesText;
+    StackPane hudContainer;
 
     public GameScreen(Stage stage) {
 
@@ -48,7 +62,8 @@ public class GameScreen extends Pane {
         setPrefSize(1280, 720);
         canvas = new Canvas(1280, 720);
         getChildren().add(canvas);
-        setupUI();
+        pauseUI();
+        gold_life_shieldUI();
 
         towers = new ArrayList<>();
         map = new Map(20, 15); // 20 tiles wide, 15 tiles tall
@@ -112,7 +127,7 @@ public class GameScreen extends Pane {
 
     
     //PAUSE GAME STARTS
-    private void setupUI() {
+    private void pauseUI() {
         getChildren().clear();
         getChildren().add(canvas);
 
@@ -158,8 +173,78 @@ public class GameScreen extends Pane {
     } // PAUSE GAME ENDS
     
     
+    //GOLD LIFE SHIELD UI STARTS
+    private void gold_life_shieldUI() {
+    	Image coin = new Image("file:Tower_Game/UI/coin.png");
+        Image heart = new Image("file:Tower_Game/UI/health.png");
+        Image shield = new Image("file:Tower_Game/UI/shield.png");
+        Image slot = new Image("file:Tower_Game/UI/Button_Blue_3Slides.png");
+        
+        coinIcon = new ImageView(coin);
+        heartIcon = new ImageView(heart);
+        shieldIcon = new ImageView(shield);
+        slotIcon = new ImageView(slot);
+        
+        coinIcon.setFitWidth(35);
+        coinIcon.setFitHeight(35);
+        heartIcon.setFitHeight(35);
+        heartIcon.setFitWidth(35);
+        shieldIcon.setFitWidth(35);
+        shieldIcon.setFitHeight(35);
+
+        
+        goldText = new Text("0");
+        livesText = new Text("0");
+//        shieldsText = new Text(); will need after we write the shield thing
+        
+        goldText.setFill(Color.WHITE);
+        livesText.setFill(Color.WHITE);
+        
+        goldText.setFont(Font.font(17));
+        livesText.setFont(Font.font(17));
+        
+        double slotWidth = 110;
+        double slotHeight = 45;
+        
+        ImageView coinSlot = new ImageView(slot);
+        ImageView heartSlot = new ImageView(slot);
+        ImageView shieldSlot = new ImageView(slot);
+        
+        coinSlot.setFitWidth(slotWidth);
+        coinSlot.setFitHeight(slotHeight);
+        heartSlot.setFitWidth(slotWidth);
+        heartSlot.setFitHeight(slotHeight);
+        shieldSlot.setFitWidth(slotWidth);
+        shieldSlot.setFitHeight(slotHeight);
+        
+        StackPane coinStack = new StackPane(coinSlot, goldText);
+        StackPane heartStack = new StackPane(heartSlot, livesText);
+        StackPane shieldStack = new StackPane(shieldSlot, new Text(""));
+        
+        StackPane.setAlignment(goldText, Pos.TOP_CENTER);
+        StackPane.setMargin(goldText, new Insets(5, 0, 0, 5));
+        StackPane.setAlignment(livesText, Pos.TOP_CENTER);
+        StackPane.setMargin(livesText, new Insets(5, 0, 0, 5));
+        
+        HBox coinRow = new HBox(5, coinIcon, coinStack);
+        HBox heartRow = new HBox(5, heartIcon, heartStack);
+        HBox shieldRow = new HBox(5, shieldIcon, shieldStack);
+        
+        VBox icons = new VBox(10, coinRow, heartRow, shieldRow);
+        
+        hudContainer = new StackPane(icons);
+        hudContainer.setAlignment(Pos.TOP_LEFT);
+        hudContainer.setLayoutX(20);
+        hudContainer.setLayoutY(20);
+        
+        getChildren().add(hudContainer);
+        
+    }
     
-    
+    private void updateGoldLife() {
+        goldText.setText(String.valueOf(manage_game.player.get_gold()));
+        livesText.setText(String.valueOf(manage_game.player.get_lives()));
+    }// GOLD LIFE SHIELD UI ENDS
     
     // drawing map, towers, enemies, health bars, HUD
     private void draw() {
@@ -217,17 +302,7 @@ public class GameScreen extends Pane {
             g.strokeRect(p.x, p.y - 6, bar_width, bar_height);
         }
 
-        // display player gold and lives
-        g.setFill(Color.BLACK);
-        
-        String goldText = "Gold: " + manage_game.player.get_gold();
-        String livesText = "Lives: " + manage_game.player.get_lives();
-
-        
-        double textX = 20; // 120 is padding to the left from the right edge
-
-        g.fillText(goldText, textX, 30);   // y=30 for first line
-        g.fillText(livesText, textX, 50);  // y=50 for second line
+        updateGoldLife();
     }
 }
 
