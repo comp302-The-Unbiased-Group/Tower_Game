@@ -133,18 +133,15 @@ public class GameScreen extends Pane {
 
         // main game loop which updates game logic and redraws screen every frame
         AnimationTimer timer = new AnimationTimer() {
-        	 private long lastUpdate = 0;
-             @Override
-             public void handle(long now) {
-                 if (isPaused) 
-                	 return;
-                 if (lastUpdate == 0 || now - lastUpdate >= (16_000_000 / speedMultiplier)) {
-                     manage_game.updateGame();
-                     draw();
-                     lastUpdate = now;
-                 }
-             }
-         };
+        	 
+        	@Override
+            public void handle(long now) {
+                if (!isPaused) {
+                    manage_game.updateGame(speedMultiplier);
+                }
+                draw(); 
+            }
+        };
          timer.start();
      }
     
