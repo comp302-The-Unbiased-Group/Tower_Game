@@ -57,7 +57,7 @@ public class OptionsHandler {
                 startGold = Integer.parseInt(value);
                 
             } else {
-                System.out.println("Unknown option: " + key);
+                System.out.println("Unknown option: " + key1);
             }
         }
     }

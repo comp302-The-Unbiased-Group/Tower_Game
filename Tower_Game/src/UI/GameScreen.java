@@ -71,11 +71,29 @@ public class GameScreen extends Pane {
         map = new Map(20, 15); // 20 tiles wide, 15 tiles tall
         Player player = new Player(500, 100); // player starts with 500 gold and 100 lives
 
-        // define straight horizontal path at row 7, from tile (0,7) to (14,7)
-        for (int x = 0; x < 15; x++) {
-            map.set_tile(x, 7, new PathTile(x, 7)); // mark tile as path
-            map.add_path_point(new Point(x * TILE_SIZE, 7 * TILE_SIZE)); // add to enemy path
+        // define straight horizontal path at row 7, from tile (0,7) to (4,7)
+        
+        for (int x = 0; x <= 4; x++) {
+            map.set_tile(x, 7, new PathTile(x, 7));
+            map.add_path_point(new Point(x * TILE_SIZE, 7 * TILE_SIZE));
         }
+        for (int y = 8; y <= 9; y++) {
+            map.set_tile(4, y, new PathTile(4, y));
+            map.add_path_point(new Point(4 * TILE_SIZE, y * TILE_SIZE));
+        }
+        for (int x = 5; x <= 9; x++) {
+            map.set_tile(x, 9, new PathTile(x, 9));
+            map.add_path_point(new Point(x * TILE_SIZE, 9 * TILE_SIZE));
+        }
+        for (int y = 8; y >= 6; y--) {
+            map.set_tile(9, y, new PathTile(9, y));
+            map.add_path_point(new Point(9 * TILE_SIZE, y * TILE_SIZE));
+        }
+        for (int x = 10; x <= 14; x++) {
+            map.set_tile(x, 6, new PathTile(x, 6));
+            map.add_path_point(new Point(x * TILE_SIZE, 6 * TILE_SIZE));
+        }
+        map.set_end_point(new Point(14 * TILE_SIZE, 6 * TILE_SIZE));
 
         // set where enemies spawn and where they should reach
         map.set_start_point(new Point(0 * TILE_SIZE, 7 * TILE_SIZE));
