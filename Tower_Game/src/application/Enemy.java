@@ -66,7 +66,7 @@ public abstract class Enemy {
     		
     		speed /= 2; //slow down the enemy
     		
-    	}else { 
+    	} else { 
     		
     		speed  *= 2; //speed up the enemy	
     	}
