@@ -21,7 +21,7 @@ public class OptionScreen extends VBox {
 
     public OptionScreen(Stage stage) {
     	
-        Image banner = new Image("file:Tower_Game/KuTowerDefence1.png");
+        Image banner = new Image("file:Tower_Game/KuTowerDefence1.jpg");
         BackgroundImage bg = new BackgroundImage(
                 banner,
                 BackgroundRepeat.NO_REPEAT,
