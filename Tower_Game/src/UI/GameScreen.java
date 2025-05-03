@@ -108,7 +108,7 @@ public class GameScreen extends Pane {
         manage_game.startGame(map, player);
         enemies = manage_game.enemies;
         manage_game.spawnWave();
-
+        
         // handle clicks for placing towers
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             int x = (int) e.getX() / TILE_SIZE;
@@ -321,8 +321,12 @@ public class GameScreen extends Pane {
             Point p = enemy.getPosition();
 
             // enemy body
-            g.setFill(Color.RED);
-            g.fillOval(p.x, p.y, TILE_SIZE / 2, TILE_SIZE / 2);
+            if (enemy instanceof enemy_Goblin) {
+                g.drawImage(((enemy_Goblin)enemy).getImage(), p.x, p.y, TILE_SIZE, TILE_SIZE);
+            } 
+            else if (enemy instanceof enemy_Knight) {
+                g.drawImage(((enemy_Knight)enemy).getImage(), p.x, p.y, TILE_SIZE, TILE_SIZE);
+            }
 
             // health bar
             int bar_width = TILE_SIZE / 2;
