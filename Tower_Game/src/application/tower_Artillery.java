@@ -2,10 +2,14 @@ package application;
 
 import java.util.List;
 
+import javafx.scene.image.Image;
+
 
 
 
 public class tower_Artillery extends Tower {
+	private static final String ARTILLERY_TOWER_IMAGE_PATH = "file:Tower_Game/Towers/Tower_bomb256.png";
+    private static Image towerImage;
     private int aoe_radius = 50;
 
     public tower_Artillery(int x, int y) {
@@ -29,6 +33,10 @@ public class tower_Artillery extends Tower {
                 break;
             }
         }
+    }
+    
+    public Image getImage() {
+        return towerImage;
     }
 }
 

@@ -121,7 +121,7 @@ public class GameScreen extends Pane {
                 int py = y * TILE_SIZE;
 
                 // check if tower is already placed at that tile
-                boolean taken = towers.stream().anyMatch(t -> t.x == px && t.y == py);
+                boolean taken = towers.stream().anyMatch(t -> t.getX() == px && t.getY() == py);
 
                 // if tile is free and player has enough gold place a tower
                 if (!taken && manage_game.player.can_afford(50)) {
@@ -313,7 +313,8 @@ public class GameScreen extends Pane {
         // draw towers as blue circles
         g.setFill(Color.GRAY);
         for (Tower tower : towers) {
-            g.fillOval(tower.x, tower.y, TILE_SIZE, TILE_SIZE);
+        	Image towerImage = tower.getImage();
+        	g.drawImage(towerImage, tower.getX(), tower.getY(), TILE_SIZE, TILE_SIZE);
         }
 
         // draw enemies and health bars
