@@ -45,8 +45,8 @@ public class MainMenu extends StackPane {
         });
 
          options.setOnMouseClicked(event -> {
-            OptionScreen optionScreen = new OptionScreen(primaryStage);
-            Scene optionScene = optionScreen.newScene();
+            OptionScreen optionScreen = new OptionScreen();
+            Scene optionScene = optionScreen.newScene(primaryStage);
             primaryStage.setScene(optionScene);
         });
         

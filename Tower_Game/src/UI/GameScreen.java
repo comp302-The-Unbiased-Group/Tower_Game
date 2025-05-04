@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -71,7 +72,7 @@ public class GameScreen extends Pane {
 
         towers = new ArrayList<>();
         map = new Map(20, 15); // 20 tiles wide, 15 tiles tall
-        Player player = new Player(500, 100); // player starts with 500 gold and 100 lives
+        Player player = new Player(500, 15); // player starts with y gold and x lives
 
         // define straight horizontal path at row 7, from tile (0,7) to (4,7)
         
@@ -95,9 +96,9 @@ public class GameScreen extends Pane {
             map.set_tile(x, 6, new PathTile(x, 6));
             map.add_path_point(new Point(x * TILE_SIZE, 6 * TILE_SIZE));
         }
-        map.set_end_point(new Point(14 * TILE_SIZE, 6 * TILE_SIZE));
 
-        // set where enemies spawn and where they should reach
+
+        // set starting and ending tile points.
         map.set_start_point(new Point(0 * TILE_SIZE, 7 * TILE_SIZE));
         map.set_end_point(new Point(15 * TILE_SIZE, 7 * TILE_SIZE));
 
@@ -105,12 +106,29 @@ public class GameScreen extends Pane {
         map.set_tile(6, 6, new BuildableTile(6, 6));
         map.set_tile(7, 6, new BuildableTile(7, 6));
 
-        // start game logic 
+        // start game logic
         manage_game = new Manage_game();
-        manage_game.startGame(map, player);
+
+        manage_game.startGame(map, 500, 15);
+
+        manage_game.set_go_Listener(() -> {
+            Platform.runLater(() -> {
+                GameOverScreen GameOverNow = new GameOverScreen(stage);
+                Scene GAME_OVER = GameOverNow.newScene();
+                stage.setScene(GAME_OVER);
+            });
+        });
+
+        manage_game.set_gs_handler(enemy_total -> {
+            Platform.runLater(() -> {
+                EndGameStats WinScreen = new EndGameStats(stage, enemy_total);
+                stage.setScene(WinScreen.newScene());
+            });
+        });
+
         enemies = manage_game.enemies;
         
-        // handle clicks for placing towers
+        // mouse clicking for placing towers
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             int x = (int) e.getX() / TILE_SIZE;
             int y = (int) e.getY() / TILE_SIZE;
@@ -154,9 +172,9 @@ public class GameScreen extends Pane {
         getChildren().add(canvas);
 
         if (pause == null) {
-            Image pauseImage = new Image("file:Tower_Game/UI/pause_button.png");
+            Image pauseImage = new Image("file:Tower_Game/UI_assets/pause_button.png");
             pauseIcon = new ImageView(pauseImage);
-            Image resumeImage = new Image("file:Tower_Game/UI/resume_button.png");
+            Image resumeImage = new Image("file:Tower_Game/UI_assets/resume_button.png");
             resumeIcon = new ImageView(resumeImage);
             
             pauseIcon.setFitWidth(30);
@@ -176,18 +194,35 @@ public class GameScreen extends Pane {
         }
         
         if (speedButton == null) {
-            speedButton = new Button("Speed x1");
+
+            Image normal_speed = new Image("file:Tower_Game/UI_assets/buttons (1_1).png");
+            Image fast = new Image("file:Tower_Game/UI_assets/buttons_(1_0).png");
+
+            ImageView speedView = new ImageView(normal_speed);
+
+
+            speedView.setFitWidth(30);
+            speedView.setFitHeight(30);
+
+            speedButton = new Button();
+            speedButton.setGraphic(speedView);
+
+
             speedButton.setLayoutX(1280 - 150);
             speedButton.setLayoutY(10);
             speedButton.setPadding(Insets.EMPTY);
             speedButton.getStyleClass().add("speed-button");
+
             speedButton.setOnAction(e -> {
+
                 if (speedMultiplier == 1.0) {
+
                     speedMultiplier = 2.0;
-                    speedButton.setText("Speed x2");
+                    speedView.setImage(fast);
                 } else {
+
                     speedMultiplier = 1.0;
-                    speedButton.setText("Speed x1");
+                    speedView.setImage(normal_speed);
                 }
             });
         }
@@ -214,10 +249,10 @@ public class GameScreen extends Pane {
     
     //GOLD LIFE SHIELD UI STARTS
     private void gold_life_shieldUI() {
-    	Image coin = new Image("file:Tower_Game/UI/coin.png");
-        Image heart = new Image("file:Tower_Game/UI/health.png");
-        Image shield = new Image("file:Tower_Game/UI/shield.png");
-        Image slot = new Image("file:Tower_Game/UI/Button_Blue_3Slides.png");
+    	Image coin = new Image("file:Tower_Game/UI_assets/coin.png");
+        Image heart = new Image("file:Tower_Game/UI_assets/health.png");
+        Image shield = new Image("file:Tower_Game/UI_assets/shield.png");
+        Image slot = new Image("file:Tower_Game/UI_assets/Button_Blue_3Slides.png");
         
         coinIcon = new ImageView(coin);
         heartIcon = new ImageView(heart);
@@ -283,7 +318,8 @@ public class GameScreen extends Pane {
     private void updateGoldLife() {
         goldText.setText(String.valueOf(manage_game.player.get_gold()));
         livesText.setText(String.valueOf(manage_game.player.get_lives()));
-    }// GOLD LIFE SHIELD UI ENDS
+
+    }//HUD UI
     
     // drawing map, towers, enemies, health bars, HUD
     private void draw() {
@@ -330,7 +366,7 @@ public class GameScreen extends Pane {
 
                 g.drawImage(
                     goblin.getCurrentImage(),
-                    p.x, p.y, TILE_SIZE, TILE_SIZE
+                    p.x - (TILE_SIZE*0.25), p.y-(TILE_SIZE*0.25), TILE_SIZE*1.25, TILE_SIZE*1.25
                 );
             }
            
@@ -341,7 +377,7 @@ public class GameScreen extends Pane {
 
                 g.drawImage(
                     knight.getCurrentImage(),
-                    p.x, p.y, TILE_SIZE, TILE_SIZE
+                        p.x-(TILE_SIZE*0.25), p.y-(TILE_SIZE*0.25), TILE_SIZE*1.5, TILE_SIZE*1.5
                 );
             }
 
@@ -352,13 +388,15 @@ public class GameScreen extends Pane {
             int maxHp = enemy.getMaxHp();
             int filled = (int) ((hp / (double) maxHp) * bar_width);
 
-            // drawing HP bar of enemy
-            g.setFill(Color.GRAY); // background
-            g.fillRect(p.x, p.y - 6, bar_width, bar_height);
-            g.setFill(Color.GREEN); // current HP
-            g.fillRect(p.x, p.y - 6, filled, bar_height);
-            g.setStroke(Color.BLACK); // outline
-            g.strokeRect(p.x, p.y - 6, bar_width, bar_height);
+            double barX = p.x + (TILE_SIZE - bar_width) / 2.5;
+            double barY = p.y + TILE_SIZE + 1.8;
+
+            g.setFill(Color.GRAY);
+            g.fillRect(barX, barY, bar_width, bar_height);
+            g.setFill(Color.RED);
+            g.fillRect(barX, barY, filled, bar_height);
+            g.setStroke(Color.WHITE);
+            g.strokeRect(barX, barY, bar_width, bar_height);
         }
 
         updateGoldLife();

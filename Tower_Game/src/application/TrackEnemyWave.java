@@ -5,12 +5,12 @@ import java.awt.Point;
 import java.util.List;
 
 public class TrackEnemyWave {
-	private boolean firstWave = true;
+    private boolean firstWave = true;
     private int current_wave = 0;
     private long lastWaveTime = 0;
     private boolean waveOn = false;
     private static final long FIRST_DELAY_MS = 4000;
-    private static final long WAVE_DELAY_MS = 4000; 
+    private static final long WAVE_DELAY_MS = 4000;
     private static final long SPAWN_DELAY_MS = 500;
     private List<Point> path;
     private int enemiesToSpawn = 0;
@@ -28,38 +28,37 @@ public class TrackEnemyWave {
     }
 
     public void startWave(List<Enemy> enemies) {
-    	firstWave = false;
-    	waveOn = true;
-    	enemiesToSpawn = 5 + current_wave;
+        firstWave = false;
+        waveOn = true;
+        enemiesToSpawn = 5 + current_wave;
         spawnedEnemies = 0;
         lastSpawnTime = System.currentTimeMillis();
         current_wave++;
         lastWaveTime = System.currentTimeMillis();
     }
-    
+
     private void spawnOneEnemy(List<Enemy> enemies) {
-    	Enemy enemy;
+        Enemy enemy;
         if (spawnedEnemies % 2 == 0) {
             enemy = (new enemy_Goblin(path));
         } else {
             enemy = (new enemy_Knight(path));
-            }
-        
+        }
+
         enemies.add(enemy);
         spawnedEnemies++;
         lastSpawnTime = System.currentTimeMillis();
     }
-    
+
     public void update(List<Enemy> enemies) {
         long currentTime = System.currentTimeMillis();
-        
+
         if (firstWave && (currentTime - lastWaveTime >= FIRST_DELAY_MS)) {
             startWave(enemies);
-        }
-        else if (!waveOn && !firstWave && (currentTime - lastWaveTime >= WAVE_DELAY_MS)) {
+        } else if (!waveOn && !firstWave && (currentTime - lastWaveTime >= WAVE_DELAY_MS)) {
             startWave(enemies);
         }
-        
+
         if (waveOn && spawnedEnemies < enemiesToSpawn) {
             if (currentTime - lastSpawnTime >= SPAWN_DELAY_MS) {
                 spawnOneEnemy(enemies);
@@ -69,6 +68,13 @@ public class TrackEnemyWave {
             waveOn = false;
             lastWaveTime = currentTime;
         }
+    }
+
+    public boolean check_if_last_wave() {
+        if (current_wave == OptionsHandler.getInstance().getWaveCount()){
+            return true;
+        }
+        return false;
     }
 }
 

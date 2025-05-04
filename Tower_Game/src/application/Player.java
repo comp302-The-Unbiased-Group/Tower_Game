@@ -29,8 +29,6 @@ public class Player {
         return gold;
     }
     
-    public void test_func() {
-    	
-    }
+
 
 }

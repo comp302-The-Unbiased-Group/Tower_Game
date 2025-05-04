@@ -1,11 +1,5 @@
 package application;
 	
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
-import javafx.event.*;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import UI.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
