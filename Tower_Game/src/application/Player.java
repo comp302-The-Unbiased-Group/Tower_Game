@@ -19,7 +19,7 @@ public class Player {
     }
 
     public void reduce_life() {
-        lives--;
+        lives = lives - OptionsHandler.getInstance().getPlayerDamage();
     }
 
     public int get_lives() {

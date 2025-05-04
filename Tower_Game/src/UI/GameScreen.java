@@ -67,6 +67,7 @@ public class GameScreen extends Pane {
     ImageView shieldIcon;
     Text goldText;
     Text livesText;
+    Text WaveCounterText;
     StackPane hudContainer;
 
     public GameScreen(Stage stage) {
@@ -158,7 +159,7 @@ public class GameScreen extends Pane {
         // start game logic
         manage_game = new Manage_game();
 
-        manage_game.startGame(map, 500, 15);
+        manage_game.startGame(map,OptionsHandler.getInstance().getStartGold(), OptionsHandler.getInstance().getPlayerHP());
 
         manage_game.set_go_Listener(() -> {
             Platform.runLater(() -> {
@@ -317,13 +318,16 @@ public class GameScreen extends Pane {
         
         goldText = new Text("0");
         livesText = new Text("0");
+        WaveCounterText = new Text("0");
 //        shieldsText = new Text(); will need after we write the shield thing
         
         goldText.setFill(Color.WHITE);
         livesText.setFill(Color.WHITE);
+        WaveCounterText.setFill(Color.WHITE);
         
         goldText.setFont(Font.font(17));
         livesText.setFont(Font.font(17));
+        WaveCounterText.setFont(Font.font(17));
         
         double slotWidth = 110;
         double slotHeight = 45;
@@ -341,12 +345,14 @@ public class GameScreen extends Pane {
         
         StackPane coinStack = new StackPane(coinSlot, goldText);
         StackPane heartStack = new StackPane(heartSlot, livesText);
-        StackPane shieldStack = new StackPane(shieldSlot, new Text(""));
+        StackPane shieldStack = new StackPane(shieldSlot, WaveCounterText);
         
         StackPane.setAlignment(goldText, Pos.TOP_CENTER);
         StackPane.setMargin(goldText, new Insets(5, 0, 0, 5));
         StackPane.setAlignment(livesText, Pos.TOP_CENTER);
         StackPane.setMargin(livesText, new Insets(5, 0, 0, 5));
+        StackPane.setAlignment(WaveCounterText, Pos.TOP_CENTER);
+        StackPane.setMargin(WaveCounterText, new Insets(5, 0, 0, 5));
         
         HBox coinRow = new HBox(5, coinIcon, coinStack);
         HBox heartRow = new HBox(5, heartIcon, heartStack);
@@ -365,7 +371,8 @@ public class GameScreen extends Pane {
     
     private void updateGoldLife() {
         goldText.setText(String.valueOf(manage_game.player.get_gold()));
-        livesText.setText(String.valueOf(manage_game.player.get_lives()));
+        livesText.setText(String.valueOf(manage_game.player.get_lives())+ "/" + manage_game.get_maxlives());
+        WaveCounterText.setText(String.valueOf(TrackEnemyWave.get_wavecount()) + "/" + OptionsHandler.getInstance().getWaveCount());
 
     }//HUD UI
     
