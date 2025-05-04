@@ -49,7 +49,11 @@ public class OptionsHandler {
             }  else if (key1.equals("Tower Range")) {
 
                 this.towerRange = value;
-            } else if (key1.equals("Player Hit Damage")) {
+            }
+            else if (key1.equals("Player Lives")) {
+
+                this.PlayerHP= Integer.parseInt(value);
+            }else if (key1.equals("Player Hit Damage")) {
 
                 this.playerDamage = Integer.parseInt(value);
             } else if (key1.equals("Composition")) {
