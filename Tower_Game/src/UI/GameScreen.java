@@ -14,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -73,8 +75,9 @@ public class GameScreen extends Pane {
 
         // set size of game screen and create canvas
     	Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
+    	this.screenWidth = screenBounds.getWidth();
+    	this.screenHeight = screenBounds.getHeight();
+
         TILE_SIZE = (int) Math.min(screenWidth / TILE_COLS, screenHeight / TILE_ROWS);
 
         setPrefSize(screenWidth, screenHeight);
@@ -193,10 +196,37 @@ public class GameScreen extends Pane {
 
                 // if tile is free and player has enough gold place a tower
                 if (!taken && manage_game.player.can_afford(50)) {
-                    towers.add(new tower_Archer(px, py));
-                    manage_game.player.add_gold(-50);
+                	
+                	
+                	ContextMenu towerMenu = new ContextMenu();
+                	
+                    MenuItem archer = new MenuItem("Archer Tower");
+                    MenuItem artillery = new MenuItem("Artillery Tower");
+                    MenuItem mage = new MenuItem("Mage Tower");
+
+                    archer.setOnAction(a -> {
+                        towers.add(new tower_Archer(px, py));
+                        manage_game.player.add_gold(-50);
+                        draw();  // Redraw to show tower
+                    });
+
+                    artillery.setOnAction(c -> {
+                        towers.add(new tower_Artillery(px, py));
+                        manage_game.player.add_gold(-50);
+                        draw();
+                    });
+
+                    mage.setOnAction(m -> {
+                        towers.add(new tower_Mage(px, py));
+                        manage_game.player.add_gold(-50);
+                        draw();
+                    });
+
+                    towerMenu.getItems().addAll(archer, artillery, mage);
+                    towerMenu.show(canvas, e.getScreenX(), e.getScreenY());
                 }
             }
+              
         });
 
         // main game loop which updates game logic and redraws screen every frame
@@ -206,6 +236,10 @@ public class GameScreen extends Pane {
             public void handle(long now) {
                 if (!isPaused) {
                     manage_game.updateGame(speedMultiplier);
+                    
+                    for (Tower tower : towers) {
+                        tower.attack(enemies);
+                    }
                 }
                 draw(); 
             }
@@ -406,12 +440,17 @@ public class GameScreen extends Pane {
             }
         }
 
-        // draw towers as blue circles
-        g.setFill(Color.GRAY);
+        // draw towers 
         for (Tower tower : towers) {
-        	Image towerImage = tower.getImage();
-        	g.drawImage(towerImage, tower.getX(), tower.getY(), TILE_SIZE, TILE_SIZE);
+            Image towerImage = tower.getImage(); 
+            if (towerImage != null) {
+                g.drawImage(towerImage, tower.getX(), tower.getY(), TILE_SIZE, TILE_SIZE);
+            } else {
+                g.setFill(Color.GRAY); //fallback
+                g.fillOval(tower.getX(), tower.getY(), TILE_SIZE, TILE_SIZE);
+            }
         }
+
 
         // draw enemies and health bars
         for (Enemy enemy : enemies) {
