@@ -10,45 +10,72 @@ public class Manage_game {
     private List<Tower> towers = new ArrayList<>();
     public List<Enemy> enemies = new ArrayList<>();
     private TrackEnemyWave wave_manager = new TrackEnemyWave();
+    private int enemies_killed = 0;
+    private int maxlives = 0;
 
-    public void startGame(Map map, Player player) {
+
+    // listener interfaces
+    private GameOverListener gameOverListener;
+    private EndGameStatsHandler endGameStatsHandler;
+
+    public void set_go_Listener(GameOverListener listener) {
+        this.gameOverListener = listener;
+    }
+
+    public void set_gs_handler(EndGameStatsHandler handler) {
+        this.endGameStatsHandler = handler;
+    }
+    public void initialize_player(int initialGold, int initialLives) {
+        player = new Player(initialGold, initialLives);
+    }
+
+    public void startGame(Map map, int gold,int lives) {
         this.map = map;
-        this.player = player;
+        initialize_player(gold, lives);
         wave_manager.setupWaves(map.get_path());
+        this.maxlives = lives;
     }
 
     public void updateGame(double speedMultiplier) {
         wave_manager.update(enemies);
-        
+
         for (Enemy enemy : enemies) {
             enemy.move(speedMultiplier);
         }
-        
+
         for (Tower tower : towers) {
             tower.attack(enemies);
         }
-        
-        // creating an iterator to loop through all enemies
+
         Iterator<Enemy> enemy_iterator = enemies.iterator();
-        
+
         while (enemy_iterator.hasNext()) {
             Enemy current_enemy = enemy_iterator.next();
-            
-            // if enemy is dead, give player gold and remove it
+
             if (!current_enemy.is_alive()) {
                 player.add_gold(current_enemy.getGoldValue());
+                enemies_killed++;
                 enemy_iterator.remove();
-            } 
-            // if enemy reached end, reduce player's life and remove it
-            else if (current_enemy.reached_end()) {
+            } else if (current_enemy.reached_end()) {
                 player.reduce_life();
                 enemy_iterator.remove();
+
+                if (player.get_lives() <= 0 && gameOverListener != null) {
+                    gameOverListener.onGameOver();
+                }
             }
+
+        }
+        if (enemies.isEmpty() && wave_manager.check_if_last_wave()) {
+
+                endGameStatsHandler.onVictory(enemies_killed);
+
         }
     }
 
-    public void spawnWave() {
-        wave_manager.startWave(enemies);
-    }
-}
+ public int get_maxlives(){
+        return maxlives;
+ }
 
+
+}

@@ -3,6 +3,7 @@ package application;
 public class Player {
 	private int gold;
     private int lives;
+    private int maxlives;
 
     public Player(int gold, int lives) {
         this.gold = gold;
@@ -18,7 +19,7 @@ public class Player {
     }
 
     public void reduce_life() {
-        lives--;
+        lives = lives - OptionsHandler.getInstance().getPlayerDamage();
     }
 
     public int get_lives() {
@@ -29,8 +30,8 @@ public class Player {
         return gold;
     }
     
-    public void test_func() {
-    	
-    }
+public int get_maxlives() {
+        return maxlives;
+}
 
 }
