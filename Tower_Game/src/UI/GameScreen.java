@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -17,6 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.awt.geom.Point2D;
 
@@ -33,7 +35,13 @@ import javafx.scene.image.Image;
 public class GameScreen extends Pane {
 
     // each tile on the grid is 64x64 pixels
-    private static final int TILE_SIZE = 64; 
+   
+    
+    private static final int TILE_COLS = 20;
+    private static final int TILE_ROWS = 15;
+    private final int TILE_SIZE;
+    private double screenWidth;
+    private double screenHeight;
 
     // core components of the game
     private Manage_game manage_game;
@@ -63,15 +71,22 @@ public class GameScreen extends Pane {
     public GameScreen(Stage stage) {
 
         // set size of game screen and create canvas
-        setPrefSize(1280, 720);
-        canvas = new Canvas(1280, 720);
+    	Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+        TILE_SIZE = (int) Math.min(screenWidth / TILE_COLS, screenHeight / TILE_ROWS);
+
+        setPrefSize(screenWidth, screenHeight);
+        canvas = new Canvas(screenWidth, screenHeight);
         getChildren().add(canvas);
         pauseUI();
         gold_life_shieldUI();
 
         towers = new ArrayList<>();
-        map = new Map(20, 15); // 20 tiles wide, 15 tiles tall
-        Player player = new Player(500, 100); // player starts with 500 gold and 100 lives
+        map = new Map(TILE_COLS, TILE_ROWS);
+        Player player = new Player(500, 100);// player starts with 500 gold and 100 lives
+        
+        
 
         // define straight horizontal path at row 7, from tile (0,7) to (4,7)
         
@@ -167,7 +182,7 @@ public class GameScreen extends Pane {
             pause = new Button();
             pause.setGraphic(pauseIcon);
             pause.getStyleClass().add("pause-button");
-            pause.setLayoutX(1280 - 50);
+            pause.setLayoutX(screenWidth - 50);
             pause.setLayoutY(10);
             
             pause.setPadding(Insets.EMPTY);
@@ -177,7 +192,7 @@ public class GameScreen extends Pane {
         
         if (speedButton == null) {
             speedButton = new Button("Speed x1");
-            speedButton.setLayoutX(1280 - 150);
+            speedButton.setLayoutX(screenWidth - 150);
             speedButton.setLayoutY(10);
             speedButton.setPadding(Insets.EMPTY);
             speedButton.getStyleClass().add("speed-button");
@@ -193,7 +208,7 @@ public class GameScreen extends Pane {
         }
 
         if (createPause == null) {
-            Rectangle overlay = new Rectangle(1280, 720, Color.rgb(0, 0, 0, 0.5));
+            Rectangle overlay = new Rectangle(screenWidth, screenHeight, Color.rgb(0, 0, 0, 0.5));
             createPause = new StackPane(overlay);
             createPause.setVisible(false);
             createPause.getStyleClass().add("pause-overlay");

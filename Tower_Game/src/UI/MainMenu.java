@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
@@ -34,8 +35,9 @@ public class MainMenu extends StackPane {
             
 
             GameScreen game = new GameScreen(primaryStage); 
-            Scene gameScene = new Scene(game, 1280, 720);
+            Scene gameScene = new Scene(game);
             primaryStage.setScene(gameScene);
+            primaryStage.setFullScreen(true);
         });
         
         quit.setOnAction(new EventHandler <ActionEvent>() {
@@ -76,7 +78,7 @@ public class MainMenu extends StackPane {
     } 
     public Scene newScene() {
 		
-		return new Scene(this, 580, 580);
+		return new Scene(this, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
 	}
 }
 

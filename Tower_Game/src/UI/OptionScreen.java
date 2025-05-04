@@ -1,6 +1,7 @@
 package UI;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -8,6 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -65,6 +67,7 @@ public class OptionScreen extends VBox {
             MainMenu mainMenu = new MainMenu(stage);  // Create MainMenu instance
             Scene mainMenuScene = mainMenu.newScene();  // Get the main menu scene
             stage.setScene(mainMenuScene);
+            stage.setFullScreen(true);
         });
 
         getChildren().add(save);
@@ -88,8 +91,9 @@ public class OptionScreen extends VBox {
     }
 
     public Scene newScene() {
-        return new Scene(this, 580, 580);
-    } 
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        return new Scene(this, screenBounds.getWidth(), screenBounds.getHeight());
+    }
 
     public Map<String, String> getSelected() {
     	
