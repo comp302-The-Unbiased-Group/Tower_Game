@@ -23,13 +23,6 @@ public abstract class Tower {
 
     public abstract void attack(List<Enemy> enemies);
     public abstract Image getImage();
-    
-    public int getX() {
-    	return x; 
-    }
-    public int getY() {
-    	return y; 
-    }
 
     public boolean range_tower(Enemy enemy) {
         double dx = enemy.getPosition().x - x;
@@ -38,7 +31,12 @@ public abstract class Tower {
         return distance <= range;
     }
     
-
+    public int getX() {
+    	return x; 
+    }
+    public int getY() {
+    	return y; 
+    }
 }
 
 	
