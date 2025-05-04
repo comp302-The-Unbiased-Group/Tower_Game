@@ -36,10 +36,8 @@ import javafx.scene.text.Text;
 import javafx.scene.image.Image;
 
 public class GameScreen extends Pane {
-
-    // each tile on the grid is 64x64 pixels
-   
-    
+ 
+       
     private static final int TILE_COLS = 20;
     private static final int TILE_ROWS = 15;
     private final int TILE_SIZE;
@@ -215,27 +213,22 @@ public class GameScreen extends Pane {
         
         if (speedButton == null) {
 
-            speedButton = new Button("Speed x1");
-            speedButton.setLayoutX(screenWidth - 150);
-
-
             Image normal_speed = new Image("file:Tower_Game/UI_assets/buttons (1_1).png");
             Image fast = new Image("file:Tower_Game/UI_assets/buttons_(1_0).png");
 
             ImageView speedView = new ImageView(normal_speed);
-
-
             speedView.setFitWidth(30);
             speedView.setFitHeight(30);
 
             speedButton = new Button();
             speedButton.setGraphic(speedView);
-
-
-            speedButton.setLayoutX(1280 - 150);
-
             speedButton.setPadding(Insets.EMPTY);
             speedButton.getStyleClass().add("speed-button");
+            
+            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+            double screenWidth = screenBounds.getWidth();
+            speedButton.setLayoutX(screenWidth - 150);
+            speedButton.setLayoutY(10);
 
             speedButton.setOnAction(e -> {
 

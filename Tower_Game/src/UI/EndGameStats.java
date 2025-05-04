@@ -1,6 +1,7 @@
 package UI;
 
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -8,6 +9,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class EndGameStats extends StackPane {
@@ -17,6 +19,10 @@ public class EndGameStats extends StackPane {
     public EndGameStats(Stage stage, int enemiesKilled) {
         this.stage = stage;
         this.enemiesKilled = enemiesKilled;
+
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
 
         // Text setup
         Text victoryText = new Text("VICTORY");
@@ -33,6 +39,7 @@ public class EndGameStats extends StackPane {
             MainMenu mainMenu = new MainMenu(stage);
             Scene menuScene = mainMenu.newScene();
             stage.setScene(menuScene);
+            stage.setFullScreen(true); 
         });
 
         VBox layout = new VBox(30, victoryText, statsText, backToMenu);
@@ -45,7 +52,7 @@ public class EndGameStats extends StackPane {
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
-                new BackgroundSize(100, 100, true, true, false, true)
+                new BackgroundSize(screenWidth, screenHeight, false, false, false, false)
         );
 
         this.setBackground(new Background(bgImage));
@@ -53,6 +60,8 @@ public class EndGameStats extends StackPane {
     }
 
     public Scene newScene() {
-        return new Scene(this, 1280, 720);
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        return new Scene(this, screenBounds.getWidth(), screenBounds.getHeight());
     }
 }
+

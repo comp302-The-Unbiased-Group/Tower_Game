@@ -1,5 +1,6 @@
 package UI;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -7,12 +8,18 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.application.Platform;
 
 public class GameOverScreen extends StackPane {
 
     public GameOverScreen(Stage primaryStage) {
+        
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+
         // Background image
         Image backgroundImage = new Image("file:Tower_Game/KuTowerDefence1.jpg");
         BackgroundImage bgImage = new BackgroundImage(
@@ -20,7 +27,7 @@ public class GameOverScreen extends StackPane {
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
-                new BackgroundSize(100, 100, true, true, false, true)
+                new BackgroundSize(screenWidth, screenHeight, false, false, false, false)
         );
         setBackground(new Background(bgImage));
 
@@ -35,8 +42,9 @@ public class GameOverScreen extends StackPane {
 
         mainMenuButton.setOnAction(e -> {
             MainMenu mainMenu = new MainMenu(primaryStage);
-            Scene mainMenuScene = new Scene(mainMenu, 1280, 720);
+            Scene mainMenuScene = mainMenu.newScene();  
             primaryStage.setScene(mainMenuScene);
+            primaryStage.setFullScreen(true); // 
         });
 
         quitButton.setOnAction(e -> Platform.exit());
@@ -48,6 +56,7 @@ public class GameOverScreen extends StackPane {
     }
 
     public Scene newScene() {
-        return new Scene(this, 1280, 720);
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        return new Scene(this, screenBounds.getWidth(), screenBounds.getHeight());
     }
 }
