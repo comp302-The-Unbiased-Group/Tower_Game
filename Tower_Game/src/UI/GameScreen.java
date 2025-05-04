@@ -18,6 +18,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import java.awt.geom.Point2D;
+
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -318,14 +320,29 @@ public class GameScreen extends Pane {
 
         // draw enemies and health bars
         for (Enemy enemy : enemies) {
-            Point p = enemy.getPosition();
+            Point2D.Double p = enemy.getPosition();
 
             // enemy body
             if (enemy instanceof enemy_Goblin) {
-                g.drawImage(((enemy_Goblin)enemy).getImage(), p.x, p.y, TILE_SIZE, TILE_SIZE);
-            } 
-            else if (enemy instanceof enemy_Knight) {
-                g.drawImage(((enemy_Knight)enemy).getImage(), p.x, p.y, TILE_SIZE, TILE_SIZE);
+                enemy_Goblin goblin = (enemy_Goblin) enemy;
+
+                goblin.updateAnimation(System.nanoTime());
+
+                g.drawImage(
+                    goblin.getCurrentImage(),
+                    p.x, p.y, TILE_SIZE, TILE_SIZE
+                );
+            }
+           
+            if (enemy instanceof enemy_Knight) {
+                enemy_Knight knight = (enemy_Knight) enemy;
+
+                knight.updateAnimation(System.nanoTime());
+
+                g.drawImage(
+                    knight.getCurrentImage(),
+                    p.x, p.y, TILE_SIZE, TILE_SIZE
+                );
             }
 
             // health bar
