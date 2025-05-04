@@ -3,6 +3,7 @@ package application;
 
 import java.awt.Point;
 import java.util.List;
+import java.awt.geom.Point2D;
 
 
 public abstract class Enemy {
@@ -10,7 +11,7 @@ public abstract class Enemy {
     protected int hp;
     protected int max_hp;
     protected double speed;
-    protected Point position;
+    protected Point2D.Double position;
     protected int gold_value;
     protected int path_index;
     protected List<Point> path;
@@ -23,7 +24,7 @@ public abstract class Enemy {
         this.speed = speed;
         this.gold_value = gold_value;
         this.path_index = 0;
-        this.position = new Point(path.get(0)); // start at first path point
+        this.position = new Point2D.Double(path.get(0).x, path.get(0).y);
     }
     
     //controls movement behavior of enemy
@@ -56,7 +57,8 @@ public abstract class Enemy {
         	// else, move a small step in the direction of the target
             double direction_x = (distance_x / distance); //direction vectors,they are unit vectors
             double direction_y = (distance_y / distance);
-            position.translate((int) (direction_x * (speed * speedMultiplier)), (int) (direction_y * (speed * speedMultiplier)));
+            position.x += direction_x * (speed * speedMultiplier); 
+            position.y += direction_y * (speed * speedMultiplier); 
         }
     }
     
@@ -87,7 +89,7 @@ public abstract class Enemy {
         return path_index >= path.size() - 1;
     }
 
-    public Point getPosition() {
+    public Point2D.Double getPosition() { 
         return position;
     }
 
