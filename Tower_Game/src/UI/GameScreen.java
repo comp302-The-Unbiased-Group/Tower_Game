@@ -107,7 +107,6 @@ public class GameScreen extends Pane {
         manage_game = new Manage_game();
         manage_game.startGame(map, player);
         enemies = manage_game.enemies;
-        manage_game.spawnWave();
         
         // handle clicks for placing towers
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {

@@ -5,9 +5,11 @@ import java.awt.Point;
 import java.util.List;
 
 public class TrackEnemyWave {
+	private boolean firstWave = true;
     private int current_wave = 0;
     private long lastWaveTime = 0;
     private boolean waveOn = false;
+    private static final long FIRST_DELAY_MS = 4000;
     private static final long WAVE_DELAY_MS = 4000; 
     private static final long SPAWN_DELAY_MS = 500;
     private List<Point> path;
@@ -17,6 +19,7 @@ public class TrackEnemyWave {
 
     public void setupWaves(List<Point> path) {
         this.path = path;
+        firstWave = true;
         current_wave = 0;
         lastWaveTime = System.currentTimeMillis();
         waveOn = false;
@@ -25,6 +28,7 @@ public class TrackEnemyWave {
     }
 
     public void startWave(List<Enemy> enemies) {
+    	firstWave = false;
     	waveOn = true;
     	enemiesToSpawn = 5 + current_wave;
         spawnedEnemies = 0;
@@ -49,16 +53,18 @@ public class TrackEnemyWave {
     public void update(List<Enemy> enemies) {
         long currentTime = System.currentTimeMillis();
         
-        if (!waveOn && (currentTime - lastWaveTime >= WAVE_DELAY_MS)) {
+        if (firstWave && (currentTime - lastWaveTime >= FIRST_DELAY_MS)) {
+            startWave(enemies);
+        }
+        else if (!waveOn && !firstWave && (currentTime - lastWaveTime >= WAVE_DELAY_MS)) {
             startWave(enemies);
         }
         
         if (waveOn && spawnedEnemies < enemiesToSpawn) {
             if (currentTime - lastSpawnTime >= SPAWN_DELAY_MS) {
-            	spawnOneEnemy(enemies);
+                spawnOneEnemy(enemies);
             }
         }
-        
         if (waveOn && spawnedEnemies >= enemiesToSpawn && enemies.isEmpty()) {
             waveOn = false;
             lastWaveTime = currentTime;

@@ -46,9 +46,5 @@ public class Manage_game {
             }
         }
     }
-
-    public void spawnWave() {
-        wave_manager.startWave(enemies);
-    }
 }
 
