@@ -3,6 +3,7 @@ package application;
 
 import java.awt.Point;
 import java.util.List;
+import java.awt.geom.Point2D;
 
 
 public abstract class Enemy {
@@ -10,10 +11,11 @@ public abstract class Enemy {
     protected int hp;
     protected int max_hp;
     protected double speed;
-    protected Point position;
+    protected Point2D.Double position;
     protected int gold_value;
     protected int path_index;
     protected List<Point> path;
+    protected boolean fastMode = false; //for toggle enemy speed in the game
 
     public Enemy(List<Point> path, int hp, double speed, int gold_value) {
         this.path = path;
@@ -22,11 +24,11 @@ public abstract class Enemy {
         this.speed = speed;
         this.gold_value = gold_value;
         this.path_index = 0;
-        this.position = new Point(path.get(0)); // start at first path point
+        this.position = new Point2D.Double(path.get(0).x, path.get(0).y);
     }
     
     //controls movement behavior of enemy
-    public void move() {
+    public void move(double speedMultiplier) {
     	
     	// if reached the last point, stop moving
     	boolean reached_last_point = (path_index + 1 >= path.size());
@@ -48,16 +50,32 @@ public abstract class Enemy {
         double distance = Math.sqrt(squared_x + squared_y);
         
      // if close enough, snap to target and move to next path point
-        if (distance < speed) {
+        if (distance < speed * speedMultiplier ) {
             position.setLocation(target);
             path_index++;
         } else {
         	// else, move a small step in the direction of the target
             double direction_x = (distance_x / distance); //direction vectors,they are unit vectors
             double direction_y = (distance_y / distance);
-            position.translate((int) (direction_x * speed), (int) (direction_y * speed));
+            position.x += direction_x * (speed * speedMultiplier); 
+            position.y += direction_y * (speed * speedMultiplier); 
         }
     }
+    
+    public void toggleSpeed() {
+    	
+    	if (fastMode) {
+    		
+    		speed /= 2; //slow down the enemy
+    		
+    	} else { 
+    		
+    		speed  *= 2; //speed up the enemy	
+    	}
+    	fastMode = !fastMode; //reset the speed toggle
+    	    }
+    
+    
 
     public void take_damage(int damage) {
         hp -= damage;
@@ -71,7 +89,7 @@ public abstract class Enemy {
         return path_index >= path.size() - 1;
     }
 
-    public Point getPosition() {
+    public Point2D.Double getPosition() { 
         return position;
     }
 
