@@ -25,16 +25,16 @@ public class EndGameStats extends StackPane {
         double screenHeight = screenBounds.getHeight();
 
         // Text setup
-        Text victoryText = new Text("VICTORY");
-        victoryText.setFont(Font.font("Arial", 64));
-        victoryText.setFill(Color.GREEN);
+        Text victoryText = new Text("VICTORY!");
+        victoryText.setFont(Font.font("Arial", 128));
+        victoryText.setFill(Color.GOLD);
 
         Text statsText = new Text("Enemies killed: " + enemiesKilled);
         statsText.setFont(Font.font("Arial", 24));
         statsText.setFill(Color.WHITE);
 
         // Button setup
-        Button backToMenu = new Button("Back to Main Menu");
+        Button backToMenu = new Button("Main Menu");
         backToMenu.setOnMouseClicked(e -> {
             MainMenu mainMenu = new MainMenu(stage);
             Scene menuScene = mainMenu.newScene();

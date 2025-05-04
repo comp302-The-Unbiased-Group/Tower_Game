@@ -53,7 +53,7 @@ public class OptionScreen {
         createOption(content, "Difficulty", Arrays.asList("Easy", "Normal", "Expert"));
         createOption(content, "Wave Count", Arrays.asList("1", "2", "3"));
         createOption(content, "Delay", Arrays.asList("No Delay", "Short(5s)", "Long(30s)"));
-        createOption(content, "Wave Speed", Arrays.asList("Slowed", "Normal", "Fast"));
+        createOption(content, "Player Lives", Arrays.asList("10", "25", "50"));
         createOption(content, "Player Hit Damage", Arrays.asList("20", "40", "60"));
         createOption(content, "Composition", Arrays.asList("Mixed", "Goblin only", "Knight only"));
         createOption(content, "Tower Range", Arrays.asList("Short", "Medium", "Long"));
@@ -72,7 +72,7 @@ public class OptionScreen {
             MainMenu mainMenu = new MainMenu(stage);
             Scene mainMenuScene = mainMenu.newScene();
             stage.setScene(mainMenuScene);
-            stage.setFullScreen(true);
+            stage.setFullScreen(false);
         });
 
         root.getChildren().addAll(overlay, content);

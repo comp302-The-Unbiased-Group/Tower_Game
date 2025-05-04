@@ -11,6 +11,7 @@ public class Manage_game {
     public List<Enemy> enemies = new ArrayList<>();
     private TrackEnemyWave wave_manager = new TrackEnemyWave();
     private int enemies_killed = 0;
+    private int maxlives = 0;
 
 
     // listener interfaces
@@ -32,6 +33,7 @@ public class Manage_game {
         this.map = map;
         initialize_player(gold, lives);
         wave_manager.setupWaves(map.get_path());
+        this.maxlives = lives;
     }
 
     public void updateGame(double speedMultiplier) {
@@ -62,13 +64,18 @@ public class Manage_game {
                     gameOverListener.onGameOver();
                 }
             }
-            else if (enemy_iterator.hasNext() == false && wave_manager.check_if_last_wave()) {
 
-                    endGameStatsHandler.onVictory(enemies_killed);
+        }
+        if (enemies.isEmpty() && wave_manager.check_if_last_wave()) {
 
-            }
+                endGameStatsHandler.onVictory(enemies_killed);
+
         }
     }
+
+ public int get_maxlives(){
+        return maxlives;
+ }
 
 
 }

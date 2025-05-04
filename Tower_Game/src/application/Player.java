@@ -3,6 +3,7 @@ package application;
 public class Player {
 	private int gold;
     private int lives;
+    private int maxlives;
 
     public Player(int gold, int lives) {
         this.gold = gold;
@@ -29,6 +30,8 @@ public class Player {
         return gold;
     }
     
-
+public int get_maxlives() {
+        return maxlives;
+}
 
 }

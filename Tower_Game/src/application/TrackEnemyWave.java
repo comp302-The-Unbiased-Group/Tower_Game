@@ -6,7 +6,7 @@ import java.util.List;
 
 public class TrackEnemyWave {
     private boolean firstWave = true;
-    private int current_wave = 0;
+    protected static int current_wave = 0;
     private long lastWaveTime = 0;
     private boolean waveOn = false;
     private static final long FIRST_DELAY_MS = 4000;
@@ -71,10 +71,14 @@ public class TrackEnemyWave {
     }
 
     public boolean check_if_last_wave() {
-        if (current_wave == OptionsHandler.getInstance().getWaveCount()){
+        if (current_wave == OptionsHandler.getInstance().getWaveCount() && !waveOn) {
             return true;
         }
         return false;
+    }
+
+    public static int get_wavecount() {
+        return current_wave;
     }
 }
 
