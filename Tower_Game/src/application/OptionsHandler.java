@@ -4,63 +4,101 @@ import java.util.Map;
 
 public class OptionsHandler {
 
-    
-    protected static String difficulty;
-    
-    protected static int waveCount;
-    protected static String delay;
-    protected static String waveSpeed;
-    
-    protected static String towerRange;
-    protected static int playerDamage;
-    
-    protected static String composition;
-    protected static String movementSpeed;
-    
-    protected static int earnedGold;
-    protected static int startGold;
+    // Singleton instance
+    private static OptionsHandler instance;
 
-    public static void process(Map<String, String> selected) {
-    	
+    // Default values
+    protected String difficulty;
+    protected int waveCount = 3;
+    protected String delay;
+    protected String waveSpeed;
+    protected String towerRange;
+    protected int playerDamage;
+    protected String composition;
+    protected String movementSpeed;
+    protected int earnedGold;
+    protected int startGold;
+
+    // Private constructor
+    private OptionsHandler() {}
+
+    // Get the singleton instance
+    public static OptionsHandler getInstance() {
+        if (instance == null) {
+            instance = new OptionsHandler();
+        }
+        return instance;
+    }
+
+    // Process selected options
+    public void process(Map<String, String> selected) {
         for (Map.Entry<String, String> option1 : selected.entrySet()) {
             String key1 = option1.getKey();
             String value = option1.getValue();
 
             if (key1.equals("Difficulty")) {
-                difficulty = value;
-                
+                this.difficulty = value;
             } else if (key1.equals("Wave Count")) {
-                waveCount = Integer.parseInt(value);
-                
+                this.waveCount = Integer.parseInt(value);
             } else if (key1.equals("Delay")) {
-                delay = value;
-                
+                this.delay = value;
             } else if (key1.equals("Wave Speed")) {
-                waveSpeed = value;
-                
-            } else if (key1.equals("Player Hit Damage")) {
-                playerDamage = Integer.parseInt(value);
-                
-            } else if (key1.equals("Composition")) {
-                composition = value;
-                
+                this.waveSpeed = value;
             } else if (key1.equals("Tower Range")) {
-                towerRange = value;
-                
+                this.towerRange = value;
+            } else if (key1.equals("Player Hit Damage")) {
+                this.playerDamage = Integer.parseInt(value);
+            } else if (key1.equals("Composition")) {
+                this.composition = value;
             } else if (key1.equals("Movement Speed")) {
-                movementSpeed = value;
-                
+                this.movementSpeed = value;
             } else if (key1.equals("Gold Amount Earned")) {
-                earnedGold = Integer.parseInt(value);
-                
+                this.earnedGold = Integer.parseInt(value);
             } else if (key1.equals("Gold Amount Start")) {
-                startGold = Integer.parseInt(value);
-                
-            } else {
-                System.out.println("Unknown option: " + key1);
+                this.startGold = Integer.parseInt(value);
             }
         }
     }
-}
 
+
+    public String getDifficulty() {
+        return difficulty;
+    }
+
+    public int getWaveCount() {
+        return waveCount;
+    }
+
+    public String getDelay() {
+        return delay;
+    }
+
+    public String getWaveSpeed() {
+        return waveSpeed;
+    }
+
+    public String getTowerRange() {
+        return towerRange;
+    }
+
+    public int getPlayerDamage() {
+        return playerDamage;
+    }
+
+    public String getComposition() {
+        return composition;
+    }
+
+    public String getMovementSpeed() {
+        return movementSpeed;
+    }
+
+    public int getEarnedGold() {
+        return earnedGold;
+    }
+
+    public int getStartGold() {
+        return startGold;
+    }
+}
    
