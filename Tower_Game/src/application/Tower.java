@@ -22,6 +22,7 @@ public abstract class Tower {
     }
 
     public abstract void attack(List<Enemy> enemies);
+    
     public abstract Image getImage();
 
     public boolean range_tower(Enemy enemy) {
