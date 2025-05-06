@@ -1,4 +1,4 @@
-package application;
+package tile;
 
 import javafx.scene.image.Image;
 

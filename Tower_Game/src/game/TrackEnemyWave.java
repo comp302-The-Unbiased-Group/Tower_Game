@@ -1,6 +1,9 @@
 
-package application;
-
+package game;
+import utils.OptionsHandler;
+import enemy.Enemy;
+import enemy.enemy_Goblin;
+import enemy.enemy_Knight;
 import java.awt.Point;
 import java.util.List;
 

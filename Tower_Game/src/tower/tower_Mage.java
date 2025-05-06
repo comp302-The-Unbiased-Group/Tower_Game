@@ -1,5 +1,6 @@
-package application;
+package tower;
 
+import enemy.Enemy;
 import java.util.List;
 
 import javafx.scene.image.Image;

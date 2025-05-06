@@ -1,4 +1,4 @@
-package application;
+package enemy;
 
 
 import java.awt.Point;

@@ -1,4 +1,5 @@
-package application;
+package game;
+import utils.OptionsHandler;
 
 public class Player {
 	private int gold;

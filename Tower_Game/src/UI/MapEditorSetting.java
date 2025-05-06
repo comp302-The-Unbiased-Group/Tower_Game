@@ -1,4 +1,5 @@
 package UI;
+import game.Map;
 import application.*;
 import javafx.animation.AnimationTimer;
 import javafx.geometry.Pos;

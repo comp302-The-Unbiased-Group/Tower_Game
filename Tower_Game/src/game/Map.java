@@ -1,4 +1,10 @@
-package application;
+package game;
+
+import enemy.Enemy;
+import tile.Tile;
+import tile.BuildableTile;
+import tile.DecorativeTile;
+import tile.PathTile;
 
 import java.awt.Point;
 import java.util.*;

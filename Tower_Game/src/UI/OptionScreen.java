@@ -1,4 +1,5 @@
 package UI;
+import utils.OptionsHandler;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +18,7 @@ import javafx.stage.Stage;
 
 import java.util.*;
 
-import application.OptionsHandler;
+
 
 public class OptionScreen {
 
