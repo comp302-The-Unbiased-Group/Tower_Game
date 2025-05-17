@@ -111,45 +111,45 @@ public class GameScreen extends Pane {
         // horizontal: from (0,7) to (3,7)
         for (int x = 0; x <= 3; x++) {
             map.set_tile(x, 7, new PathTile(x, 7, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point(x , 7 ));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(7 * tileHeight)));
         }
 
         //corner: (4,7) turning down
         map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_BOTTOMLEFT));
-        map.add_path_point(new Point(4 , 7 ));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(7 * tileHeight)));
 
         // vertical: from (4,8) to (4,8)
         map.set_tile(4, 8, new PathTile(4, 8, PathTile.PathType.VERTICAL));
-        map.add_path_point(new Point(4 , 8 ));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(8 * tileHeight)));
 
         // corner: (4,9) turning right
         map.set_tile(4, 9, new PathTile(4, 9, PathTile.PathType.CORNER_TOPRIGHT));
-        map.add_path_point(new Point(4 , 9 ));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(9 * tileHeight)));
 
         // horizontal: from (5,9) to (8,9)
         for (int x = 5; x <= 8; x++) {
             map.set_tile(x, 9, new PathTile(x, 9, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point(x , 9));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(9 * tileHeight)));
         }
 
         // corner: (9,9) turning up
         map.set_tile(9, 9, new PathTile(9, 9, PathTile.PathType.CORNER_TOPLEFT));
-        map.add_path_point(new Point(9 , 9 ));
+        map.add_path_point(new Point((int)(9 * tileWidth), (int)(9 * tileHeight)));
 
         // vertical: (9,8) and (9,7)
         for (int y = 8; y >= 7; y--) {
             map.set_tile(9, y, new PathTile(9, y, PathTile.PathType.VERTICAL));
-            map.add_path_point(new Point(9 , y));
+            map.add_path_point(new Point((int)(9 * tileWidth), (int)(y * tileHeight)));
         }
 
         // corner: (9,6) turning right
         map.set_tile(9, 6, new PathTile(9, 6, PathTile.PathType.CORNER_BOTTOMRIGHT));
-        map.add_path_point(new Point(9 ,6));
+        map.add_path_point(new Point((int)(9 * tileWidth), (int)(6 * tileHeight)));
 
         // horizontal: from (10,6) to (14,6)
         for (int x = 10; x <= 19; x++) {
             map.set_tile(x, 6, new PathTile(x, 6, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point(x, 6));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(6 * tileHeight)));
         }
 
         // set starting and ending tile points.
@@ -475,8 +475,8 @@ public class GameScreen extends Pane {
         // draw enemies and health bars
         for (Enemy enemy : enemies) {
             Point2D.Double p = enemy.getPosition();
-            double ex = p.x * tileWidth;
-            double ey = p.y * tileHeight;
+            double enemy_x = p.x;
+            double enemy_y = p.y;
 
             // enemy body
             if (enemy instanceof enemy_Goblin) {
@@ -484,7 +484,7 @@ public class GameScreen extends Pane {
 
                 goblin.updateAnimation(System.nanoTime());
 
-                g.drawImage(goblin.getCurrentImage(), ex - tileWidth * 0.25, ey - tileHeight * 0.25, tileWidth * 1.25, tileHeight * 1.25);
+                g.drawImage(goblin.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.25, tileHeight * 1.25);
             }
            
             if (enemy instanceof enemy_Knight) {
@@ -492,7 +492,7 @@ public class GameScreen extends Pane {
 
                 knight.updateAnimation(System.nanoTime());
 
-                g.drawImage(knight.getCurrentImage(), ex - tileWidth * 0.25, ey - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+                g.drawImage(knight.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
             }
 
             // health bar
@@ -502,8 +502,8 @@ public class GameScreen extends Pane {
             int maxHp = enemy.getMaxHp();
             int filled = (int) ((hp / (double) maxHp) * bar_width);
 
-            double barX = ex + (tileWidth - bar_width) / 2.5;
-            double barY = ey + tileHeight + 1.8;
+            double barX = enemy_x + (tileWidth - bar_width) / 2.5;
+            double barY = enemy_y + tileHeight + 1.8;
 
             g.setFill(Color.GRAY);
             g.fillRect(barX, barY, bar_width, bar_height);
