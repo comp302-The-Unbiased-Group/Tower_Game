@@ -62,20 +62,7 @@ public abstract class Enemy {
         }
     }
     
-    public void toggleSpeed() {
-    	
-    	if (fastMode) {
-    		
-    		speed /= 2; //slow down the enemy
-    		
-    	} else { 
-    		
-    		speed  *= 2; //speed up the enemy	
-    	}
-    	fastMode = !fastMode; //reset the speed toggle
-    	    }
-    
-    
+   
 
     public void take_damage(int damage) {
         hp -= damage;
