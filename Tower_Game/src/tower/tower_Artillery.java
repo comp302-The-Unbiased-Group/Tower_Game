@@ -12,8 +12,8 @@ public class tower_Artillery extends Tower {
     private int aoe_radius = 50;
     private long last_hit_time = 0;
 
-    public tower_Artillery(int x, int y) {
-        super(x, y, 120, 70, 1);
+    public tower_Artillery(int x, int y,int tileWidth) {
+        super(x, y, (int)(2.5 * tileWidth), 70, 1);
     }
     
     @Override
