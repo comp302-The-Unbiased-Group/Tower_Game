@@ -212,19 +212,19 @@ public class GameScreen extends Pane {
                     MenuItem mage = new MenuItem("Mage Tower");
 
                     archer.setOnAction(a -> {
-                        towers.add(new tower_Archer(x, y));
+                    	towers.add(new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight),(int)tileWidth));
                         manage_game.player.add_gold(-50);
                         draw();  // Redraw to show tower
                     });
 
                     artillery.setOnAction(c -> {
-                        towers.add(new tower_Artillery(x, y));
+                    	towers.add(new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight),(int)tileWidth ));
                         manage_game.player.add_gold(-50);
                         draw();
                     });
 
                     mage.setOnAction(m -> {
-                        towers.add(new tower_Mage(x, y));
+                    	towers.add(new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth));
                         manage_game.player.add_gold(-50);
                         draw();
                     });
@@ -461,13 +461,13 @@ public class GameScreen extends Pane {
         // draw towers 
         for (Tower tower : towers) {
             Image towerImage = tower.getImage(); 
-            double px = tower.getX() * tileWidth;
-            double py = tower.getY() * tileHeight;
+            double tower_x = tower.getX();
+            double tower_y = tower.getY();
             if (towerImage != null) {
-            	g.drawImage(towerImage, px, py, tileWidth, tileHeight);
+            	g.drawImage(towerImage, tower_x, tower_y, tileWidth, tileHeight);
             } else {
                 g.setFill(Color.GRAY); //fallback
-                g.fillOval(px, py, tileWidth, tileHeight);
+                g.fillOval(tower_x, tower_y, tileWidth, tileHeight);
             }
         }
 
