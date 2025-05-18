@@ -75,11 +75,20 @@ public class MainMenu extends StackPane {
         root.getChildren().add(layout);
 
         this.getChildren().add(root);
-    } 
+
+
+        editMap.setOnAction(e -> {
+            MapEditorSetting mapEditor = new MapEditorSetting(primaryStage);
+            Scene mapScene = new Scene(mapEditor);
+            primaryStage.setScene(mapScene);
+            primaryStage.setFullScreen(true);
+        });
+    }
     public Scene newScene() {
 		
 		return new Scene(this, Screen.getPrimary().getBounds().getWidth(), Screen.getPrimary().getBounds().getHeight());
 	}
+
 }
 
 
