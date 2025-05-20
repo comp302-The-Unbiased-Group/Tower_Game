@@ -62,7 +62,7 @@ public class projectile {
             
         } else if (type.equals("mage")) {
             target.take_damage(damage);
-            target.setSpeed(target.getSpeed() * 0.5);
+            target.setSpeed(target.getSpeed() * 0.8);
             
         } else if (type.equals("artillery")) {
         	
