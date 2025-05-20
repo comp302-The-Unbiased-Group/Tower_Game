@@ -70,6 +70,11 @@ public class GameScreen extends Pane {
     private List<Tower> towers;
     private Map map;
     private Canvas canvas;
+    private List<tower.projectile> projectiles = new ArrayList<>();
+    
+    public void addProjectile(tower.projectile p) {
+        projectiles.add(p);
+    }
     
     //For pause
     Button pause;
@@ -212,19 +217,24 @@ public class GameScreen extends Pane {
                     MenuItem mage = new MenuItem("Mage Tower");
 
                     archer.setOnAction(a -> {
-                    	towers.add(new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight),(int)tileWidth));
+                        tower_Archer archerTower = new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                        archerTower.setGameScreen(this); 
+                        towers.add(archerTower);
                         manage_game.player.add_gold(-50);
-                        draw();  // Redraw to show tower
-                    });
+                        draw();                      });
 
                     artillery.setOnAction(c -> {
-                    	towers.add(new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight),(int)tileWidth ));
+                        tower_Artillery artilleryTower = new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                        artilleryTower.setGameScreen(this); 
+                        towers.add(artilleryTower);
                         manage_game.player.add_gold(-50);
                         draw();
                     });
 
                     mage.setOnAction(m -> {
-                    	towers.add(new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth));
+                        tower_Mage mageTower = new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                        mageTower.setGameScreen(this); 
+                        towers.add(mageTower);
                         manage_game.player.add_gold(-50);
                         draw();
                     });
@@ -246,6 +256,11 @@ public class GameScreen extends Pane {
                     
                     for (Tower tower : towers) {
                         tower.attack(enemies);
+                    }
+                    
+                    projectiles.removeIf(p -> p.hasHit());
+                    for (tower.projectile p : projectiles) {
+                        p.update();
                     }
                 }
                 draw(); 
@@ -457,7 +472,9 @@ public class GameScreen extends Pane {
                 g.strokeRect(px, py, tileWidth, tileHeight);
             }
         }
-
+        
+        
+        
         // draw towers 
         for (Tower tower : towers) {
             Image towerImage = tower.getImage(); 
@@ -514,5 +531,9 @@ public class GameScreen extends Pane {
         }
 
         updateGoldLife();
+        
+        for (tower.projectile p : projectiles) {
+            p.draw(g);
+        }
     }
 }

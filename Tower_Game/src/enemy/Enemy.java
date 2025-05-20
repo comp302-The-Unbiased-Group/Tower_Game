@@ -91,4 +91,12 @@ public abstract class Enemy {
     public int getMaxHp() {
         return max_hp;
     }
+    
+    public void setSpeed(double newSpeed) {
+        this.speed = newSpeed;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
 }

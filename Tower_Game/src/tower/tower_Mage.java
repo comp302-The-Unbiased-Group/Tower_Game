@@ -1,5 +1,5 @@
 package tower;
-
+import java.awt.geom.Point2D;
 import enemy.Enemy;
 import java.util.List;
 
@@ -15,17 +15,23 @@ public class tower_Mage extends Tower {
         super(x, y, (int)(2.0 * tileWidth), 60, 1);
     }
 
+    
     @Override
     public void attack(List<Enemy> enemies) {
+    	
         long now = System.nanoTime();
-        if ((now - last_hit_time) < (1_000_000_000 / fire_rate)) {
-            return; 
-        }
+        
+        if ((now - last_hit_time) < (1_000_000_000 / fire_rate)) return;
 
         for (Enemy enemy : enemies) {
+        	
             if (enemy.is_alive() && range_tower(enemy)) {
-                enemy.take_damage(15);  
-                last_hit_time = now;     
+            	
+                Point2D.Double start = new Point2D.Double(x + 32, y + 32);
+                Image img = new Image("file:Tower_Game/Effects/fireball.png.png");
+                projectile p = new projectile(start, enemy, 4.0, 8, img, "mage", null);
+                gameScreen.addProjectile(p);
+                last_hit_time = now;
                 break;
             }
         }
