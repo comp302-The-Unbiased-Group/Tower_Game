@@ -71,6 +71,7 @@ public class GameScreen extends Pane {
     private Map map;
     private Canvas canvas;
     private List<tower.projectile> projectiles = new ArrayList<>();
+    private Pane towerMenu = null;
     
     public void addProjectile(tower.projectile p) {
         projectiles.add(p);
@@ -210,40 +211,17 @@ public class GameScreen extends Pane {
                 if (!taken && manage_game.player.can_afford(50)) {
                 	
                 	
-                	ContextMenu towerMenu = new ContextMenu();
-                	
-                    MenuItem archer = new MenuItem("Archer Tower");
-                    MenuItem artillery = new MenuItem("Artillery Tower");
-                    MenuItem mage = new MenuItem("Mage Tower");
-
-                    archer.setOnAction(a -> {
-                        tower_Archer archerTower = new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
-                        archerTower.setGameScreen(this); 
-                        towers.add(archerTower);
-                        manage_game.player.add_gold(-50);
-                        draw();                      });
-
-                    artillery.setOnAction(c -> {
-                        tower_Artillery artilleryTower = new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
-                        artilleryTower.setGameScreen(this); 
-                        towers.add(artilleryTower);
-                        manage_game.player.add_gold(-50);
-                        draw();
-                    });
-
-                    mage.setOnAction(m -> {
-                        tower_Mage mageTower = new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
-                        mageTower.setGameScreen(this); 
-                        towers.add(mageTower);
-                        manage_game.player.add_gold(-50);
-                        draw();
-                    });
-
-                    towerMenu.getItems().addAll(archer, artillery, mage);
-                    towerMenu.show(canvas, e.getScreenX(), e.getScreenY());
+                	 showTowerRadialMenu(x, y, e.getX(), e.getY());
                 }
             }
               
+        });
+        
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            if (towerMenu != null && !towerMenu.contains(e.getX(), e.getY())) {
+                getChildren().remove(towerMenu);
+                towerMenu = null;
+            }
         });
 
         // main game loop which updates game logic and redraws screen every frame
@@ -269,7 +247,62 @@ public class GameScreen extends Pane {
          timer.start();
      }
     
+    private void showTowerRadialMenu(int x, int y, double mouseX, double mouseY) {
+        if (towerMenu != null) {
+            getChildren().remove(towerMenu);
+            towerMenu = null;
+        }
 
+        double clicked_tile_x = x * tileWidth + tileWidth / 2;
+        double clicked_tile_y = y * tileHeight + tileHeight / 2;
+        double radius = tileWidth * 0.8; 
+
+        String[] images_tower = { "file:Tower_Game/Towers/archer.png", "file:Tower_Game/Towers/mage.png","file:Tower_Game/Towers/artillery.png"};
+        
+
+        Pane radialMenu = new Pane();
+        radialMenu.setPickOnBounds(false);
+
+        for (int i = 0; i < 3; i++) {
+            double angle = Math.toRadians(90 + i * 120);
+            double button_x = clicked_tile_x + radius * Math.cos(angle) - 32; // button center
+            double button_y = clicked_tile_y + radius * Math.sin(angle) - 32;
+
+            Button btn = new Button();
+            btn.setGraphic(new ImageView(new Image(images_tower[i], 64, 64, true, true)));
+            btn.setStyle("-fx-background-color: transparent;");
+           
+
+            btn.setLayoutX(button_x);
+            btn.setLayoutY(button_y);
+
+            final int tower_type = i;
+            btn.setOnAction(e -> {
+                if (tower_type == 0) {
+                    tower_Archer archerTower = new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                    archerTower.setGameScreen(this); 
+                    towers.add(archerTower);
+                } else if (tower_type == 1) {
+                    tower_Mage mageTower = new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                    mageTower.setGameScreen(this); 
+                    towers.add(mageTower);
+                } else if (tower_type == 2) {
+                    tower_Artillery artilleryTower = new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                    artilleryTower.setGameScreen(this); 
+                    towers.add(artilleryTower);
+                }
+                manage_game.player.add_gold(-50);
+                getChildren().remove(radialMenu);
+                towerMenu = null;
+                draw();
+            });
+
+            radialMenu.getChildren().add(btn);
+        }
+
+        getChildren().add(radialMenu);
+        towerMenu = radialMenu;
+    }
     
     //PAUSE GAME STARTS
     private void pauseUI() {
