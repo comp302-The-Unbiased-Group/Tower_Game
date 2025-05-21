@@ -210,8 +210,7 @@ public class GameScreen extends Pane {
                 // if tile is free and player has enough gold place a tower
                 if (!taken && manage_game.player.can_afford(50)) {
                 	
-                	
-                	 showTowerRadialMenu(x, y, e.getX(), e.getY());
+                	showTowerRadialMenu(x, y);
                 }
             }
               
@@ -247,7 +246,7 @@ public class GameScreen extends Pane {
          timer.start();
      }
     
-    private void showTowerRadialMenu(int x, int y, double mouseX, double mouseY) {
+    private void showTowerRadialMenu(int x, int y) {
         if (towerMenu != null) {
             getChildren().remove(towerMenu);
             towerMenu = null;
