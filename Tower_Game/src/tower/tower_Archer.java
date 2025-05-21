@@ -27,7 +27,7 @@ public class tower_Archer extends Tower {
             if (enemy.is_alive() && range_tower(enemy)) {
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/arrow.png"); 
-                projectile p = new projectile(start, enemy, 5.0, 10, img, "archer", null);
+                projectile p = new projectile(start, enemy, 14.0, 10, img, "archer", null);
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
                 break;

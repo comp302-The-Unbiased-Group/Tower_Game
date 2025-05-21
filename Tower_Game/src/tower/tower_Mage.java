@@ -29,7 +29,7 @@ public class tower_Mage extends Tower {
             	
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/fireball.png.png");
-                projectile p = new projectile(start, enemy, 4.0, 8, img, "mage", null);
+                projectile p = new projectile(start, enemy, 10.0, 8, img, "mage", null);
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
                 break;
