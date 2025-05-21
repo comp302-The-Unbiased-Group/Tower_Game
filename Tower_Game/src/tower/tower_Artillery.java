@@ -27,7 +27,7 @@ public class tower_Artillery extends Tower {
             if (enemy.is_alive() && range_tower(enemy)) {
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/bomb.png.png");
-                projectile p = new projectile(start, enemy, 7.0, 15, img, "artillery", enemies);
+                projectile p = new projectile(start, enemy, 12.0, 15, img, "artillery", enemies);
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
                 break;
