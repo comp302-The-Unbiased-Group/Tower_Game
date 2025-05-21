@@ -1,8 +1,10 @@
 package tower;
 import enemy.Enemy;
 
+
 import java.util.List;
 
+import UI.GameScreen;
 import javafx.scene.image.Image;
 
 public abstract class Tower {
@@ -21,6 +23,11 @@ public abstract class Tower {
         this.fire_rate = fire_rate;
     }
 
+    protected GameScreen gameScreen;
+
+    public void setGameScreen(GameScreen gs) {
+        this.gameScreen = gs; }
+    
     public abstract void attack(List<Enemy> enemies);
     
     public abstract Image getImage();
@@ -31,6 +38,8 @@ public abstract class Tower {
         double distance = Math.sqrt((dx * dx) + (dy * dy));
         return distance <= range;
     }
+    
+    
     
     public int getX() {
     	return x; 

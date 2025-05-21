@@ -13,7 +13,7 @@ public class enemy_Knight extends Enemy {
     private static final long FRAME_DURATION = 150_000_000; 
 
     public enemy_Knight(List<Point> path) {
-        super(path, 60, 0.2, 10); 
+        super(path, 60, 2.8, 10); 
 
         for (int i = 0; i < 6; i++) {
             frames[i] = new Image("file:Tower_Game/Enemies/knight_" + i + ".png");

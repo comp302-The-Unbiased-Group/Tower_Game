@@ -57,7 +57,8 @@ public class GameScreen extends Pane {
        
     private static final int TILE_COLS = 20;
     private static final int TILE_ROWS = 15;
-    private final int TILE_SIZE;
+    private double tileWidth;
+    private double tileHeight;
     private double screenWidth;
     private double screenHeight;
 
@@ -69,6 +70,12 @@ public class GameScreen extends Pane {
     private List<Tower> towers;
     private Map map;
     private Canvas canvas;
+    private List<tower.projectile> projectiles = new ArrayList<>();
+    private Pane towerMenu = null;
+    
+    public void addProjectile(tower.projectile p) {
+        projectiles.add(p);
+    }
     
     //For pause
     Button pause;
@@ -94,7 +101,8 @@ public class GameScreen extends Pane {
     	this.screenWidth = screenBounds.getWidth();
     	this.screenHeight = screenBounds.getHeight();
 
-        TILE_SIZE = (int) Math.min(screenWidth / TILE_COLS, screenHeight / TILE_ROWS);
+    	tileWidth = (screenWidth / TILE_COLS);
+        tileHeight = (screenHeight / TILE_ROWS);
 
         setPrefSize(screenWidth, screenHeight);
         canvas = new Canvas(screenWidth, screenHeight);
@@ -106,62 +114,53 @@ public class GameScreen extends Pane {
 
         map = new Map(TILE_COLS, TILE_ROWS);
        
-         
-
-        
-
-       
-        
-    	// horizontal: from (0,7) to (3,7)
+        // horizontal: from (0,7) to (3,7)
         for (int x = 0; x <= 3; x++) {
             map.set_tile(x, 7, new PathTile(x, 7, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point(x * TILE_SIZE, 7 * TILE_SIZE));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(7 * tileHeight)));
         }
 
         //corner: (4,7) turning down
         map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_BOTTOMLEFT));
-        map.add_path_point(new Point(4 * TILE_SIZE, 7 * TILE_SIZE));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(7 * tileHeight)));
 
         // vertical: from (4,8) to (4,8)
         map.set_tile(4, 8, new PathTile(4, 8, PathTile.PathType.VERTICAL));
-        map.add_path_point(new Point(4 * TILE_SIZE, 8 * TILE_SIZE));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(8 * tileHeight)));
 
         // corner: (4,9) turning right
         map.set_tile(4, 9, new PathTile(4, 9, PathTile.PathType.CORNER_TOPRIGHT));
-        map.add_path_point(new Point(4 * TILE_SIZE, 9 * TILE_SIZE));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(9 * tileHeight)));
 
         // horizontal: from (5,9) to (8,9)
         for (int x = 5; x <= 8; x++) {
             map.set_tile(x, 9, new PathTile(x, 9, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point(x * TILE_SIZE, 9 * TILE_SIZE));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(9 * tileHeight)));
         }
 
         // corner: (9,9) turning up
         map.set_tile(9, 9, new PathTile(9, 9, PathTile.PathType.CORNER_TOPLEFT));
-        map.add_path_point(new Point(9 * TILE_SIZE, 9 * TILE_SIZE));
+        map.add_path_point(new Point((int)(9 * tileWidth), (int)(9 * tileHeight)));
 
         // vertical: (9,8) and (9,7)
         for (int y = 8; y >= 7; y--) {
             map.set_tile(9, y, new PathTile(9, y, PathTile.PathType.VERTICAL));
-            map.add_path_point(new Point(9 * TILE_SIZE, y * TILE_SIZE));
+            map.add_path_point(new Point((int)(9 * tileWidth), (int)(y * tileHeight)));
         }
 
         // corner: (9,6) turning right
         map.set_tile(9, 6, new PathTile(9, 6, PathTile.PathType.CORNER_BOTTOMRIGHT));
-        map.add_path_point(new Point(9 * TILE_SIZE, 6 * TILE_SIZE));
+        map.add_path_point(new Point((int)(9 * tileWidth), (int)(6 * tileHeight)));
 
         // horizontal: from (10,6) to (14,6)
         for (int x = 10; x <= 19; x++) {
             map.set_tile(x, 6, new PathTile(x, 6, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point(x * TILE_SIZE, 6 * TILE_SIZE));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(6 * tileHeight)));
         }
 
-
-
-
         // set starting and ending tile points.
-        map.set_start_point(new Point(0 * TILE_SIZE, 7 * TILE_SIZE));
-        map.set_end_point(new Point(15 * TILE_SIZE, 7 * TILE_SIZE));
+        map.set_start_point(new Point(0, 7));
+        map.set_end_point(new Point(15, 7));
 
         // buildable tiles where towers can be placed
         map.set_tile(6, 8, new BuildableTile(6, 8));
@@ -198,51 +197,30 @@ public class GameScreen extends Pane {
         
         // mouse clicking for placing towers
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            int x = (int) e.getX() / TILE_SIZE;
-            int y = (int) e.getY() / TILE_SIZE;
+        	int x = (int)(e.getX() / tileWidth);
+            int y = (int)(e.getY() / tileHeight);
 
             Tile tile = map.get_tile(x, y);
             
             if (tile instanceof BuildableTile) {
-                int px = x * TILE_SIZE;
-                int py = y * TILE_SIZE;
+               
 
                 // check if tower is already placed at that tile
-                boolean taken = towers.stream().anyMatch(t -> t.getX() == px && t.getY() == py);
-
+            	boolean taken = towers.stream().anyMatch(t -> t.getX() == x && t.getY() == y);
                 // if tile is free and player has enough gold place a tower
                 if (!taken && manage_game.player.can_afford(50)) {
                 	
-                	
-                	ContextMenu towerMenu = new ContextMenu();
-                	
-                    MenuItem archer = new MenuItem("Archer Tower");
-                    MenuItem artillery = new MenuItem("Artillery Tower");
-                    MenuItem mage = new MenuItem("Mage Tower");
-
-                    archer.setOnAction(a -> {
-                        towers.add(new tower_Archer(px, py));
-                        manage_game.player.add_gold(-50);
-                        draw();  // Redraw to show tower
-                    });
-
-                    artillery.setOnAction(c -> {
-                        towers.add(new tower_Artillery(px, py));
-                        manage_game.player.add_gold(-50);
-                        draw();
-                    });
-
-                    mage.setOnAction(m -> {
-                        towers.add(new tower_Mage(px, py));
-                        manage_game.player.add_gold(-50);
-                        draw();
-                    });
-
-                    towerMenu.getItems().addAll(archer, artillery, mage);
-                    towerMenu.show(canvas, e.getScreenX(), e.getScreenY());
+                	showTowerRadialMenu(x, y);
                 }
             }
               
+        });
+        
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
+            if (towerMenu != null && !towerMenu.contains(e.getX(), e.getY())) {
+                getChildren().remove(towerMenu);
+                towerMenu = null;
+            }
         });
 
         // main game loop which updates game logic and redraws screen every frame
@@ -256,6 +234,11 @@ public class GameScreen extends Pane {
                     for (Tower tower : towers) {
                         tower.attack(enemies);
                     }
+                    
+                    projectiles.removeIf(p -> p.hasHit());
+                    for (tower.projectile p : projectiles) {
+                        p.update();
+                    }
                 }
                 draw(); 
             }
@@ -263,7 +246,62 @@ public class GameScreen extends Pane {
          timer.start();
      }
     
+    private void showTowerRadialMenu(int x, int y) {
+        if (towerMenu != null) {
+            getChildren().remove(towerMenu);
+            towerMenu = null;
+        }
 
+        double clicked_tile_x = x * tileWidth + tileWidth / 2;
+        double clicked_tile_y = y * tileHeight + tileHeight / 2;
+        double radius = tileWidth * 0.8; 
+
+        String[] images_tower = { "file:Tower_Game/Towers/archer.png", "file:Tower_Game/Towers/mage.png","file:Tower_Game/Towers/artillery.png"};
+        
+
+        Pane radialMenu = new Pane();
+        radialMenu.setPickOnBounds(false);
+
+        for (int i = 0; i < 3; i++) {
+            double angle = Math.toRadians(90 + i * 120);
+            double button_x = clicked_tile_x + radius * Math.cos(angle) - 32; // button center
+            double button_y = clicked_tile_y + radius * Math.sin(angle) - 32;
+
+            Button btn = new Button();
+            btn.setGraphic(new ImageView(new Image(images_tower[i], 64, 64, true, true)));
+            btn.setStyle("-fx-background-color: transparent;");
+           
+
+            btn.setLayoutX(button_x);
+            btn.setLayoutY(button_y);
+
+            final int tower_type = i;
+            btn.setOnAction(e -> {
+                if (tower_type == 0) {
+                    tower_Archer archerTower = new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                    archerTower.setGameScreen(this); 
+                    towers.add(archerTower);
+                } else if (tower_type == 1) {
+                    tower_Mage mageTower = new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                    mageTower.setGameScreen(this); 
+                    towers.add(mageTower);
+                } else if (tower_type == 2) {
+                    tower_Artillery artilleryTower = new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
+                    artilleryTower.setGameScreen(this); 
+                    towers.add(artilleryTower);
+                }
+                manage_game.player.add_gold(-50);
+                getChildren().remove(radialMenu);
+                towerMenu = null;
+                draw();
+            });
+
+            radialMenu.getChildren().add(btn);
+        }
+
+        getChildren().add(radialMenu);
+        towerMenu = radialMenu;
+    }
     
     //PAUSE GAME STARTS
     private void pauseUI() {
@@ -429,10 +467,12 @@ public class GameScreen extends Pane {
     private void draw() {
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        
+      
 
         // drawing each tile on grid
-        for (int y = 0; y < 15; y++) {
-            for (int x = 0; x < 20; x++) {
+        for (int y = 0; y < TILE_ROWS; y++) {
+            for (int x = 0; x < TILE_COLS; x++) {
                 Tile tile = map.get_tile(x, y);
                 Image tileImage = null;
 
@@ -448,28 +488,35 @@ public class GameScreen extends Pane {
                     tileImage = new Image("file:Tower_Game/Tiles/grass_tile2.png");
                 }
                 
+                double px = x * tileWidth;
+                double py = y * tileHeight;
+                
                 if (tileImage != null) {
-                    g.drawImage(tileImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                	g.drawImage(tileImage, px, py, tileWidth, tileHeight);
                 } else {
                     g.setFill(Color.LIGHTGREEN); // fallback
-                    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                    g.fillRect(px, py, tileWidth, tileHeight);
                 }
 
                 // draw tile
                 
                 g.setStroke(Color.BLACK); // tile border
-                g.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                g.strokeRect(px, py, tileWidth, tileHeight);
             }
         }
-
+        
+        
+        
         // draw towers 
         for (Tower tower : towers) {
             Image towerImage = tower.getImage(); 
+            double tower_x = tower.getX();
+            double tower_y = tower.getY();
             if (towerImage != null) {
-                g.drawImage(towerImage, tower.getX(), tower.getY(), TILE_SIZE, TILE_SIZE);
+            	g.drawImage(towerImage, tower_x, tower_y, tileWidth, tileHeight);
             } else {
                 g.setFill(Color.GRAY); //fallback
-                g.fillOval(tower.getX(), tower.getY(), TILE_SIZE, TILE_SIZE);
+                g.fillOval(tower_x, tower_y, tileWidth, tileHeight);
             }
         }
 
@@ -477,6 +524,8 @@ public class GameScreen extends Pane {
         // draw enemies and health bars
         for (Enemy enemy : enemies) {
             Point2D.Double p = enemy.getPosition();
+            double enemy_x = p.x;
+            double enemy_y = p.y;
 
             // enemy body
             if (enemy instanceof enemy_Goblin) {
@@ -484,10 +533,7 @@ public class GameScreen extends Pane {
 
                 goblin.updateAnimation(System.nanoTime());
 
-                g.drawImage(
-                    goblin.getCurrentImage(),
-                    p.x - (TILE_SIZE*0.25), p.y-(TILE_SIZE*0.25), TILE_SIZE*1.25, TILE_SIZE*1.25
-                );
+                g.drawImage(goblin.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.25, tileHeight * 1.25);
             }
            
             if (enemy instanceof enemy_Knight) {
@@ -495,21 +541,18 @@ public class GameScreen extends Pane {
 
                 knight.updateAnimation(System.nanoTime());
 
-                g.drawImage(
-                    knight.getCurrentImage(),
-                        p.x-(TILE_SIZE*0.25), p.y-(TILE_SIZE*0.25), TILE_SIZE*1.5, TILE_SIZE*1.5
-                );
+                g.drawImage(knight.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
             }
 
             // health bar
-            int bar_width = TILE_SIZE / 2;
-            int bar_height = 4;
+            int bar_width = (int)(tileWidth / 2);
+            int bar_height = (int)(tileHeight / 8);
             int hp = enemy.getHp();
             int maxHp = enemy.getMaxHp();
             int filled = (int) ((hp / (double) maxHp) * bar_width);
 
-            double barX = p.x + (TILE_SIZE - bar_width) / 2.5;
-            double barY = p.y + TILE_SIZE + 1.8;
+            double barX = enemy_x + (tileWidth - bar_width) / 2.5;
+            double barY = enemy_y + tileHeight + 1.8;
 
             g.setFill(Color.GRAY);
             g.fillRect(barX, barY, bar_width, bar_height);
@@ -520,6 +563,9 @@ public class GameScreen extends Pane {
         }
 
         updateGoldLife();
+        
+        for (tower.projectile p : projectiles) {
+            p.draw(g);
+        }
     }
 }
-
