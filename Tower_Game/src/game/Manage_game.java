@@ -44,8 +44,6 @@ public class Manage_game {
             wave_manager.update(enemies);
         }
     	
-        boolean enemiesAlive = !enemies.isEmpty();
-
         for (Enemy enemy : enemies) {
             enemy.move(speedMultiplier);
         }
