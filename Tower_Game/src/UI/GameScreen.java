@@ -24,7 +24,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
 import javafx.geometry.Rectangle2D;
-
+import javafx.scene.ImageCursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -244,6 +244,10 @@ public class GameScreen extends Pane {
             }
         };
          timer.start();
+         
+         Image cursorImage = new Image("file:Tower_Game/UI_assets/01.png");
+         
+         canvas.setCursor(new ImageCursor(cursorImage, cursorImage.getWidth() / 4, cursorImage.getHeight() / 4));
      }
     
     private void showTowerRadialMenu(int x, int y) {
