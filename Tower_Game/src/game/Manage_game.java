@@ -40,7 +40,11 @@ public class Manage_game {
     }
 
     public void updateGame(double speedMultiplier) {
-        wave_manager.update(enemies);
+    	if (!wave_manager.check_if_last_wave()) {
+            wave_manager.update(enemies);
+        }
+    	
+        boolean enemiesAlive = !enemies.isEmpty();
 
         for (Enemy enemy : enemies) {
             enemy.move(speedMultiplier);
@@ -65,14 +69,14 @@ public class Manage_game {
 
                 if (player.get_lives() <= 0 && gameOverListener != null) {
                     gameOverListener.onGameOver();
+                    return;
                 }
             }
 
         }
-        if (enemies.isEmpty() && wave_manager.check_if_last_wave()) {
-
-                endGameStatsHandler.onVictory(enemies_killed);
-
+        
+        if (wave_manager.check_if_last_wave() && player.get_lives() > 0 && endGameStatsHandler != null) {
+            endGameStatsHandler.onVictory(enemies_killed);
         }
     }
 

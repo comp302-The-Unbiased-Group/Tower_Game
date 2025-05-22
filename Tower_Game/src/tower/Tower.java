@@ -12,18 +12,18 @@ public abstract class Tower {
     protected int range;
     protected int cost;
     protected int fire_rate;
+    protected GameScreen gameScreen;
     
     
 
-    public Tower(int x, int y, int range, int cost, int fire_rate) {
+    public Tower(int x, int y, int range, int cost, int fire_rate, GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.range = range;
         this.cost = cost;
         this.fire_rate = fire_rate;
+        this.gameScreen = gameScreen;
     }
-
-    protected GameScreen gameScreen;
 
     public void setGameScreen(GameScreen gs) {
         this.gameScreen = gs; }

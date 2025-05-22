@@ -3,6 +3,7 @@ import java.awt.geom.Point2D;
 import enemy.Enemy;
 import java.util.List;
 
+import UI.GameScreen;
 import javafx.scene.image.Image;
 
 
@@ -11,8 +12,8 @@ public class tower_Mage extends Tower {
 	
 	private long last_hit_time = 0;
 	
-    public tower_Mage(int x, int y,int tileWidth) {
-        super(x, y, (int)(2.0 * tileWidth), 60, 1);
+    public tower_Mage(int x, int y,int tileWidth, GameScreen gameScreen) {
+    	super(x, y, (int)(2.0 * tileWidth), 60, 1, gameScreen);
     }
 
     

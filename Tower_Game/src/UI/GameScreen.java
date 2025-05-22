@@ -301,7 +301,7 @@ public class GameScreen extends Pane {
             if (i == 0) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_0).png"));
                 btn.setOnMouseClicked(event -> {
-                    towers.add(new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth));
+                	towers.add(new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                     manage_game.player.add_gold(-50);
                     draw();
                     getChildren().remove(towerMenu);
@@ -312,7 +312,7 @@ public class GameScreen extends Pane {
             else if (i == 1) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
                 btn.setOnMouseClicked(event -> {
-                    towers.add(new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth));
+                	towers.add(new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                     manage_game.player.add_gold(-50);
                     draw();
                     getChildren().remove(towerMenu);
@@ -323,7 +323,7 @@ public class GameScreen extends Pane {
             else {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_3).png"));
                 btn.setOnMouseClicked(event -> {
-                    towers.add(new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth));
+                	towers.add(new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                     manage_game.player.add_gold(-50);
                     draw();
                     getChildren().remove(towerMenu);
@@ -368,8 +368,8 @@ public class GameScreen extends Pane {
         
         if (speedButton == null) {
 
-            Image normal_speed = new Image("file:Tower_Game/UI_assets/buttons (1_1).png");
-            Image fast = new Image("file:Tower_Game/UI_assets/buttons_(1_0).png");
+            Image normal_speed = new Image("file:Tower_Game/UI_assets/speed.png");
+            Image fast = new Image("file:Tower_Game/UI_assets/resume_button.png");
 
             ImageView speedView = new ImageView(normal_speed);
             speedView.setFitWidth(30);
@@ -377,14 +377,16 @@ public class GameScreen extends Pane {
 
             speedButton = new Button();
             speedButton.setGraphic(speedView);
-            speedButton.setPadding(Insets.EMPTY);
             speedButton.getStyleClass().add("speed-button");
             
             Rectangle2D screenBounds = Screen.getPrimary().getBounds();
             double screenWidth = screenBounds.getWidth();
             speedButton.setLayoutX(screenWidth - 150);
             speedButton.setLayoutY(10);
-
+            speedButton.setPadding(Insets.EMPTY);
+            pause.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+            pause.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+            
             speedButton.setOnAction(e -> {
 
                 if (speedMultiplier == 1.0) {
@@ -415,6 +417,7 @@ public class GameScreen extends Pane {
         	     createPause.setVisible(isPaused);
         	     pause.setGraphic(isPaused ? resumeIcon : pauseIcon);
         	}
+
         });
     } // PAUSE GAME ENDS
     

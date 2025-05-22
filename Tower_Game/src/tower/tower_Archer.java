@@ -4,6 +4,7 @@ import enemy.Enemy;
 
 import java.util.List;
 
+import UI.GameScreen;
 import javafx.scene.image.Image;
 
 
@@ -12,9 +13,10 @@ public class tower_Archer extends Tower {
 
     private long last_hit_time = 0;  // track last time tower fire
 
-    public tower_Archer(int x, int y,int tileWidth) {
-        super(x, y, (int)(2.2 * tileWidth), 50, 2); // I adjust fire_rate as 2 shots per second
+    public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
+    	super(x, y, (int)(2.0 * tileWidth), 60, 1, gameScreen);
     }
+    
 
     @Override
     public void attack(List<Enemy> enemies) {
