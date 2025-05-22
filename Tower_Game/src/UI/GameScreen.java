@@ -15,6 +15,9 @@ import enemy.enemy_Goblin;
 import enemy.enemy_Knight;
 import utils.OptionsHandler;
 import game.TrackEnemyWave;
+import tower.tower_ArcherUp;
+import tower.tower_MageUp;
+import tower.tower_ArtilleryUp;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -279,14 +282,16 @@ public class GameScreen extends Pane {
         circle.setStrokeWidth(1.5);
         towerMenu.getChildren().add(circle);
         
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
         	double angle;
         	if (i == 0) {
         	    angle = 90;
         	} else if (i == 1) {
-        	    angle = 210; 
+        	    angle = 180; 
+        	} else if (i == 2) {
+        	    angle = 270;
         	} else {
-        	    angle = 330;
+        		angle = 0;
         	}
         	double angleRad = Math.toRadians(angle);
             double button_x = clicked_tile_x + radius * Math.cos(angleRad) - 20;
@@ -310,7 +315,7 @@ public class GameScreen extends Pane {
                 });
             } 
             else if (i == 1) {
-                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_2).png"));
                 btn.setOnMouseClicked(event -> {
                 	towers.add(new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                     manage_game.player.add_gold(-50);
@@ -320,7 +325,7 @@ public class GameScreen extends Pane {
                     event.consume();
                 });
             } 
-            else {
+            else if (i == 2) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_3).png"));
                 btn.setOnMouseClicked(event -> {
                 	towers.add(new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
@@ -331,6 +336,14 @@ public class GameScreen extends Pane {
                     event.consume();
                 });
             }
+            else { // New button for secondary menu
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png")); // Add your image
+                btn.setOnMouseClicked(event -> {
+                    getChildren().remove(towerMenu);
+                    showUpdateMenu(x, y);
+                    event.consume();
+                });
+            }
             
             towerMenu.getChildren().add(btn);
         }
@@ -338,6 +351,91 @@ public class GameScreen extends Pane {
         getChildren().add(towerMenu);
     }
     
+    private void showUpdateMenu(int x, int y) {
+    	if (towerMenu != null) {
+            getChildren().remove(towerMenu);
+        }
+    	
+    	double clicked_tile_x = (x + 0.5) * tileWidth;
+        double clicked_tile_y = (y + 0.5) * tileHeight;
+        double radius = 60;
+        
+        towerMenu = new Group();
+        
+        Circle circle = new Circle(radius);
+        circle.setCenterX(clicked_tile_x);
+        circle.setCenterY(clicked_tile_y);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.WHITE);
+        circle.setStrokeWidth(1.5);
+        towerMenu.getChildren().add(circle);
+        
+        for (int i = 0; i < 3; i++) {
+        	double angle;
+        	if (i == 0) {
+        	    angle = 90;
+        	} else if (i == 1) {
+        	    angle = 210; 
+        	} else {
+        	    angle = 330; 
+        	}
+            double angleRad = Math.toRadians(angle);
+            double button_x = clicked_tile_x + radius * Math.cos(angleRad) - 20;
+            double button_y = clicked_tile_y + radius * Math.sin(angleRad) - 20;
+
+            ImageView btn = new ImageView();
+            btn.setFitWidth(40);
+            btn.setFitHeight(40);
+            btn.setX(button_x);
+            btn.setY(button_y);
+            
+            if (i == 0) {
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_0).png"));
+                btn.setOnMouseClicked(event -> {
+                	towers.removeIf(t -> 
+                    t.getX() == x * (int)tileWidth && 
+                    t.getY() == y * (int)tileHeight &&
+                    t instanceof tower_Archer
+                );
+                	manage_game.player.add_gold(-75);
+                	towers.add(new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));                    getChildren().remove(towerMenu);
+                    towerMenu = null;
+                    event.consume();
+                });
+            }
+            else if (i == 1) {
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_2).png"));
+                btn.setOnMouseClicked(event -> {
+                	towers.removeIf(t -> 
+                    t.getX() == x * (int)tileWidth && 
+                    t.getY() == y * (int)tileHeight &&
+                    t instanceof tower_Archer
+                );
+                	manage_game.player.add_gold(-75);
+                	towers.add(new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));                    getChildren().remove(towerMenu);
+                    towerMenu = null;
+                    event.consume();
+                });
+            }
+            else {
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_3).png"));
+                btn.setOnMouseClicked(event -> {
+                	towers.removeIf(t -> 
+                    t.getX() == x * (int)tileWidth && 
+                    t.getY() == y * (int)tileHeight &&
+                    t instanceof tower_Archer
+                );
+                	manage_game.player.add_gold(-75);
+                	towers.add(new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));                    getChildren().remove(towerMenu);
+                	towerMenu = null;
+                    event.consume();
+                });
+            }
+            
+            towerMenu.getChildren().add(btn);
+        }
+        getChildren().add(towerMenu);
+    }
     
     //PAUSE GAME STARTS
     private void pauseUI() {

@@ -15,7 +15,7 @@ public class tower_Artillery extends Tower {
     private long last_hit_time = 0;
 
     public tower_Artillery(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 60, 1, gameScreen);
+    	super(x, y, (int)(2.0 * tileWidth), 60, 5, 1, gameScreen);
     }
     
   
