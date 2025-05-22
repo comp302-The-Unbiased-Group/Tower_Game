@@ -11,16 +11,18 @@ public abstract class Tower {
     public int x, y;
     protected int range;
     protected int cost;
-    protected int fire_rate;
+    protected int damage;
+    protected double fire_rate;
     protected GameScreen gameScreen;
     
     
 
-    public Tower(int x, int y, int range, int cost, int fire_rate, GameScreen gameScreen) {
+    public Tower(int x, int y, int range, int cost, int damage, int fire_rate, GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.range = range;
         this.cost = cost;
+        this.damage = damage;
         this.fire_rate = fire_rate;
         this.gameScreen = gameScreen;
     }
@@ -47,6 +49,12 @@ public abstract class Tower {
     public int getY() {
     	return y; 
     }
+    public int getRange() {
+    	return range; 
+    	}
+    public int getDamage() { 
+    	return damage; 
+    	}
 }
 
 	
