@@ -47,10 +47,12 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.image.Image;
+import javafx.scene.Group;
 
 public class GameScreen extends Pane {
  
@@ -71,7 +73,8 @@ public class GameScreen extends Pane {
     private Map map;
     private Canvas canvas;
     private List<tower.projectile> projectiles = new ArrayList<>();
-    private Pane towerMenu = null;
+    private Group towerMenu;
+    private BuildableTile hoveredTile;
     
     public void addProjectile(tower.projectile p) {
         projectiles.add(p);
@@ -196,11 +199,17 @@ public class GameScreen extends Pane {
         enemies = manage_game.enemies;
         
         // mouse clicking for placing towers
-        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
         	int x = (int)(e.getX() / tileWidth);
             int y = (int)(e.getY() / tileHeight);
 
             Tile tile = map.get_tile(x, y);
+            
+            if (towerMenu != null) {
+                getChildren().remove(towerMenu);
+                towerMenu = null;
+                hoveredTile = null;
+            }
             
             if (tile instanceof BuildableTile) {
                
@@ -256,56 +265,79 @@ public class GameScreen extends Pane {
             towerMenu = null;
         }
 
-        double clicked_tile_x = x * tileWidth + tileWidth / 2;
-        double clicked_tile_y = y * tileHeight + tileHeight / 2;
-        double radius = tileWidth * 0.8; 
-
-        String[] images_tower = { "file:Tower_Game/Towers/archer.png", "file:Tower_Game/Towers/mage.png","file:Tower_Game/Towers/artillery.png"};
+        double clicked_tile_x = (x + 0.5) * tileWidth;
+        double clicked_tile_y = (y + 0.5) * tileHeight;
+        double radius = 60; 
         
-
-        Pane radialMenu = new Pane();
-        radialMenu.setPickOnBounds(false);
-
+        towerMenu = new Group();
+        
+        Circle circle = new Circle(radius);
+        circle.setCenterX(clicked_tile_x);
+        circle.setCenterY(clicked_tile_y);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.WHITE);
+        circle.setStrokeWidth(1.5);
+        towerMenu.getChildren().add(circle);
+        
         for (int i = 0; i < 3; i++) {
-            double angle = Math.toRadians(90 + i * 120);
-            double button_x = clicked_tile_x + radius * Math.cos(angle) - 32; // button center
-            double button_y = clicked_tile_y + radius * Math.sin(angle) - 32;
+        	double angle;
+        	if (i == 0) {
+        	    angle = 90;
+        	} else if (i == 1) {
+        	    angle = 210; 
+        	} else {
+        	    angle = 330;
+        	}
+        	double angleRad = Math.toRadians(angle);
+            double button_x = clicked_tile_x + radius * Math.cos(angleRad) - 20;
+            double button_y = clicked_tile_y + radius * Math.sin(angleRad) - 20;
 
-            Button btn = new Button();
-            btn.setGraphic(new ImageView(new Image(images_tower[i], 64, 64, true, true)));
-            btn.setStyle("-fx-background-color: transparent;");
-           
-
-            btn.setLayoutX(button_x);
-            btn.setLayoutY(button_y);
-
-            final int tower_type = i;
-            btn.setOnAction(e -> {
-                if (tower_type == 0) {
-                    tower_Archer archerTower = new tower_Archer((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
-                    archerTower.setGameScreen(this); 
-                    towers.add(archerTower);
-                } else if (tower_type == 1) {
-                    tower_Mage mageTower = new tower_Mage((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
-                    mageTower.setGameScreen(this); 
-                    towers.add(mageTower);
-                } else if (tower_type == 2) {
-                    tower_Artillery artilleryTower = new tower_Artillery((int)(x * tileWidth), (int)(y * tileHeight), (int)tileWidth);
-                    artilleryTower.setGameScreen(this); 
-                    towers.add(artilleryTower);
-                }
-                manage_game.player.add_gold(-50);
-                getChildren().remove(radialMenu);
-                towerMenu = null;
-                draw();
-            });
-
-            radialMenu.getChildren().add(btn);
+            ImageView btn = new ImageView();
+            btn.setFitWidth(40);
+            btn.setFitHeight(40);
+            btn.setX(button_x);
+            btn.setY(button_y);
+            
+            if (i == 0) {
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_0).png"));
+                btn.setOnMouseClicked(event -> {
+                    towers.add(new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth));
+                    manage_game.player.add_gold(-50);
+                    draw();
+                    getChildren().remove(towerMenu);
+                    towerMenu = null;
+                    event.consume();
+                });
+            } 
+            else if (i == 1) {
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
+                btn.setOnMouseClicked(event -> {
+                    towers.add(new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth));
+                    manage_game.player.add_gold(-50);
+                    draw();
+                    getChildren().remove(towerMenu);
+                    towerMenu = null;
+                    event.consume();
+                });
+            } 
+            else {
+                btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_3).png"));
+                btn.setOnMouseClicked(event -> {
+                    towers.add(new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth));
+                    manage_game.player.add_gold(-50);
+                    draw();
+                    getChildren().remove(towerMenu);
+                    towerMenu = null;
+                    event.consume();
+                });
+            }
+            
+            towerMenu.getChildren().add(btn);
         }
-
-        getChildren().add(radialMenu);
-        towerMenu = radialMenu;
+        
+        getChildren().add(towerMenu);
     }
+    
     
     //PAUSE GAME STARTS
     private void pauseUI() {
