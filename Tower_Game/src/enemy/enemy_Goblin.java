@@ -15,7 +15,7 @@ public class enemy_Goblin extends Enemy {
     
     public enemy_Goblin(List<Point> path) {
     	
-        super(path, 30, 3.4, 5);
+        super(path, 30, 3.5, 5);
 
         for (int i = 0; i < 6; i++) {
             frames[i] = new Image("file:Tower_Game/Enemies/goblin_" + i + ".png");

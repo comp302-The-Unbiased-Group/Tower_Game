@@ -1,5 +1,6 @@
 package game;
 import enemy.Enemy;
+import enemy.enemy_Knight;
 import tower.Tower;
 import UI.GameOverListener;
 import utils.EndGameStatsHandler;
@@ -43,9 +44,13 @@ public class Manage_game {
     	if (!wave_manager.check_if_last_wave()) {
             wave_manager.update(enemies);
         }
-    	
+
         for (Enemy enemy : enemies) {
-            enemy.move(speedMultiplier);
+            if (enemy instanceof enemy_Knight) {
+                ((enemy_Knight) enemy).move(speedMultiplier, enemies, 64);
+            } else {
+                enemy.move(speedMultiplier);
+            }
         }
 
         for (Tower tower : towers) {
