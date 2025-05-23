@@ -57,6 +57,8 @@ import javafx.scene.text.Text;
 import javafx.scene.image.Image;
 import javafx.scene.Group;
 
+import Gold.Gold_Drop;
+
 public class GameScreen extends Pane {
  
        
@@ -78,6 +80,7 @@ public class GameScreen extends Pane {
     private Map map;
     private Canvas canvas;
     private List<tower.projectile> projectiles = new ArrayList<>();
+    private List<Gold_Drop> goldDropList = new ArrayList<>();
     private Group towerMenu;
     private BuildableTile hoveredTile;
     
@@ -205,6 +208,10 @@ public class GameScreen extends Pane {
             });
         });
 
+        manage_game.set_gold_handler((amount, x, y) -> {
+            Gold_Drop drop = new Gold_Drop(amount, x, y, gamePane, player);
+            goldDropList.add(drop); // if you're tracking them
+        });
         enemies = manage_game.enemies;
         
         // mouse clicking for placing towers
@@ -721,6 +728,9 @@ public class GameScreen extends Pane {
         
         for (tower.projectile p : projectiles) {
             p.draw(g);
+        }
+        for (Gold_Drop drop : goldDropList) {
+            drop.update_goldAnimation(now, gamePane);
         }
     }
 }
