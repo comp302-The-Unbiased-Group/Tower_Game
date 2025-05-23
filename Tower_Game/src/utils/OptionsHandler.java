@@ -18,6 +18,9 @@ public class OptionsHandler {
     protected String EnemySpeed;
     protected int earnedGold= 10;
     protected int startGold = 100;
+    protected double basegoblinmulti = 3.5;
+    protected double baseknightmulti= 2.5;
+    protected double speedmultiplier=1;
 
 
     private OptionsHandler() {}
@@ -111,6 +114,18 @@ public class OptionsHandler {
     }
     public int getPlayerHP() {
         return PlayerHP;
+    }
+
+    public double getbaseknight_speed_multiplier() {
+        return baseknightmulti;
+    }
+
+    public double getbasegoblin_speed_multiplier() {
+        return basegoblinmulti;
+    }
+
+    public double getspeedmultiplier() {
+        return speedmultiplier;
     }
 }
    

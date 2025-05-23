@@ -70,7 +70,9 @@ public class GameScreen extends Pane {
     // core components of the game
     private Manage_game manage_game;
     private List<Enemy> enemies;
-    private double speedMultiplier = 1.0;
+
+    private double speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
+
     private Button speedButton;
     private List<Tower> towers;
     private Map map;
@@ -99,6 +101,10 @@ public class GameScreen extends Pane {
     Text livesText;
     Text WaveCounterText;
     StackPane hudContainer;
+
+    // for special effects on enemies
+    Image thunderIcon;
+    Image snowIcon;
 
     public GameScreen(Stage stage) {
 
@@ -487,13 +493,13 @@ public class GameScreen extends Pane {
             
             speedButton.setOnAction(e -> {
 
-                if (speedMultiplier == 1.0) {
+                if (speedMultiplier == OptionsHandler.getInstance().getspeedmultiplier()) {
 
-                    speedMultiplier = 2.0;
+                    speedMultiplier = speedMultiplier * 2.0;
                     speedView.setImage(fast);
                 } else {
 
-                    speedMultiplier = 1.0;
+                    speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
                     speedView.setImage(normal_speed);
                 }
             });
@@ -672,13 +678,25 @@ public class GameScreen extends Pane {
 
                 g.drawImage(goblin.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.25, tileHeight * 1.25);
             }
-           
+
+
             if (enemy instanceof enemy_Knight) {
                 enemy_Knight knight = (enemy_Knight) enemy;
 
                 knight.updateAnimation(System.nanoTime());
 
                 g.drawImage(knight.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+
+            // thunder icon
+            if (enemy instanceof enemy_Knight && ((enemy_Knight) enemy).get_synergyState()) {
+
+                thunderIcon = new Image("file:Tower_Game/Enemy_effects/thunder.png");
+                double offsetY = tileHeight * 0.5;
+                double thunderwidth = tileWidth / 2.8;
+                double thunderheight = tileHeight / 2.8;
+                g.drawImage(thunderIcon, enemy_x+ tileWidth/2.8, enemy_y - offsetY, thunderwidth, thunderheight);
+
             }
 
             // health bar
