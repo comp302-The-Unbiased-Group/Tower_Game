@@ -120,5 +120,11 @@ public abstract class Enemy {
         slowed_enemy = true;
         slowed_end_time = System.currentTimeMillis() + durationMillis;
     }
-    
+
+
+    // return to starting path index
+    public void teleportback() {
+        this.position = new Point2D.Double(path.get(0).x, path.get(0).y);
+        this.path_index = 0;
+    }
 }

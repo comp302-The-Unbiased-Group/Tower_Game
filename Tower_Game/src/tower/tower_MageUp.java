@@ -31,16 +31,20 @@ public class tower_MageUp extends tower_Mage {
 
         for (Enemy enemy : enemies) {
         	
-            if (enemy.is_alive() && range_tower(enemy)) {
+            if (enemy.is_alive() && is_enemyInRange(enemy)) {
             	
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/fireball.png.png");
-                projectile p = new projectile(start, enemy, 14.0, 8, img, "mage", null);
+                projectile p = new projectile(start, enemy, 14.0, 8, img, "mage", null,this);
                 if (enemy instanceof enemy_Knight) {
                     enemy.applySlow(4000);
                 }
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
+                if (enemy.is_alive()){
+                    if(Math.random() < 0.33) {
+                        enemy.teleportback();
+                    }}
                 break;
             }
         }
