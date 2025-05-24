@@ -17,6 +17,7 @@ public class enemy_Knight extends Enemy {
     protected double basespeed = 2.5;
     private double synergyboost;
     private boolean synergy_on;
+    public static final double synergy_multiplier = 1.25;
 
     public enemy_Knight(List<Point> path) {
         super(path, 60, 2.5, 10);
@@ -54,10 +55,10 @@ public class enemy_Knight extends Enemy {
 
         if (goblin_is_close && !synergy_on) {
             this.synergy_on = true;
-            speed = synergyboost;
+            base_speed = synergyboost;
         } else if (!goblin_is_close && synergy_on) {
             this.synergy_on = false;
-            speed = basespeed;
+            base_speed = basespeed;
         }
 
 
@@ -79,8 +80,18 @@ public class enemy_Knight extends Enemy {
     public Image getCurrentImage() {
         return frames[currentFrame];
     }
-
-    public boolean get_synergyState() {
+    
+    public boolean hasSynergy() {
         return synergy_on;
+    }
+    @Override
+    public double getSpeed() {
+        double effective_speed = base_speed;
+      
+        if (hasSynergy()) // first apply synergy then slow
+        	effective_speed *= synergy_multiplier;
+        if (isSlowed()) 
+        	effective_speed *= 0.8; // 20% slower
+        return effective_speed;
     }
 }
