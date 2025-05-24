@@ -10,18 +10,21 @@ public abstract class Enemy {
 	
     protected int hp;
     protected int max_hp;
-    protected double speed;
+    protected double base_speed;
     protected Point2D.Double position;
     protected int gold_value;
     protected int path_index;
     protected List<Point> path;
     protected boolean fastMode = false; //for toggle enemy speed in the game
+    private boolean slowed_enemy = false;
+    private long slowed_end_time = 0;
 
-    public Enemy(List<Point> path, int hp, double speed, int gold_value) {
+
+    public Enemy(List<Point> path, int hp, double base_speed, int gold_value) {
         this.path = path;
         this.hp = hp;
         this.max_hp = hp;
-        this.speed = speed;
+        this.base_speed = base_speed;
         this.gold_value = gold_value;
         this.path_index = 0;
         this.position = new Point2D.Double(path.get(0).x, path.get(0).y);
@@ -50,15 +53,15 @@ public abstract class Enemy {
         double distance = Math.sqrt(squared_x + squared_y);
         
      // if close enough, snap to target and move to next path point
-        if (distance < speed * speedMultiplier ) {
+        if (distance < base_speed * speedMultiplier ) {
             position.setLocation(target);
             path_index++;
         } else {
         	// else, move a small step in the direction of the target
             double direction_x = (distance_x / distance); //direction vectors,they are unit vectors
             double direction_y = (distance_y / distance);
-            position.x += direction_x * (speed * speedMultiplier); 
-            position.y += direction_y * (speed * speedMultiplier); 
+            position.x += direction_x * (base_speed * speedMultiplier); 
+            position.y += direction_y * (base_speed * speedMultiplier); 
         }
     }
     
@@ -93,10 +96,29 @@ public abstract class Enemy {
     }
     
     public void setSpeed(double newSpeed) {
-        this.speed = newSpeed;
+        this.base_speed = newSpeed;
+    }
+    
+    public boolean hasSynergy() {
+        return false; // By default, enemies have no synergy
+    }
+    public double getSpeed() {
+        double effective_speed = base_speed;
+        if (isSlowed()) effective_speed *= 0.8;
+        return effective_speed;
     }
 
-    public double getSpeed() {
-        return speed;
+
+    
+    public boolean isSlowed() {
+        if (slowed_enemy && System.currentTimeMillis() > slowed_end_time) {
+            slowed_enemy = false;
+        }
+        return slowed_enemy;
     }
+    public void applySlow(long durationMillis) {
+        slowed_enemy = true;
+        slowed_end_time = System.currentTimeMillis() + durationMillis;
+    }
+    
 }

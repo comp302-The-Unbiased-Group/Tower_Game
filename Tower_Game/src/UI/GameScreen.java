@@ -49,6 +49,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.image.Image;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 
 import Gold.Gold_Drop;
@@ -266,8 +267,14 @@ public class GameScreen extends Pane {
          timer.start();
          
          Image cursorImage = new Image("file:Tower_Game/UI_assets/01.png");
+         String operating_system = System.getProperty("os.name").toLowerCase();
+         if (operating_system.contains("mac")) {
+             this.setCursor(Cursor.CROSSHAIR);
+         } else {
+        	 canvas.setCursor(new ImageCursor(cursorImage, cursorImage.getWidth() / 4, cursorImage.getHeight() / 4));
+         }
          
-         canvas.setCursor(new ImageCursor(cursorImage, cursorImage.getWidth() / 4, cursorImage.getHeight() / 4));
+         
      }
     
     private void showTowerRadialMenu(int x, int y) {
@@ -693,7 +700,7 @@ public class GameScreen extends Pane {
             }
 
             // thunder icon
-            if (enemy instanceof enemy_Knight && ((enemy_Knight) enemy).get_synergyState()) {
+            if (enemy instanceof enemy_Knight && ((enemy_Knight) enemy).hasSynergy()) {
 
                 thunderIcon = new Image("file:Tower_Game/Enemy_effects/thunder.png");
                 double offsetY = tileHeight * 0.5;
@@ -719,6 +726,11 @@ public class GameScreen extends Pane {
             g.fillRect(barX, barY, filled, bar_height);
             g.setStroke(Color.WHITE);
             g.strokeRect(barX, barY, bar_width, bar_height);
+            
+            if (enemy instanceof enemy_Knight && enemy.isSlowed()) {
+                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snow flake icon.png");
+                g.drawImage(snowflake, barX + bar_width + 3, barY - 6, 16, 16);
+            }
         }
 
         updateGoldLife();
