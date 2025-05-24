@@ -34,7 +34,7 @@ public abstract class Tower {
     
     public abstract Image getImage();
 
-    public boolean range_tower(Enemy enemy) {
+    public boolean is_enemyInRange(Enemy enemy) {
         double dx = enemy.getPosition().x - x;
         double dy = enemy.getPosition().y - y;
         double distance = Math.sqrt((dx * dx) + (dy * dy));

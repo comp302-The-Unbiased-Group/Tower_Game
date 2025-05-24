@@ -17,8 +17,9 @@ public class projectile {
     private String type;
     private List<Enemy> enemies; 
     private Point2D.Double impactPosition; 
+    private Tower towertype;
 
-    public projectile(Point2D.Double start, Enemy target, double speed, int damage, Image image, String type, List<Enemy> enemies) {
+    public projectile(Point2D.Double start, Enemy target, double speed, int damage, Image image, String type, List<Enemy> enemies,Tower towertype) {
     	
         this.position = new Point2D.Double(start.x, start.y);
         this.target = target;
@@ -27,10 +28,16 @@ public class projectile {
         this.image = image;
         this.type = type;
         this.enemies = enemies;
+        this.towertype = towertype;
     }
 
     public void update() {
-    	
+
+        if(!towertype.is_enemyInRange(target)){
+            isHit = true;
+            return;
+
+        }
         if (target == null || !target.is_alive()) {
             isHit = true;
             return;
