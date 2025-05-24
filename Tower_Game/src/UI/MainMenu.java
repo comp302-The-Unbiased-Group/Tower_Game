@@ -68,7 +68,7 @@ public class MainMenu extends StackPane {
             BackgroundRepeat.NO_REPEAT,
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
-            new BackgroundSize(100, 100, true, true, false, true)
+            new BackgroundSize(1.0, 1.0, true, true, false, false )
         );
 
         StackPane root = new StackPane();
