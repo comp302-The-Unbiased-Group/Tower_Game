@@ -116,6 +116,7 @@ public abstract class Enemy {
         }
         return slowed_enemy;
     }
+    
     public void applySlow(long durationMillis) {
         slowed_enemy = true;
         slowed_end_time = System.currentTimeMillis() + durationMillis;

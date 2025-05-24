@@ -34,7 +34,7 @@ public class tower_MageUp extends tower_Mage {
             if (enemy.is_alive() && is_enemyInRange(enemy)) {
             	
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
-                Image img = new Image("file:Tower_Game/Effects/fireball.png.png");
+                Image img = new Image("file:Tower_Game/Effects/fireball2.png");
                 projectile p = new projectile(start, enemy, 14.0, 8, img, "mage", null,this);
                 if (enemy instanceof enemy_Knight) {
                     enemy.applySlow(4000);
