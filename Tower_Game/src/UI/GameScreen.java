@@ -374,6 +374,11 @@ public class GameScreen extends Pane {
     }
     
     private void showUpgradeSellMenu(int x, int y, double centerX, double centerY, Tower existingTower) {
+    	if (towerMenu != null) {
+            getChildren().remove(towerMenu);
+            towerMenu = null;
+        }
+    	
     	double radius = 60;
 
     	double clicked_tile_x = (x + 0.5) * tileWidth;
@@ -408,7 +413,7 @@ public class GameScreen extends Pane {
                 towers.remove(existingTower);
                 manage_game.player.add_gold(-75);
                 towers.add(new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                closeMenuAndRedraw();
+                closeTowerMenu();
             });
         } 
         else if (existingTower instanceof tower_Mage) {
@@ -417,7 +422,7 @@ public class GameScreen extends Pane {
                 towers.remove(existingTower);
                 manage_game.player.add_gold(-75);
                 towers.add(new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                closeMenuAndRedraw();
+                closeTowerMenu();
             });
         }
         else if (existingTower instanceof tower_Artillery) {
@@ -426,31 +431,36 @@ public class GameScreen extends Pane {
                 towers.remove(existingTower);
                 manage_game.player.add_gold(-75);
                 towers.add(new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                closeMenuAndRedraw();
+                closeTowerMenu();
             });
         }
         
-        sell_button.setImage(new Image("file:Tower_Game/UI_assets/sell_button.png"));
+        sell_button.setImage(new Image("file:Tower_Game/UI_assets/sell.png"));
         sell_button.setOnMouseClicked(event -> {
             towers.remove(existingTower);
             manage_game.player.add_gold(25);
-            closeMenuAndRedraw();
+            closeTowerMenu();
         });
         
         if (manage_game.player.get_gold() < 75) {
         	upgrade_button.setDisable(true);
         	upgrade_button.setOpacity(0.5);
+        } else {
+        	upgrade_button.setDisable(false);
+        	upgrade_button.setOpacity(1.0);
         }
         
         towerMenu.getChildren().addAll(upgrade_button, sell_button);
         getChildren().add(towerMenu);
     }
 
-    private void closeMenuAndRedraw() {
-        draw();
-        getChildren().remove(towerMenu);
-        towerMenu = null;
-    }
+    private void closeTowerMenu() {
+    	 if (towerMenu != null) {
+    	        getChildren().remove(towerMenu);
+    	        towerMenu = null;
+    	    }
+    	    draw();
+    	}
     
     //PAUSE GAME STARTS
     private void pauseUI() {
