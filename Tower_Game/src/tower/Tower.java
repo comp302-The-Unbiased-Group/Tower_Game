@@ -40,9 +40,15 @@ public abstract class Tower {
         double distance = Math.sqrt((dx * dx) + (dy * dy));
         return distance <= range;
     }
-    
-    
-    
+
+    public int getCost() {
+        return cost;
+    }
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+
     public int getX() {
     	return x; 
     }
@@ -55,6 +61,10 @@ public abstract class Tower {
     public int getDamage() { 
     	return damage; 
     	}
+
+
+
+
 }
 
 	

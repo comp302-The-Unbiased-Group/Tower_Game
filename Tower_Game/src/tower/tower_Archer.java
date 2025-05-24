@@ -12,7 +12,7 @@ import javafx.scene.image.Image;
 public class tower_Archer extends Tower {
 
     private long last_hit_time = 0;  // track last time tower fire
-
+    private int cost = 60;
     public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
     	super(x, y, (int)(2.0 * tileWidth), 60, 2, 1, gameScreen);
     }
@@ -39,5 +39,13 @@ public class tower_Archer extends Tower {
     @Override
     public Image getImage() {
         return new Image("file:Tower_Game/Towers/Tower_archer256.png"); 
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 }

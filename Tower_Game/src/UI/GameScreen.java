@@ -4,10 +4,7 @@ import enemy.Enemy;
 import game.Map;
 import game.Manage_game;
 import tile.Tile;
-import tower.Tower;
-import tower.tower_Archer;
-import tower.tower_Artillery;
-import tower.tower_Mage;
+import tower.*;
 import tile.BuildableTile;
 import tile.DecorativeTile;
 import tile.PathTile;
@@ -15,9 +12,6 @@ import enemy.enemy_Goblin;
 import enemy.enemy_Knight;
 import utils.OptionsHandler;
 import game.TrackEnemyWave;
-import tower.tower_ArcherUp;
-import tower.tower_MageUp;
-import tower.tower_ArtilleryUp;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
@@ -57,6 +51,8 @@ import javafx.scene.text.Text;
 import javafx.scene.image.Image;
 import javafx.scene.Group;
 
+import Gold.Gold_Drop;
+
 public class GameScreen extends Pane {
  
        
@@ -77,11 +73,12 @@ public class GameScreen extends Pane {
     private List<Tower> towers;
     private Map map;
     private Canvas canvas;
-    private List<tower.projectile> projectiles = new ArrayList<>();
+    private List<projectile> projectiles = new ArrayList<>();
+    private List<Gold_Drop> goldDropList = new ArrayList<>();
     private Group towerMenu;
     private BuildableTile hoveredTile;
     
-    public void addProjectile(tower.projectile p) {
+    public void addProjectile(projectile p) {
         projectiles.add(p);
     }
     
@@ -205,6 +202,11 @@ public class GameScreen extends Pane {
             });
         });
 
+        manage_game.set_gold_handler((amount, x, y) -> {
+
+            Gold_Drop drop = new Gold_Drop(amount, x, y,this, manage_game.getPlayer());
+            goldDropList.add(drop); // if you're tracking them
+        });
         enemies = manage_game.enemies;
         
         // mouse clicking for placing towers
@@ -254,7 +256,7 @@ public class GameScreen extends Pane {
                     }
                     
                     projectiles.removeIf(p -> p.hasHit());
-                    for (tower.projectile p : projectiles) {
+                    for (projectile p : projectiles) {
                         p.update();
                     }
                 }
@@ -608,6 +610,8 @@ public class GameScreen extends Pane {
     
     // drawing map, towers, enemies, health bars, HUD
     private void draw() {
+
+        long now = System.nanoTime();
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         
@@ -719,8 +723,13 @@ public class GameScreen extends Pane {
 
         updateGoldLife();
         
-        for (tower.projectile p : projectiles) {
+        for (projectile p : projectiles) {
             p.draw(g);
+        }
+        for (Gold_Drop drop : goldDropList) {
+
+            drop.update_goldAnimation(now,this);
+
         }
     }
 }
