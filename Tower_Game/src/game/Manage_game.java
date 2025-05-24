@@ -76,7 +76,7 @@ public class Manage_game {
                 player.add_gold(current_enemy.getGoldValue());
                 enemies_killed++;
 
-                if (Math.random() < 0.25 && goldDropHandler != null) {
+                if (Math.random() < 0.96 && goldDropHandler != null) {
 
                     int max = 30; // half of level 1 archer tower
                     int goldAmount = 2 + (int)(Math.random() * (max));
@@ -95,7 +95,7 @@ public class Manage_game {
             }
 
         }
-        
+
         if (wave_manager.check_if_last_wave() && player.get_lives() > 0 && endGameStatsHandler != null) {
             endGameStatsHandler.onVictory(enemies_killed);
         }
@@ -104,6 +104,8 @@ public class Manage_game {
  public int get_maxlives(){
         return maxlives;
  }
-
+ public Player getPlayer(){
+        return player;
+ }
 
 }

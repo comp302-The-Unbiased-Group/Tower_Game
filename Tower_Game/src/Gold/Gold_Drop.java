@@ -23,7 +23,7 @@ public class Gold_Drop {
 
 
         for (int i = 0; i < 7; i++) {
-            frames[i] = new Image("file:Tower_Game/Enemies/knight_" + i + ".png");
+            frames[i] = new Image("file:Tower_Game/ItemDrop_UI/goldDrop" + i + ".png");
         }
 
 
@@ -31,8 +31,8 @@ public class Gold_Drop {
         goldimage = new ImageView(frames[0]);
         goldimage.setX(x);
         goldimage.setY(y);
-        goldimage.setFitWidth(32);
-        goldimage.setFitHeight(32);
+        goldimage.setFitWidth(64);
+        goldimage.setFitHeight(64);
 
 
         goldimage.setOnMouseClicked((MouseEvent e) -> {
@@ -69,7 +69,7 @@ public class Gold_Drop {
         }
     }
 
-    public Image get_goldCurrentImage() {
+    public Image getCurrentImage() {
         return frames[currentFrame];
     }
 }
