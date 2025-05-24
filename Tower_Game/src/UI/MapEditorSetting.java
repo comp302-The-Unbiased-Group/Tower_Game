@@ -87,7 +87,7 @@ public class MapEditorSetting extends BorderPane {
         for (int y = 0; y < GRID_HEIGHT; y++) {
             for (int x = 0; x < GRID_WIDTH; x++) {
                 switch (logic.getTile(x, y)) {
-                    case PATH -> gc.setFill(Color.BROWN);
+                    case PATH -> gc.setFill(Color.BROWN;
                     case START -> gc.setFill(Color.GREEN);
                     case END -> gc.setFill(Color.RED);
                     case TOWER_PREPLACED -> gc.setFill(Color.DARKBLUE);
