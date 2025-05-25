@@ -135,26 +135,27 @@ public class GameScreen extends Pane {
         map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_BOTTOMLEFT));
         map.add_path_point(new Point((int)(4 * tileWidth), (int)(7 * tileHeight)));
 
-        // vertical: from (4,8) to (4,8)
-        map.set_tile(4, 8, new PathTile(4, 8, PathTile.PathType.VERTICAL));
-        map.add_path_point(new Point((int)(4 * tileWidth), (int)(8 * tileHeight)));
+        // vertical: from (4,8) to (4,11)
+        for (int y = 8; y <= 11; y++) {
+            map.set_tile(4, y, new PathTile(4, y, PathTile.PathType.VERTICAL));
+        	map.add_path_point(new Point((int)(4 * tileWidth), (int)(y * tileHeight)));
+        }
+        // corner: (4,12) turning right
+        map.set_tile(4, 12, new PathTile(4, 12, PathTile.PathType.CORNER_TOPRIGHT));
+        map.add_path_point(new Point((int)(4 * tileWidth), (int)(12 * tileHeight)));
 
-        // corner: (4,9) turning right
-        map.set_tile(4, 9, new PathTile(4, 9, PathTile.PathType.CORNER_TOPRIGHT));
-        map.add_path_point(new Point((int)(4 * tileWidth), (int)(9 * tileHeight)));
-
-        // horizontal: from (5,9) to (8,9)
+        // horizontal: from (5,12) to (8,12)
         for (int x = 5; x <= 8; x++) {
-            map.set_tile(x, 9, new PathTile(x, 9, PathTile.PathType.HORIZONTAL));
-            map.add_path_point(new Point((int)(x * tileWidth), (int)(9 * tileHeight)));
+            map.set_tile(x, 12, new PathTile(x, 12, PathTile.PathType.HORIZONTAL));
+            map.add_path_point(new Point((int)(x * tileWidth), (int)(12 * tileHeight)));
         }
 
-        // corner: (9,9) turning up
-        map.set_tile(9, 9, new PathTile(9, 9, PathTile.PathType.CORNER_TOPLEFT));
-        map.add_path_point(new Point((int)(9 * tileWidth), (int)(9 * tileHeight)));
+        // corner: (9,12) turning up
+        map.set_tile(9, 12, new PathTile(9, 12, PathTile.PathType.CORNER_TOPLEFT));
+        map.add_path_point(new Point((int)(9 * tileWidth), (int)(12 * tileHeight)));
 
-        // vertical: (9,8) and (9,7)
-        for (int y = 8; y >= 7; y--) {
+       // vertical: (9,11) and (9,7)
+        for (int y = 11; y >= 7; y--) {
             map.set_tile(9, y, new PathTile(9, y, PathTile.PathType.VERTICAL));
             map.add_path_point(new Point((int)(9 * tileWidth), (int)(y * tileHeight)));
         }
@@ -164,26 +165,48 @@ public class GameScreen extends Pane {
         map.add_path_point(new Point((int)(9 * tileWidth), (int)(6 * tileHeight)));
 
         // horizontal: from (10,6) to (14,6)
-        for (int x = 10; x <= 19; x++) {
+        for (int x = 10; x <= 14; x++) {
             map.set_tile(x, 6, new PathTile(x, 6, PathTile.PathType.HORIZONTAL));
             map.add_path_point(new Point((int)(x * tileWidth), (int)(6 * tileHeight)));
         }
+        //corner: (15,6)
+        map.set_tile(15, 6, new PathTile(15, 6, PathTile.PathType.CORNER_TOPLEFT));
+        map.add_path_point(new Point((int)(15 * tileWidth), (int)(6 * tileHeight)));
+        
+     // vertical: (15,5) and (15,0)
+        for (int y = 5; y >= 0; y--) {
+            map.set_tile(15, y, new PathTile(15, y, PathTile.PathType.VERTICAL));
+            map.add_path_point(new Point((int)(15 * tileWidth), (int)(y * tileHeight)));
+        }
+
 
         // set starting and ending tile points.
         map.set_start_point(new Point(0, 7));
-        map.set_end_point(new Point(15, 7));
+        map.set_end_point(new Point(11, 0));
 
         // buildable tiles where towers can be placed
-        map.set_tile(6, 8, new BuildableTile(6, 8));
-        map.set_tile(7, 8, new BuildableTile(7, 8));
+        map.set_tile(6, 11, new BuildableTile(6, 11));
+        map.set_tile(7, 11, new BuildableTile(7, 11));
         
         map.set_tile(11, 5, new BuildableTile(11, 5));
         map.set_tile(12, 5, new BuildableTile(12, 5));
         
-        map.set_tile(8, 6, new DecorativeTile(8,6));
-        map.set_tile(13, 10, new DecorativeTile(13,10));
-        map.set_tile(12, 13, new DecorativeTile(12,13));
-
+        map.set_tile(8, 6, new DecorativeTile(8,6,"mushroom"));
+        map.set_tile(13, 10, new DecorativeTile(13,10,"gold_mine"));
+        map.set_tile(12, 13, new DecorativeTile(12,13,"gold_mine"));
+        map.set_tile(3, 4, new DecorativeTile(3,4,"castle"));
+        map.set_tile(4, 4, new DecorativeTile(4,4,"tree"));
+        map.set_tile(7, 3, new DecorativeTile(4,4,"tree"));
+        map.set_tile(8, 3, new DecorativeTile(4,4,"tree"));
+        map.set_tile(14, 14, new DecorativeTile(14,14,"skelaton"));
+        map.set_tile(5, 4, new DecorativeTile(5,4,"tree"));
+        map.set_tile(13, 13, new DecorativeTile(13,13,"tree"));
+        map.set_tile(2, 13, new DecorativeTile(2,13,"skelaton"));
+        map.set_tile(16, 12, new DecorativeTile(16,12,"skelaton"));
+        map.set_tile(17, 12, new DecorativeTile(17,12,"skelaton"));
+        map.set_tile(18, 12, new DecorativeTile(18,12,"skelaton"));
+        map.set_tile(19, 12, new DecorativeTile(19,12,"skelaton"));
+        
         // start game logic
         manage_game = new Manage_game();
 
@@ -690,40 +713,47 @@ public class GameScreen extends Pane {
         
       
 
-        // drawing each tile on grid
+     // drawing each tile on grid
         for (int y = 0; y < TILE_ROWS; y++) {
             for (int x = 0; x < TILE_COLS; x++) {
                 Tile tile = map.get_tile(x, y);
                 Image tileImage = null;
-
-                // Color based on tile type
-                if (tile instanceof PathTile) {
-                	tileImage = tile.getImage(); // path
-                } else if (tile instanceof BuildableTile) {
-                	tileImage = tile.getImage(); // buildable
-                } else if (tile instanceof DecorativeTile) {
-                    tileImage = tile.getImage(); }
-                    
-                else {
-                    tileImage = new Image("file:Tower_Game/Tiles/grass_tile2.png");
-                }
-                
                 double px = x * tileWidth;
                 double py = y * tileHeight;
-                
-                if (tileImage != null) {
-                	g.drawImage(tileImage, px, py, tileWidth, tileHeight);
+
+                if (tile instanceof DecorativeTile) {
+                    // Draw grass background
+                    Image grass = new Image("file:Tower_Game/Tiles/grass_tile2.png");
+                    g.drawImage(grass, px, py, tileWidth, tileHeight);
+
+                   
+                    Image decorative_img = tile.getImage();
+                    double deco_w = tileWidth * 0.9;  
+                    double deco_h = tileHeight * 0.9;
+                    double deco_x = px + (tileWidth - deco_w) / 2;
+                    double deco_y = py + (tileHeight - deco_h) / 2;
+                    g.drawImage(decorative_img, deco_x, deco_y, deco_w, deco_h);
                 } else {
-                    g.setFill(Color.LIGHTGREEN); // fallback
-                    g.fillRect(px, py, tileWidth, tileHeight);
+                    
+                    if (tile instanceof PathTile || tile instanceof BuildableTile) {
+                        tileImage = tile.getImage();
+                    } else {
+                        tileImage = new Image("file:Tower_Game/Tiles/grass_tile2.png");
+                    }
+                    if (tileImage != null) {
+                        g.drawImage(tileImage, px, py, tileWidth, tileHeight);
+                    } else {
+                        g.setFill(Color.LIGHTGREEN); // fallback
+                        g.fillRect(px, py, tileWidth, tileHeight);
+                    }
                 }
 
-                // draw tile
-                
-                g.setStroke(Color.BLACK); // tile border
+                // Draw tile border for all tiles
+                g.setStroke(Color.BLACK);
                 g.strokeRect(px, py, tileWidth, tileHeight);
             }
         }
+
         
         
         
