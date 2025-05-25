@@ -1,8 +1,11 @@
 package game;
 import enemy.Enemy;
+import enemy.enemy_Knight;
 import tower.Tower;
 import UI.GameOverListener;
 import utils.EndGameStatsHandler;
+import utils.GoldDropHandler;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,9 +23,14 @@ public class Manage_game {
     // listener interfaces
     private GameOverListener gameOverListener;
     private EndGameStatsHandler endGameStatsHandler;
+    private GoldDropHandler goldDropHandler;
 
     public void set_go_Listener(GameOverListener listener) {
         this.gameOverListener = listener;
+    }
+
+    public void set_gold_handler(GoldDropHandler goldhandler) {
+        this.goldDropHandler = goldhandler;
     }
 
     public void set_gs_handler(EndGameStatsHandler handler) {
@@ -39,11 +47,17 @@ public class Manage_game {
         this.maxlives = lives;
     }
 
-    public void updateGame(double speedMultiplier) {
-        wave_manager.update(enemies);
+    public void updateGame(double speedMultiplier, double tileSize) {
+    	if (!wave_manager.check_if_last_wave()) {
+            wave_manager.update(enemies);
+        }
 
         for (Enemy enemy : enemies) {
-            enemy.move(speedMultiplier);
+            if (enemy instanceof enemy_Knight) {
+                ((enemy_Knight) enemy).move(speedMultiplier, enemies, tileSize);
+            } else {
+                enemy.move(speedMultiplier);
+            }
         }
 
         for (Tower tower : towers) {
@@ -55,9 +69,20 @@ public class Manage_game {
         while (enemy_iterator.hasNext()) {
             Enemy current_enemy = enemy_iterator.next();
 
+            double enemyX = current_enemy.getPosition().x;
+            double enemyY = current_enemy.getPosition().y;
+
             if (!current_enemy.is_alive()) {
                 player.add_gold(current_enemy.getGoldValue());
                 enemies_killed++;
+
+                if (Math.random() < 0.96 && goldDropHandler != null) {
+
+                    int max = 30; // half of level 1 archer tower
+                    int goldAmount = 2 + (int)(Math.random() * (max));
+
+                    goldDropHandler.droping_gold(goldAmount, enemyX, enemyY);
+                }
                 enemy_iterator.remove();
             } else if (current_enemy.reached_end()) {
                 player.reduce_life();
@@ -65,20 +90,22 @@ public class Manage_game {
 
                 if (player.get_lives() <= 0 && gameOverListener != null) {
                     gameOverListener.onGameOver();
+                    return;
                 }
             }
 
         }
-        if (enemies.isEmpty() && wave_manager.check_if_last_wave()) {
 
-                endGameStatsHandler.onVictory(enemies_killed);
-
+        if (wave_manager.check_if_last_wave() && player.get_lives() > 0 && endGameStatsHandler != null) {
+            endGameStatsHandler.onVictory(enemies_killed);
         }
     }
 
  public int get_maxlives(){
         return maxlives;
  }
-
+ public Player getPlayer(){
+        return player;
+ }
 
 }

@@ -11,19 +11,21 @@ public abstract class Tower {
     public int x, y;
     protected int range;
     protected int cost;
-    protected int fire_rate;
+    protected int damage;
+    protected double fire_rate;
+    protected GameScreen gameScreen;
     
     
 
-    public Tower(int x, int y, int range, int cost, int fire_rate) {
+    public Tower(int x, int y, int range, int cost, int damage, int fire_rate, GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.range = range;
         this.cost = cost;
+        this.damage = damage;
         this.fire_rate = fire_rate;
+        this.gameScreen = gameScreen;
     }
-
-    protected GameScreen gameScreen;
 
     public void setGameScreen(GameScreen gs) {
         this.gameScreen = gs; }
@@ -32,21 +34,37 @@ public abstract class Tower {
     
     public abstract Image getImage();
 
-    public boolean range_tower(Enemy enemy) {
+    public boolean is_enemyInRange(Enemy enemy) {
         double dx = enemy.getPosition().x - x;
         double dy = enemy.getPosition().y - y;
         double distance = Math.sqrt((dx * dx) + (dy * dy));
         return distance <= range;
     }
-    
-    
-    
+
+    public int getCost() {
+        return cost;
+    }
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+
     public int getX() {
     	return x; 
     }
     public int getY() {
     	return y; 
     }
+    public int getRange() {
+    	return range; 
+    	}
+    public int getDamage() { 
+    	return damage; 
+    	}
+
+
+
+
 }
 
 	

@@ -60,6 +60,7 @@ public class MainMenu extends StackPane {
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
         layout.getChildren().addAll(startNewGame, editMap, options, quit);
+        layout.getStylesheets().add(getClass().getResource("/UI/application.css").toExternalForm());
 
         Image mainScreenImage = new Image("file:Tower_Game/KuTowerDefence1.jpg");
         BackgroundImage mImage = new BackgroundImage(
@@ -67,7 +68,7 @@ public class MainMenu extends StackPane {
             BackgroundRepeat.NO_REPEAT,
             BackgroundRepeat.NO_REPEAT,
             BackgroundPosition.CENTER,
-            new BackgroundSize(100, 100, true, true, false, true)
+            new BackgroundSize(1.0, 1.0, true, true, false, false )
         );
 
         StackPane root = new StackPane();

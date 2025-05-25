@@ -106,5 +106,13 @@ public class OptionScreen {
         }
         return res;
     }
+    
+    public void setSaveHandler(Runnable saveHandler) {
+        save.setOnAction(e -> {
+            Map<String, String> options = getSelected();
+            OptionsHandler.getInstance().process(options);
+            saveHandler.run();
+        });
+    }
 }
 
