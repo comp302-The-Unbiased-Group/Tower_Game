@@ -824,8 +824,8 @@ public class GameScreen extends Pane {
             g.strokeRect(barX, barY, bar_width, bar_height);
             
             if (enemy instanceof enemy_Knight && enemy.isSlowed()) {
-                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snow flake icon.png");
-                g.drawImage(snowflake, barX + bar_width + 3, barY - 6, 16, 16);
+                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snowflake2.png");
+                g.drawImage(snowflake, barX + bar_width + 3, barY - 9, 22, 22);
             }
         }
 
