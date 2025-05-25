@@ -14,10 +14,10 @@ public class enemy_Knight extends Enemy {
 
 
     // speed of each knight instance
-    protected double basespeed = 2.5;
+    private double base_speed = 2.5;
     private double synergyboost;
     private boolean synergy_on;
-    public static final double synergy_multiplier = 1.25;
+    
 
     public enemy_Knight(List<Point> path) {
         super(path, 60, 2.5, 10);
@@ -26,7 +26,7 @@ public class enemy_Knight extends Enemy {
         for (int i = 0; i < 6; i++) {
             frames[i] = new Image("file:Tower_Game/Enemies/knight_" + i + ".png");
         }
-        this.basespeed = OptionsHandler.getInstance().getbaseknight_speed_multiplier();
+        this.base_speed = OptionsHandler.getInstance().getbaseknight_speed_multiplier();
         this.synergyboost = (OptionsHandler.getInstance().getbasegoblin_speed_multiplier() + OptionsHandler.getInstance().getbaseknight_speed_multiplier()) / 2.0;
         this.synergy_on = false;
     }
@@ -41,10 +41,10 @@ public class enemy_Knight extends Enemy {
         for (Enemy e : allEnemies) {
             if (e != this && e.is_alive()) {
 
-
-                double dist = position.distance(e.getPosition());
+            	double dist = position.distance(e.getPosition());
+            	 
                 if (dist < tileWidth) {
-                    //
+                    
                     if (e instanceof enemy_Goblin) {
                         goblin_is_close = true;
                         break;
@@ -52,14 +52,9 @@ public class enemy_Knight extends Enemy {
                 }
             }
         }
+        
 
-        if (goblin_is_close && !synergy_on) {
-            this.synergy_on = true;
-            base_speed = synergyboost;
-        } else if (!goblin_is_close && synergy_on) {
-            this.synergy_on = false;
-            base_speed = basespeed;
-        }
+        this.synergy_on = goblin_is_close;
 
 
         super.move(speedMultiplier);
@@ -84,14 +79,22 @@ public class enemy_Knight extends Enemy {
     public boolean hasSynergy() {
         return synergy_on;
     }
+    
     @Override
     public double getSpeed() {
-        double effective_speed = base_speed;
-      
-        if (hasSynergy()) // first apply synergy then slow
-        	effective_speed *= synergy_multiplier;
-        if (isSlowed()) 
-        	effective_speed *= 0.8; // 20% slower
-        return effective_speed;
-    }
-}
+        double speed;
+        if (hasSynergy()) {
+            speed = synergyboost;
+            
+        } else {
+            speed = base_speed;
+            
+        }
+        if (isSlowed()) {
+            speed *= 0.8; 
+            
+        
+        }
+        return speed;
+ 
+    }}

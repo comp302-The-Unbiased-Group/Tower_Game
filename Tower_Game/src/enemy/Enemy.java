@@ -53,15 +53,15 @@ public abstract class Enemy {
         double distance = Math.sqrt(squared_x + squared_y);
         
      // if close enough, snap to target and move to next path point
-        if (distance < base_speed * speedMultiplier ) {
+        if (distance < getSpeed() * speedMultiplier) {
             position.setLocation(target);
             path_index++;
         } else {
         	// else, move a small step in the direction of the target
             double direction_x = (distance_x / distance); //direction vectors,they are unit vectors
             double direction_y = (distance_y / distance);
-            position.x += direction_x * (base_speed * speedMultiplier); 
-            position.y += direction_y * (base_speed * speedMultiplier); 
+            position.x += direction_x * (getSpeed() * speedMultiplier); 
+            position.y += direction_y * (getSpeed() * speedMultiplier); 
         }
     }
     
@@ -104,7 +104,8 @@ public abstract class Enemy {
     }
     public double getSpeed() {
         double effective_speed = base_speed;
-        if (isSlowed()) effective_speed *= 0.8;
+        if (isSlowed()) 
+        	effective_speed *= 0.8;
         return effective_speed;
     }
 
@@ -118,8 +119,13 @@ public abstract class Enemy {
     }
     
     public void applySlow(long durationMillis) {
-        slowed_enemy = true;
-        slowed_end_time = System.currentTimeMillis() + durationMillis;
+    	if (!slowed_enemy) {
+    		 slowed_enemy = true;
+    		 slowed_end_time = System.currentTimeMillis() + durationMillis;
+        }
+    	else {
+    		slowed_end_time = System.currentTimeMillis() + durationMillis;
+    	}
     }
 
 

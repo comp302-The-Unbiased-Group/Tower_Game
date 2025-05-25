@@ -42,7 +42,7 @@ public class tower_MageUp extends tower_Mage {
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
                 if (enemy.is_alive()){
-                    if(Math.random() < 0.33) {
+                    if(Math.random() < 0.03) {
                         enemy.teleportback();
                     }}
                 break;
