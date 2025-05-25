@@ -47,14 +47,14 @@ public class Manage_game {
         this.maxlives = lives;
     }
 
-    public void updateGame(double speedMultiplier) {
+    public void updateGame(double speedMultiplier, double tileSize) {
     	if (!wave_manager.check_if_last_wave()) {
             wave_manager.update(enemies);
         }
 
         for (Enemy enemy : enemies) {
             if (enemy instanceof enemy_Knight) {
-                ((enemy_Knight) enemy).move(speedMultiplier, enemies, 64);
+                ((enemy_Knight) enemy).move(speedMultiplier, enemies, tileSize);
             } else {
                 enemy.move(speedMultiplier);
             }

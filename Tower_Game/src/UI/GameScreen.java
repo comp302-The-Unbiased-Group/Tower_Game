@@ -251,7 +251,7 @@ public class GameScreen extends Pane {
         	@Override
             public void handle(long now) {
                 if (!isPaused) {
-                    manage_game.updateGame(speedMultiplier);
+                    manage_game.updateGame(speedMultiplier,tileWidth);
                     
                     for (Tower tower : towers) {
                         tower.attack(enemies);
