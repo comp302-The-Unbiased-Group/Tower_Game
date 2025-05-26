@@ -18,6 +18,8 @@ public class Manage_game {
     private TrackEnemyWave wave_manager = new TrackEnemyWave();
     private int enemies_killed = 0;
     private int maxlives = 0;
+    private boolean game_ended = false;
+
 
 
     // listener interfaces
@@ -96,9 +98,11 @@ public class Manage_game {
 
         }
 
-        if (wave_manager.check_if_last_wave() && player.get_lives() > 0 && endGameStatsHandler != null) {
-            endGameStatsHandler.onVictory(enemies_killed);
-        }
+        if (!game_ended && wave_manager.check_if_last_wave() && enemies.isEmpty() && player.get_lives() > 0 && endGameStatsHandler != null) {
+        		game_ended = true;
+        	    endGameStatsHandler.onVictory(enemies_killed);
+        	}
+
     }
 
  public int get_maxlives(){
