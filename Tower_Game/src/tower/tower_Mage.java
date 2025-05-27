@@ -35,7 +35,7 @@ public class tower_Mage extends Tower {
                 last_hit_time = now;
 
                 if (enemy.is_alive()){
-                   if(Math.random() < 0.33) {
+                   if(Math.random() < 0.03) {
                     enemy.teleportback();
                 }}
 
