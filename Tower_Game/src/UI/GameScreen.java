@@ -222,10 +222,14 @@ public class GameScreen extends Pane {
 
         manage_game.set_gs_handler(enemy_total -> {
             Platform.runLater(() -> {
-                EndGameStats WinScreen = new EndGameStats(stage, enemy_total);
-                stage.setScene(WinScreen.newScene());
+                EndGameStats winScreen = new EndGameStats(stage, enemy_total);
+                stage.setScene(winScreen.newScene());
+                stage.setFullScreen(true);
+                stage.toFront();
+                stage.requestFocus();
             });
         });
+
 
         manage_game.set_gold_handler((amount, x, y) -> {
 
