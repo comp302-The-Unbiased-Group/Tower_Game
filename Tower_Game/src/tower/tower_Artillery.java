@@ -11,11 +11,15 @@ import java.awt.geom.Point2D;
 
 public class tower_Artillery extends Tower {
 	
-    private int aoe_radius = 50;
+    
     private long last_hit_time = 0;
+    
+    public tower_Artillery(int x, int y, int range, int cost, int damage, int fire_rate, GameScreen gameScreen) {
+        super(x, y, range, cost, damage, fire_rate, gameScreen);
+    }
 
     public tower_Artillery(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 60, 5, 1, gameScreen);
+    	super(x, y, (int)(2.0 * tileWidth), 50, 30, 1, gameScreen);
     }
     
   
@@ -28,7 +32,8 @@ public class tower_Artillery extends Tower {
             if (enemy.is_alive() && is_enemyInRange(enemy)) {
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/bomb.png.png");
-                projectile p = new projectile(start, enemy, 12.0, 15, img, "artillery", enemies,this);
+                int projectile_damage = this.getDamage();
+                projectile p = new projectile(start, enemy, 12.0, projectile_damage, img, "artillery", enemies,this);
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
                 break;

@@ -9,7 +9,7 @@ public class OptionsHandler {
 
     // Default values
     protected String difficulty;
-    protected int waveCount = 3;
+    protected int waveCount = 8;
     protected String delay = "2s";
     protected int PlayerHP = 20;
     protected String towerRange;

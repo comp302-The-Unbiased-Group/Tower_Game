@@ -16,8 +16,9 @@ public class tower_MageUp extends tower_Mage {
 	
     public tower_MageUp(int x, int y,int tileWidth, GameScreen gameScreen) {
     	super(x, y, tileWidth, gameScreen);
-        this.range = (int)(2.5 * tileWidth); 
-        this.fire_rate = 2;
+        this.range = (int)(2.0 * tileWidth); //same as level 1
+        this.fire_rate = 1; //same as level 1
+        this.cost = 100;
     }
 
     
@@ -35,7 +36,8 @@ public class tower_MageUp extends tower_Mage {
             	
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/fireball2.png");
-                projectile p = new projectile(start, enemy, 14.0, 8, img, "mage", null,this);
+                int projectile_damage = this.getDamage();
+                projectile p = new projectile(start, enemy, 14.0, projectile_damage, img, "mage", null,this);
                 if (enemy instanceof enemy_Knight) {
                     enemy.applySlow(4000);
                 }
