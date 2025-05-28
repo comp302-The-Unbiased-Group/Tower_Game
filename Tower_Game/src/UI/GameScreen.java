@@ -363,8 +363,10 @@ public class GameScreen extends Pane {
             if (i == 0) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_0).png"));
                 btn.setOnMouseClicked(event -> {
-                	towers.add(new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                    manage_game.player.add_gold(-50);
+                	Tower newTower = new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+                    int cost = newTower.getCost();
+                	towers.add(newTower);
+                    manage_game.player.add_gold(-cost);
                     draw();
                     getChildren().remove(towerMenu);
                     towerMenu = null;
@@ -374,8 +376,10 @@ public class GameScreen extends Pane {
             else if (i == 1) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_2).png"));
                 btn.setOnMouseClicked(event -> {
-                	towers.add(new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                    manage_game.player.add_gold(-50);
+                	Tower newTower = new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+                    int cost = newTower.getCost();
+                	towers.add(newTower);
+                    manage_game.player.add_gold(-cost);
                     draw();
                     getChildren().remove(towerMenu);
                     towerMenu = null;
@@ -385,8 +389,10 @@ public class GameScreen extends Pane {
             else {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_3).png"));
                 btn.setOnMouseClicked(event -> {
-                	towers.add(new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                    manage_game.player.add_gold(-50);
+                	Tower newTower = new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+                    int cost = newTower.getCost();
+                	towers.add(newTower);
+                    manage_game.player.add_gold(-cost);
                     draw();
                     getChildren().remove(towerMenu);
                     towerMenu = null;
@@ -437,8 +443,10 @@ public class GameScreen extends Pane {
         if (existingTower instanceof tower_Archer) {
         	upgrade_button.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
         	upgrade_button.setOnMouseClicked(event -> {
+        		Tower upgraded = new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+        		int tower_cost = upgraded.getCost();
                 towers.remove(existingTower);
-                manage_game.player.add_gold(-75);
+                manage_game.player.add_gold(-tower_cost);
                 towers.add(new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                 closeTowerMenu();
             });
@@ -446,8 +454,10 @@ public class GameScreen extends Pane {
         else if (existingTower instanceof tower_Mage) {
         	upgrade_button.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
         	upgrade_button.setOnMouseClicked(event -> {
+        		Tower upgraded = new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+        		int tower_cost = upgraded.getCost();
                 towers.remove(existingTower);
-                manage_game.player.add_gold(-75);
+                manage_game.player.add_gold(-tower_cost);
                 towers.add(new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                 closeTowerMenu();
             });
@@ -455,8 +465,10 @@ public class GameScreen extends Pane {
         else if (existingTower instanceof tower_Artillery) {
         	upgrade_button.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
         	upgrade_button.setOnMouseClicked(event -> {
+        		Tower upgraded = new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+        		int tower_cost = upgraded.getCost();
                 towers.remove(existingTower);
-                manage_game.player.add_gold(-75);
+                manage_game.player.add_gold(-tower_cost);
                 towers.add(new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                 closeTowerMenu();
             });
@@ -469,7 +481,7 @@ public class GameScreen extends Pane {
             closeTowerMenu();
         });
         
-        if (manage_game.player.get_gold() < 75) {
+        if (manage_game.player.get_gold() < 100) {
         	upgrade_button.setDisable(true);
         	upgrade_button.setOpacity(0.5);
         } else {
@@ -828,7 +840,7 @@ public class GameScreen extends Pane {
             g.strokeRect(barX, barY, bar_width, bar_height);
             
             if (enemy instanceof enemy_Knight && enemy.isSlowed()) {
-                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snowflake2.png");
+                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snow flake icon.png");
                 g.drawImage(snowflake, barX + bar_width + 3, barY - 9, 22, 22);
             }
         }

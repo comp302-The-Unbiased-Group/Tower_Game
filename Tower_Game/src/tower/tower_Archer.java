@@ -12,9 +12,9 @@ import javafx.scene.image.Image;
 public class tower_Archer extends Tower {
 
     private long last_hit_time = 0;  // track last time tower fire
-    private int cost = 60;
+    
     public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 60, 2, 1, gameScreen);
+    	super(x, y, (int)(2.0 * tileWidth), 50, 20, 1, gameScreen);
     }
     
 
@@ -28,8 +28,9 @@ public class tower_Archer extends Tower {
         for (Enemy enemy : enemies) {
             if (enemy.is_alive() && is_enemyInRange(enemy)) {
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
-                Image img = new Image("file:Tower_Game/Effects/arrow.png"); 
-                projectile p = new projectile(start, enemy, 18.0, 10, img, "archer", null,this);
+                Image img = new Image("file:Tower_Game/Effects/arrow.png");
+                int projectile_damage = this.getDamage();
+                projectile p = new projectile(start, enemy, 18.0, projectile_damage, img, "archer", null,this);
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
                 break;

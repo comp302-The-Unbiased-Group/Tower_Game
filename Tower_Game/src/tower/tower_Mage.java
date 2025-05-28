@@ -13,7 +13,7 @@ public class tower_Mage extends Tower {
 	private long last_hit_time = 0;
 	
     public tower_Mage(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 60, 2, 1, gameScreen);
+    	super(x, y, (int)(2.0 * tileWidth), 50, 25, 1, gameScreen);
     }
 
     
@@ -30,7 +30,8 @@ public class tower_Mage extends Tower {
             	
                 Point2D.Double start = new Point2D.Double(x + 32, y + 32);
                 Image img = new Image("file:Tower_Game/Effects/fireball1.png");
-                projectile p = new projectile(start, enemy, 14.0, 8, img, "mage", null,this);
+                int projectile_damage = this.getDamage();
+                projectile p = new projectile(start, enemy, 14.0, projectile_damage, img, "mage", null,this);
                 gameScreen.addProjectile(p);
                 last_hit_time = now;
 

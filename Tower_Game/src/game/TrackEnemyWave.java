@@ -5,6 +5,7 @@ import enemy.Enemy;
 import enemy.enemy_Goblin;
 import enemy.enemy_Knight;
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.List;
 
 public class TrackEnemyWave {
@@ -16,9 +17,26 @@ public class TrackEnemyWave {
     private static final long WAVE_DELAY_MS = 4000;
     private static final long SPAWN_DELAY_MS = 500;
     private List<Point> path;
-    private int enemiesToSpawn = 0;
-    private int spawnedEnemies = 0;
+    
     private long lastSpawnTime = 0;
+    
+    private List<waveSetting> waves = Arrays.asList(
+            new waveSetting(3, 0),    // Wave 1
+            new waveSetting(5, 0),    // Wave 2
+            new waveSetting(5, 1),   // Wave 3
+            new waveSetting(7, 2),   // Wave 4
+            new waveSetting(9, 4),   // Wave 5
+            new waveSetting(8, 6),    // Wave 6
+            new waveSetting(12, 6),   // Wave 7
+            new waveSetting(6, 10)    // Wave 8
+        );
+    
+    private int goblins_should_Spawn = 0;
+    private int knights_should_Spawn = 0;
+    private int goblinsSpawned = 0;
+    private int knightsSpawned = 0;
+    
+
 
     public void setupWaves(List<Point> path) {
         this.path = path;
@@ -26,31 +44,44 @@ public class TrackEnemyWave {
         current_wave = 0;
         lastWaveTime = System.currentTimeMillis();
         waveOn = false;
-        enemiesToSpawn = 0;
-        spawnedEnemies = 0;
+        
+        goblins_should_Spawn = 0;
+        knights_should_Spawn = 0;
+        goblinsSpawned = 0;
+        knightsSpawned = 0;
     }
 
     public void startWave(List<Enemy> enemies) {
         firstWave = false;
         waveOn = true;
-        enemiesToSpawn = 5 + current_wave;
-        spawnedEnemies = 0;
+        
+        if (current_wave < waves.size()) {
+            waveSetting config = waves.get(current_wave);
+            goblins_should_Spawn = config.goblins;
+            knights_should_Spawn = config.knights;
+        } else {
+            goblins_should_Spawn = 0;
+            knights_should_Spawn = 0;
+        }
+        goblinsSpawned = 0;
+        knightsSpawned = 0;
         lastSpawnTime = System.currentTimeMillis();
         current_wave++;
         lastWaveTime = System.currentTimeMillis();
     }
 
-    private void spawnOneEnemy(List<Enemy> enemies) {
-        Enemy enemy;
-        if (spawnedEnemies % 2 == 0) {
-            enemy = (new enemy_Goblin(path));
-        } else {
-            enemy = (new enemy_Knight(path));
-        }
 
-        enemies.add(enemy);
-        spawnedEnemies++;
-        lastSpawnTime = System.currentTimeMillis();
+    private void spawnOneEnemy(List<Enemy> enemies) {
+    	        
+    	if (goblinsSpawned < goblins_should_Spawn) {
+    	       enemies.add(new enemy_Goblin(path));
+    	       goblinsSpawned++;
+    	} else if (knightsSpawned < knights_should_Spawn) {
+    	       enemies.add(new enemy_Knight(path));
+    	       knightsSpawned++;
+    	 }
+    	  lastSpawnTime = System.currentTimeMillis();
+    	    
     }
 
     public void update(List<Enemy> enemies) {
@@ -62,16 +93,17 @@ public class TrackEnemyWave {
             startWave(enemies);
         }
 
-        if (waveOn && spawnedEnemies < enemiesToSpawn) {
+        if (waveOn && (goblinsSpawned < goblins_should_Spawn || knightsSpawned < knights_should_Spawn)) {
             if (currentTime - lastSpawnTime >= SPAWN_DELAY_MS) {
                 spawnOneEnemy(enemies);
             }
         }
-        if (waveOn && spawnedEnemies >= enemiesToSpawn && enemies.isEmpty()) {
+        if (waveOn && goblinsSpawned >= goblins_should_Spawn && knightsSpawned >= knights_should_Spawn && enemies.isEmpty()) {
             waveOn = false;
             lastWaveTime = currentTime;
         }
     }
+
 
     public boolean check_if_last_wave() {
         if (current_wave == OptionsHandler.getInstance().getWaveCount() && !waveOn) {
