@@ -13,7 +13,7 @@ public abstract class Tower {
     protected int cost;
     protected int damage;
     protected double fire_rate;
-    protected GameScreen gameScreen;
+	protected GameScreen gameScreen;
     
     
 
@@ -61,7 +61,13 @@ public abstract class Tower {
     public int getDamage() { 
     	return damage; 
     	}
+    public double getFire_rate() {
+		return fire_rate;
+	}
 
+	public void setFire_rate(double fire_rate) {
+		this.fire_rate = fire_rate;
+	}
 
 
 

@@ -13,11 +13,26 @@ public class tower_Archer extends Tower {
 
     private long last_hit_time = 0;  // track last time tower fire
     
-    public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
+    public long getLast_hit_time() {
+		return last_hit_time;
+	}
+
+	public void setLast_hit_time(long last_hit_time) {
+		this.last_hit_time = last_hit_time;
+	}
+
+	public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
     	super(x, y, (int)(2.0 * tileWidth), 50, 20, 1, gameScreen);
     }
     
-
+    /**
+     * Requires: enemies is not null, gameScreen is initialized, fire_rate > 0
+     * Modifies: this.last_hit_time, gameScreen (adds a projectile if an enemy is in range)
+     * Effects:
+     * - If sufficient time has passed since last attack and there is at least one alive enemy in range,
+     *   creates a projectile targeting that enemy adds it to gamescreen and updates last_hit_time.
+     * - Do nothing if no enemies are in range or if fire_rate cooldown has not passed.
+     */
     @Override
     public void attack(List<Enemy> enemies) {
     	
