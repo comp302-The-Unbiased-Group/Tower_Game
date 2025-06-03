@@ -99,18 +99,25 @@ public class MapEditorSetting extends BorderPane {
         -fx-cursor: hand;
         """);
         saveBtn.setOnAction(e -> {
-            try {
-                String error = logic.validateMap();
-                if (error != null) {
-                    logic.undoLastPlacement();  // Undo last bad placement
-                    drawGrid();
-                    showError(error);
-                } else if (!logic.saveMap("custom_map.txt")) {
+            String error = logic.validateMap();
+            if (error != null) {
+                showError(error); // popup will show but app will keep running
+            } else {
+                if (logic.saveMap("custom_map.txt")) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Map saved successfully!");
+                    alert.showAndWait();
+
+                    // Return to main screen after saving
+                    // Replace this with your actual main menu scene class or logic
+                    MainMenu mainMenu = new MainMenu(stage);  // assuming you have this
+                    Scene scene = new Scene(mainMenu, 800, 600); // adjust size if needed
+                    stage.setScene(scene);
+                } else {
                     showError("Failed to save map.");
                 }
-            } catch (Exception ex) {
-                showError("Unexpected error during save: " + ex.getMessage());
-                ex.printStackTrace();
             }
         });
 
