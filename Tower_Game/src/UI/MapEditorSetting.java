@@ -48,18 +48,20 @@ public class MapEditorSetting extends BorderPane {
 
     private void loadTileImages() {
         try {
-            tileImages.put(Map_edit.TileType.PATH_HORIZONTAL, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/horizontal_path.png"));
-            tileImages.put(Map_edit.TileType.PATH_VERTICAL, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/vertical_path.png"));
-            tileImages.put(Map_edit.TileType.PATH_TOP_LEFT, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/bottom_right.png"));
-            tileImages.put(Map_edit.TileType.PATH_TOP_RIGHT, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/bottom_left.png"));
-            tileImages.put(Map_edit.TileType.PATH_BOTTOM_LEFT, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/top_right.png"));
-            tileImages.put(Map_edit.TileType.PATH_BOTTOM_RIGHT, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/top_left.png"));
-            tileImages.put(Map_edit.TileType.TOWER_EMPTY, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/tower_tile.png"));
-            tileImages.put(Map_edit.TileType.GRASS, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/grass_tile2.png"));
-            tileImages.put(Map_edit.TileType.DECORATIVE, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/tree1.png"));
-            tileImages.put(Map_edit.TileType.ARCHER_TOWER, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/tile_128_6_2.png"));
-            tileImages.put(Map_edit.TileType.MAGE_TOWER, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/tile_128_5_1.png"));
-            tileImages.put(Map_edit.TileType.ARTILLERY_TOWER, new Image("file:/Users/berk/IdeaProjects/Tower_Game/Tower_Game/Tiles/tile_128_5_0.png"));
+            String basePath = System.getProperty("user.dir") + "/Tower_Game/Tiles/";
+
+            tileImages.put(Map_edit.TileType.PATH_HORIZONTAL, new Image("file:" + basePath + "horizontal_path.png"));
+            tileImages.put(Map_edit.TileType.PATH_VERTICAL, new Image("file:" + basePath + "vertical_path.png"));
+            tileImages.put(Map_edit.TileType.PATH_TOP_LEFT, new Image("file:" + basePath + "bottom_right.png"));
+            tileImages.put(Map_edit.TileType.PATH_TOP_RIGHT, new Image("file:" + basePath + "bottom_left.png"));
+            tileImages.put(Map_edit.TileType.PATH_BOTTOM_LEFT, new Image("file:" + basePath + "top_right.png"));
+            tileImages.put(Map_edit.TileType.PATH_BOTTOM_RIGHT, new Image("file:" + basePath + "top_left.png"));
+            tileImages.put(Map_edit.TileType.TOWER_EMPTY, new Image("file:" + basePath + "tower_tile.png"));
+            tileImages.put(Map_edit.TileType.GRASS, new Image("file:" + basePath + "grass_tile2.png"));
+            tileImages.put(Map_edit.TileType.DECORATIVE, new Image("file:" + basePath + "tree1.png"));
+            tileImages.put(Map_edit.TileType.ARCHER_TOWER, new Image("file:" + basePath + "tile_128_6_2.png"));
+            tileImages.put(Map_edit.TileType.MAGE_TOWER, new Image("file:" + basePath + "tile_128_5_1.png"));
+            tileImages.put(Map_edit.TileType.ARTILLERY_TOWER, new Image("file:" + basePath + "tile_128_5_0.png"));
 
         } catch (Exception e) {
             showError("Failed to load tile images. Check if /Tiles/ folder is marked as Resources Root.");
