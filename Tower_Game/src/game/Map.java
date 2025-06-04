@@ -1,5 +1,6 @@
 package game;
 
+import MapEdit.Map_edit;
 import enemy.Enemy;
 import tile.Tile;
 import tile.BuildableTile;
@@ -10,14 +11,56 @@ import java.awt.Point;
 import java.util.*;
 
 public class Map {
-
+    private Tile[][] grid;
     private Tile[][] tiles; // Grid of tiles on map
     private List<Point> path_ = new ArrayList<>(); // Enemy path (in pixels)
     private Point start_point; // Path starting point
     private Point end_point;   // Path ending point
+    private List<TowerPlacement> towerPlacements = new ArrayList<>();
 
     public Map(int width, int height) {
         tiles = new Tile[width][height];
+    }
+
+
+
+    public static class TowerPlacement {
+        public final int x, y;
+        public final String type;
+
+        public TowerPlacement(int x, int y, String type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+        }
+    }
+
+
+
+    public void addTowerToSpawnLater(int x, int y, String type) {
+        towerPlacements.add(new TowerPlacement(x, y, type));
+    }
+
+    public List<TowerPlacement> getTowerPlacements() {
+        return towerPlacements;
+    }
+
+
+
+
+
+    public static class TowerSpawnData {
+        public Map_edit.TileType type;
+        public int x, y;
+
+        public TowerSpawnData(Map_edit.TileType type, int x, int y) {
+            this.type = type;
+            this.x = x;
+            this.y = y;
+        }
+    }
+    public Tile[][] getGrid() {
+        return grid;
     }
 
     // check if a tile is buildable

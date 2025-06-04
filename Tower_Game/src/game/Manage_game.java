@@ -25,6 +25,16 @@ public class Manage_game {
     private EndGameStatsHandler endGameStatsHandler;
     private GoldDropHandler goldDropHandler;
 
+    public Manage_game(Map map) {
+        this.map = map;
+        int gold = 100;
+        int lives = 20;
+        initialize_player(gold, lives);
+        wave_manager.setupWaves(map.get_path());
+        this.maxlives = lives;
+    }
+    public Manage_game(){}
+
     public void set_go_Listener(GameOverListener listener) {
         this.gameOverListener = listener;
     }
@@ -101,11 +111,15 @@ public class Manage_game {
         }
     }
 
- public int get_maxlives(){
+    public int get_maxlives(){
         return maxlives;
  }
- public Player getPlayer(){
+    public Player getPlayer(){
         return player;
  }
+    public void addTower(Tower tower) {
+        towers.add(tower);
+    }
+
 
 }
