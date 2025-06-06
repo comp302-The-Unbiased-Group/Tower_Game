@@ -10,6 +10,7 @@ import tile.DecorativeTile;
 import tile.PathTile;
 import enemy.enemy_Goblin;
 import enemy.enemy_Knight;
+import enemy.enemy_TNT;
 import utils.OptionsHandler;
 import game.TrackEnemyWave;
 
@@ -809,6 +810,13 @@ public class GameScreen extends Pane {
                 knight.updateAnimation(System.nanoTime());
 
                 g.drawImage(knight.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+            
+            if (enemy instanceof enemy_TNT) {
+                enemy_TNT tnt = (enemy_TNT) enemy;
+                tnt.updateAnimation(System.nanoTime());
+
+                g.drawImage(tnt.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
             }
 
             // thunder icon
