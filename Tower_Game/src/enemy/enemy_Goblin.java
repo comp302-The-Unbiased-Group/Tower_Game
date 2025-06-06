@@ -23,18 +23,21 @@ public class enemy_Goblin extends Enemy {
     }
 
     public void updateAnimation(long now) {
+    	
         if (lastFrameTime == 0) {
             lastFrameTime = now;
             return;
         }
 
         if (now - lastFrameTime > FRAME_DURATION) {
+        	
             currentFrame = (currentFrame + 1) % frames.length;
             lastFrameTime = now;
         }
     }
 
     public Image getCurrentImage() {
+    	
         return frames[currentFrame];
     }
 }
