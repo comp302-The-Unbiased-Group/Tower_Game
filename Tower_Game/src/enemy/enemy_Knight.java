@@ -20,7 +20,7 @@ public class enemy_Knight extends Enemy {
     
 
     public enemy_Knight(List<Point> path) {
-        super(path, 80, 2.5, 10);
+        super(path, 300, 2.5, 10);
 
 
         for (int i = 0; i < 6; i++) {

@@ -78,9 +78,9 @@ public class Manage_game {
                 player.add_gold(current_enemy.getGoldValue());
                 enemies_killed++;
 
-                if (Math.random() < 0.96 && goldDropHandler != null) {
+                if (Math.random() < 0.20 && goldDropHandler != null) {
 
-                    int max = 30; // half of level 1 archer tower
+                    int max = 25; // half of level 1 archer tower
                     int goldAmount = 2 + (int)(Math.random() * (max));
 
                     goldDropHandler.droping_gold(goldAmount, enemyX, enemyY);

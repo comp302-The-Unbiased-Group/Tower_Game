@@ -11,17 +11,7 @@ import java.util.List;
 
 public class TrackEnemyWave {
 	
-	 private static class waveSetting {
-	        int goblins;
-	        int knights;
-	        int tnts;
 
-	        waveSetting(int goblins, int knights, int tnts) {
-	            this.goblins = goblins;
-	            this.knights = knights;
-	            this.tnts = tnts;
-	        }
-	    }
 	
     private boolean firstWave = true;
     protected static int current_wave = 0;
@@ -35,7 +25,7 @@ public class TrackEnemyWave {
     private long lastSpawnTime = 0;
     
     private List<waveSetting> waves = Arrays.asList(
-            new waveSetting(3, 0, 1),    // Wave 1
+            new waveSetting(3, 0, 0),    // Wave 1
             new waveSetting(5, 0, 1),    // Wave 2
             new waveSetting(5, 1, 1),   // Wave 3
             new waveSetting(7, 2, 1),   // Wave 4

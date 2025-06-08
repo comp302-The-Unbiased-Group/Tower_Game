@@ -38,18 +38,33 @@ public class tower_Archer extends Tower {
     	
         long now = System.nanoTime();
         
-        if ((now - last_hit_time) < (1_000_000_000 / fire_rate)) return;
-
+        if ((now - last_hit_time) < (1_000_000_000 / fire_rate)) 
+        	return;
+        
+        Enemy target = null;
+        int maxPathIndex = -1;
+        double maxSegmentProgress = -1;
+        
         for (Enemy enemy : enemies) {
             if (enemy.is_alive() && is_enemyInRange(enemy)) {
-                Point2D.Double start = new Point2D.Double(x + 32, y + 32);
-                Image img = new Image("file:Tower_Game/Effects/arrow.png");
-                int projectile_damage = this.getDamage();
-                projectile p = new projectile(start, enemy, 18.0, projectile_damage, img, "archer", null,this);
-                gameScreen.addProjectile(p);
-                last_hit_time = now;
-                break;
+                int pi = enemy.path_index;
+                double prog = enemy.getProgressOnCurrentSegment();
+
+                if (pi > maxPathIndex || (pi == maxPathIndex && prog > maxSegmentProgress)) {
+                    target = enemy;
+                    maxPathIndex = pi;
+                    maxSegmentProgress = prog;
+                }
             }
+        }
+
+        if (target != null) {
+            Point2D.Double start = new Point2D.Double(x + 32, y + 32);
+            Image img = new Image("file:Tower_Game/Effects/arrow.png");
+            int projectile_damage = this.getDamage();
+            projectile p = new projectile(start, target, 18.0, projectile_damage, img, "archer", null, this);
+            gameScreen.addProjectile(p);
+            last_hit_time = now;
         }
     }
     @Override
