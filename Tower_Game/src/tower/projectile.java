@@ -33,11 +33,7 @@ public class projectile {
 
     public void update() {
 
-        if(!towertype.is_enemyInRange(target)){
-            isHit = true;
-            return;
-
-        }
+       
         if (target == null || !target.is_alive()) {
             isHit = true;
             return;
@@ -69,7 +65,15 @@ public class projectile {
             
         } else if (type.equals("mage")) {
             target.take_damage(damage);
-            target.setSpeed(target.getSpeed() * 0.8);
+            
+            if (towertype instanceof tower_MageUp) {
+                target.applySlow(4000);
+            }
+            
+            
+            if (target.is_alive() && Math.random() < 0.03) {
+                target.teleportback();
+            }
             
         } else if (type.equals("artillery")) {
         	
