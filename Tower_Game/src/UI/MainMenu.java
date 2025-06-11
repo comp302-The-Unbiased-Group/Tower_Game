@@ -1,4 +1,5 @@
 package UI;
+import MapEdit.Map_edit;
 import application.*;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -8,24 +9,31 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
+import java.io.File;
+import java.io.IOException;
+
 public class MainMenu extends StackPane {
 
     Button startNewGame;
+    Button loadSavedMapGame;
     Button editMap;
     Button options;
     Button quit;
 
     public MainMenu(Stage primaryStage) {
         startNewGame = new Button("NEW GAME");
+        loadSavedMapGame = new Button("LOAD SAVED MAP");
         editMap = new Button("MAP EDITOR");
         options = new Button("OPTIONS");
         quit = new Button("QUIT");
 
         startNewGame.setId("startNewGame");
+        loadSavedMapGame.setId("loadSavedMapGame");
         editMap.setId("editMap");
         options.setId("setting");
         quit.setId("quit");
@@ -34,10 +42,22 @@ public class MainMenu extends StackPane {
         startNewGame.setOnAction(e -> {
             
 
-            GameScreen game = new GameScreen(primaryStage); 
+            GameScreen game = new GameScreen(primaryStage,null);
             Scene gameScene = new Scene(game);
             primaryStage.setScene(gameScene);
             primaryStage.setFullScreen(true);
+        });
+
+        loadSavedMapGame.setOnAction(e -> {
+            File savedMap = new File("custom_map.txt");  // relative path
+            if (savedMap.exists()) {
+                GameScreen game = new GameScreen(primaryStage, savedMap);
+                Scene gameScene = new Scene(game);
+                primaryStage.setScene(gameScene);
+                primaryStage.setFullScreen(true);
+            } else {
+                System.err.println("Map file not found: " + savedMap.getAbsolutePath());
+            }
         });
         
         quit.setOnAction(new EventHandler <ActionEvent>() {
@@ -59,7 +79,7 @@ public class MainMenu extends StackPane {
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(startNewGame, editMap, options, quit);
+        layout.getChildren().addAll(startNewGame, loadSavedMapGame, editMap, options, quit);
         layout.getStylesheets().add(getClass().getResource("/UI/application.css").toExternalForm());
 
         Image mainScreenImage = new Image("file:Tower_Game/KuTowerDefence1.jpg");
@@ -91,5 +111,4 @@ public class MainMenu extends StackPane {
 	}
 
 }
-
 
