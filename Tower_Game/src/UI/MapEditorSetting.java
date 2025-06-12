@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.awt.SystemColor.text;
+
 public class MapEditorSetting extends BorderPane {
     private static int TILE_SIZE = 32;
     private static final int GRID_WIDTH = 20;
@@ -134,11 +136,14 @@ public class MapEditorSetting extends BorderPane {
 
         Label title = new Label("Map Editor");
         title.setStyle("""
-        -fx-font-size: 30px;
-        -fx-font-family: 'Comic Sans MS', 'Arial';
-        -fx-text-fill: #3e3e3e;
-        -fx-effect: dropshadow(gaussian, lightgray, 2, 0, 1, 1);
-        """);
+    -fx-font-size: 32px;
+     -fx-font-family: 'Trebuchet MS', 'Verdana', sans-serif;
+    -fx-text-fill: linear-gradient(to right, #444, #222);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 4, 0.2, 2, 2);
+    -fx-padding: 10 20 10 20;
+    -fx-background-color: transparent;
+""");
+
 
         Region leftSpacer = new Region();
         Region rightSpacer = new Region();
@@ -150,7 +155,8 @@ public class MapEditorSetting extends BorderPane {
         topBar.setAlignment(Pos.CENTER);
         topBar.setPadding(new Insets(20, 30, 10, 30));
         topBar.setSpacing(10);
-        topBar.setStyle("-fx-background-color: #ffffff;");
+        topBar.setStyle("-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);");
+
 
         StackPane canvasWrapper = new StackPane(canvas);
         canvasWrapper.setStyle("-fx-background-color: #8FC645;");
@@ -167,7 +173,7 @@ public class MapEditorSetting extends BorderPane {
         ScrollPane tilePalette = createTileSelector();
         tilePalette.setPrefWidth(200);
         tilePalette.setStyle("""
-        -fx-background-color: #fff9dc;
+        -fx-background-color: linear-gradient(to right, #6ed386, #ffffff);
         -fx-border-color: #cfcfcf;
         -fx-border-width: 1;
         """);
@@ -177,7 +183,7 @@ public class MapEditorSetting extends BorderPane {
         HBox.setHgrow(canvasScroll, Priority.ALWAYS);
 
         VBox fullLayout = new VBox(topBar, layout);
-        fullLayout.setStyle("-fx-background-color: #fefefe;");
+        fullLayout.setStyle("-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);");
         fullLayout.setSpacing(5);
         fullLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -229,7 +235,9 @@ public class MapEditorSetting extends BorderPane {
         VBox content = new VBox(20);
         content.setAlignment(Pos.TOP_CENTER);
         content.setStyle("-fx-padding: 10;");
+
         content.getChildren().add(makeHeader("Grass"));
+
 
         content.getChildren().add(createTileButton(Map_edit.TileType.GRASS, "Delete tile (reset to grass)"));
 
@@ -266,7 +274,12 @@ public class MapEditorSetting extends BorderPane {
 
     private Label makeHeader(String text) {
         Label header = new Label(text);
-        header.setStyle("-fx-font-size: 14px; -fx-text-fill: #3a3a3a; -fx-font-weight: bold;");
+        header.setStyle("""
+        -fx-font-size: 20px;
+        -fx-font-weight: bold;
+        -fx-font-family: 'Arial', sans-serif;
+        -fx-text-fill: #333;
+    """);
         return header;
     }
 
@@ -296,7 +309,7 @@ public class MapEditorSetting extends BorderPane {
         -fx-effect: dropshadow(gaussian, #bbbbbb, 2, 0, 0, 1);
         """);
 
-        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #f7f7f7; -fx-border-color: #888888;"));
+        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #6ed386; -fx-border-color: #888888;"));
         btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: #ffffff; -fx-border-color: #aaaaaa;"));
 
         btn.setOnDragDetected(e -> {
