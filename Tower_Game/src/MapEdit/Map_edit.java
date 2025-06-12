@@ -1,9 +1,18 @@
 package MapEdit;
 
+import game.Map;
+import tile.PathTile;
+
 import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+
+import static tile.PathTile.PathType.HORIZONTAL;
 
 public class Map_edit {
     private int lastX = -1, lastY = -1;
@@ -11,6 +20,9 @@ public class Map_edit {
     private final int width, height;
     private TileType[][] grid;
     private TileType selectedTile = TileType.GRASS;
+    private List<Map.TowerSpawnData> towerPlacements = new ArrayList<>();
+    private Point start = null;
+    private Point end = null;
 
     public enum TileType {
         PATH_HORIZONTAL, PATH_VERTICAL,
@@ -44,7 +56,8 @@ public class Map_edit {
     }
 
     public String placeTile(int x, int y) {
-        if (x < 0 || y < 0 || x >= width || y >= height) return null;
+        if (x < 0 || y < 0 || x >= width || y >= height) 
+        	return null;
 
 
         lastX = x;
@@ -152,5 +165,31 @@ public class Map_edit {
             grid[lastY][lastX] = lastTile;
         }
     }
+
+    public TileType[][] getGrid() {
+        return grid;
+    }
+    public static class TowerSpawnData {
+        public int x, y;
+        public TileType type;
+
+        public TowerSpawnData(int x, int y, TileType type) {
+            this.x = x;
+            this.y = y;
+            this.type = type;
+
+        }
+    }
+    public List<Map.TowerSpawnData> getTowerPlacements() {
+            return towerPlacements;
+    }
+    public Point getStartTile() {
+        return start;
+    }
+
+    public Point getEndTile() {
+        return end;
+    }
+    
 }
 

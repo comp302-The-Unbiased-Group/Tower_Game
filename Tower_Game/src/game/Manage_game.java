@@ -115,5 +115,8 @@ public class Manage_game {
  public Player getPlayer(){
         return player;
  }
+ public void addTower(Tower tower) {
+     towers.add(tower);
+ }
 
 }

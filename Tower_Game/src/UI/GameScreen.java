@@ -1,13 +1,21 @@
 package UI;
+import MapEdit.Map_edit;
+import UI.EndGameStats;
+import UI.GameOverScreen;
+import UI.MainMenu;
+import UI.OptionScreen;
 import application.*;
 import enemy.*;
 import game.Map;
 import game.Manage_game;
-import tile.Tile;
+import tile.*;
 import tower.*;
-import tile.BuildableTile;
-import tile.DecorativeTile;
-import tile.PathTile;
+
+
+import enemy.enemy_Goblin;
+import enemy.enemy_Knight;
+import enemy.enemy_TNT;
+
 import utils.OptionsHandler;
 import game.TrackEnemyWave;
 
@@ -39,8 +47,11 @@ import java.awt.geom.Point2D;
 
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -52,6 +63,8 @@ import javafx.scene.Group;
 
 import Gold.Gold_Drop;
 
+import static tile.PathTile.PathType.*;
+
 public class GameScreen extends Pane {
  
        
@@ -61,6 +74,8 @@ public class GameScreen extends Pane {
     private double tileHeight;
     private double screenWidth;
     private double screenHeight;
+    
+   
 
     // core components of the game
     private Manage_game manage_game;
@@ -104,7 +119,7 @@ public class GameScreen extends Pane {
     Image snowIcon;
     Image healIcon;
 
-    public GameScreen(Stage stage) {
+    public GameScreen(Stage stage, File file) {
 
         // set size of game screen and create canvas
     	Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -123,6 +138,9 @@ public class GameScreen extends Pane {
         towers = new ArrayList<>();
 
         map = new Map(TILE_COLS, TILE_ROWS);
+        
+        if (file == null) {
+            // Default map setup for new game
        
         // horizontal: from (0,7) to (3,7)
         for (int x = 0; x <= 3; x++) {
@@ -131,7 +149,7 @@ public class GameScreen extends Pane {
         }
 
         //corner: (4,7) turning down
-        map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_BOTTOMLEFT));
+        map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_TOPRIGHT));
         map.add_path_point(new Point((int)(4 * tileWidth), (int)(7 * tileHeight)));
 
         // vertical: from (4,8) to (4,11)
@@ -140,7 +158,7 @@ public class GameScreen extends Pane {
         	map.add_path_point(new Point((int)(4 * tileWidth), (int)(y * tileHeight)));
         }
         // corner: (4,12) turning right
-        map.set_tile(4, 12, new PathTile(4, 12, PathTile.PathType.CORNER_TOPRIGHT));
+        map.set_tile(4, 12, new PathTile(4, 12, PathTile.PathType.CORNER_BOTTOMLEFT));
         map.add_path_point(new Point((int)(4 * tileWidth), (int)(12 * tileHeight)));
 
         // horizontal: from (5,12) to (8,12)
@@ -150,7 +168,7 @@ public class GameScreen extends Pane {
         }
 
         // corner: (9,12) turning up
-        map.set_tile(9, 12, new PathTile(9, 12, PathTile.PathType.CORNER_TOPLEFT));
+        map.set_tile(9, 12, new PathTile(9, 12, PathTile.PathType.CORNER_BOTTOMRIGHT));
         map.add_path_point(new Point((int)(9 * tileWidth), (int)(12 * tileHeight)));
 
        // vertical: (9,11) and (9,7)
@@ -160,7 +178,7 @@ public class GameScreen extends Pane {
         }
 
         // corner: (9,6) turning right
-        map.set_tile(9, 6, new PathTile(9, 6, PathTile.PathType.CORNER_BOTTOMRIGHT));
+        map.set_tile(9, 6, new PathTile(9, 6, PathTile.PathType.CORNER_TOPLEFT));
         map.add_path_point(new Point((int)(9 * tileWidth), (int)(6 * tileHeight)));
 
         // horizontal: from (10,6) to (14,6)
@@ -169,7 +187,7 @@ public class GameScreen extends Pane {
             map.add_path_point(new Point((int)(x * tileWidth), (int)(6 * tileHeight)));
         }
         //corner: (15,6)
-        map.set_tile(15, 6, new PathTile(15, 6, PathTile.PathType.CORNER_TOPLEFT));
+        map.set_tile(15, 6, new PathTile(15, 6, PathTile.PathType.CORNER_BOTTOMRIGHT));
         map.add_path_point(new Point((int)(15 * tileWidth), (int)(6 * tileHeight)));
         
      // vertical: (15,5) and (15,0)
@@ -195,8 +213,8 @@ public class GameScreen extends Pane {
         map.set_tile(12, 13, new DecorativeTile(12,13,"gold_mine"));
         map.set_tile(3, 4, new DecorativeTile(3,4,"castle"));
         map.set_tile(4, 4, new DecorativeTile(4,4,"tree"));
-        map.set_tile(7, 3, new DecorativeTile(4,4,"tree"));
-        map.set_tile(8, 3, new DecorativeTile(4,4,"tree"));
+        map.set_tile(7, 3, new DecorativeTile(7,3,"tree"));
+        map.set_tile(8, 3, new DecorativeTile(8,3,"tree"));
         map.set_tile(14, 14, new DecorativeTile(14,14,"skelaton"));
         map.set_tile(5, 4, new DecorativeTile(5,4,"tree"));
         map.set_tile(13, 13, new DecorativeTile(13,13,"tree"));
@@ -206,11 +224,39 @@ public class GameScreen extends Pane {
         map.set_tile(18, 12, new DecorativeTile(18,12,"skelaton"));
         map.set_tile(19, 12, new DecorativeTile(19,12,"skelaton"));
         
+        }else {
+            // Load map from file
+            try {
+                loadFromFile(file.getAbsolutePath(), map);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        
         // start game logic
         manage_game = new Manage_game();
 
         manage_game.startGame(map,OptionsHandler.getInstance().getStartGold(), OptionsHandler.getInstance().getPlayerHP());
+        
+     // Load towers if file was provided
+        if (file != null) {
+            for (Map.TowerPlacement spawn : map.getTowerPlacements()) {
+                
 
+                Tower tower = switch (spawn.type) {
+                    case "ARCHER_TOWER" -> new tower_Archer(spawn.x, spawn.y, (int)tileWidth, this);
+                    case "MAGE_TOWER" -> new tower_Mage(spawn.x, spawn.y, (int)tileWidth, this);
+                    case "ARTILLERY_TOWER" -> new tower_Artillery(spawn.x, spawn.y, (int)tileWidth, this);
+                    default -> null;
+                };
+
+                if (tower != null) {
+                    manage_game.addTower(tower);
+                    towers.add(tower);
+                }
+            }
+        }
         manage_game.set_go_Listener(() -> {
             Platform.runLater(() -> {
                 GameOverScreen GameOverNow = new GameOverScreen(stage);
@@ -303,6 +349,112 @@ public class GameScreen extends Pane {
          
          
      }
+    
+    public void loadFromFile(String path, game.Map map) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get(path));
+        if (lines.size() < 3) throw new IOException("Invalid map file");
+
+        String[] startParts = lines.get(0).replace("START:", "").trim().split(",");
+        String[] endParts = lines.get(1).replace("END:", "").trim().split(",");
+
+        Point start = new Point(Integer.parseInt(startParts[0]), Integer.parseInt(startParts[1]));
+        Point end = new Point(Integer.parseInt(endParts[0]), Integer.parseInt(endParts[1]));
+        map.set_start_point(start);
+        map.set_end_point(end);
+
+        // Step 1: Build tile grid
+        boolean[][] isPath = new boolean[TILE_COLS][TILE_ROWS];
+
+        for (int y = 0; y < TILE_ROWS; y++) {
+            String[] tokens = lines.get(y + 2).split(" ");
+            for (int x = 0; x < TILE_COLS && x < tokens.length; x++) {
+                String token = tokens[x].trim();
+
+                switch (token) {
+                    case "PATH_HORIZONTAL" -> {
+                        map.set_tile(x, y, new PathTile(x, y, HORIZONTAL));
+                        isPath[x][y] = true;
+                    }
+                    case "PATH_VERTICAL" -> {
+                        map.set_tile(x, y, new PathTile(x, y, VERTICAL));
+                        isPath[x][y] = true;
+                    }
+                    case "PATH_TOP_LEFT" -> {
+                        map.set_tile(x, y, new PathTile(x, y, CORNER_TOPLEFT));
+                        isPath[x][y] = true;
+                    }
+                    case "PATH_TOP_RIGHT" -> {
+                        map.set_tile(x, y, new PathTile(x, y, CORNER_TOPRIGHT));
+                        isPath[x][y] = true;
+                    }
+                    case "PATH_BOTTOM_LEFT" -> {
+                        map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMLEFT));
+                        isPath[x][y] = true;
+                    }
+                    case "PATH_BOTTOM_RIGHT" -> {
+                        map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMRIGHT));
+                        isPath[x][y] = true;
+                    }
+                    case "ARCHER_TOWER", "MAGE_TOWER", "ARTILLERY_TOWER" -> {
+                        map.getTowerPlacements().add(new Map.TowerPlacement(x, y, token));
+                    }
+                    case "TOWER_EMPTY" -> map.set_tile(x, y, new BuildableTile(x, y));
+                    case "DECORATIVE" -> map.set_tile(x, y, new DecorativeTile(x, y, "tree"));
+                    default -> map.set_tile(x, y, new DecorativeTile(x, y, "grass"));
+                }
+            }
+        }
+
+        // Step 2: Rebuild path from start to end using BFS
+        Queue<Point> queue = new LinkedList<>();
+        Set<Point> visited = new HashSet<>();
+        java.util.Map<Point, Point> parent = new HashMap<>();
+
+        queue.add(start);
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            Point curr = queue.poll();
+            if (curr.equals(end)) break;
+
+            int[][] dirs = {{0,1},{1,0},{0,-1},{-1,0}};
+            for (int[] d : dirs) {
+                int nx = curr.x + d[0];
+                int ny = curr.y + d[1];
+                if (nx >= 0 && ny >= 0 && nx < TILE_COLS && ny < TILE_ROWS && isPath[nx][ny]) {
+                    Point np = new Point(nx, ny);
+                    if (!visited.contains(np)) {
+                        visited.add(np);
+                        parent.put(np, curr);
+                        queue.add(np);
+                    }
+                }
+            }
+        }
+
+        // Step 3: Backtrack path from end to start
+        List<Point> pathTiles = new ArrayList<>();
+        Point p = end;
+        while (p != null && parent.containsKey(p)) {
+            pathTiles.add(p);
+            p = parent.get(p);
+        }
+        pathTiles.add(start);
+        Collections.reverse(pathTiles);
+
+        for (Point tile : pathTiles) {
+            int pixelX = (int)((tile.x ) * tileWidth);
+            int pixelY = (int)((tile.y ) * tileHeight);
+            map.add_path_point(new Point(pixelX, pixelY));
+        }
+
+        System.out.println("✔ Map loaded: Start=" + start + ", End=" + end + ", Path=" + map.get_path().size() + " points");
+    }
+
+    
+    	
+    
+    
     
     private void showTower(int x, int y) {
         if (towerMenu != null) {
