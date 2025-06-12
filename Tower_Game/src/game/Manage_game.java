@@ -1,5 +1,6 @@
 package game;
 import enemy.Enemy;
+import enemy.Enemy_Healer;
 import enemy.enemy_Knight;
 import tower.Tower;
 import UI.GameOverListener;
@@ -59,6 +60,9 @@ public class Manage_game {
                 ((enemy_Knight) enemy).move(speedMultiplier, enemies, tileSize);
             } else {
                 enemy.move(speedMultiplier);
+            }
+            if (enemy instanceof Enemy_Healer) {
+                ((Enemy_Healer) enemy).heal(enemies,tileSize);
             }
         }
 
