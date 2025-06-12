@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 
+import java.io.File;
+
 public class Main extends Application {
     @Override
    public void start(Stage primaryStage) {
@@ -15,6 +17,9 @@ public class Main extends Application {
         double screenHeight = screenBounds.getHeight();
 
         // changed to fullscreen from static resolution
+
+        File dir = new File("saved_maps");
+        if (!dir.exists()) dir.mkdirs();
         MainMenu menu = new MainMenu(primaryStage);
         Scene scene = new Scene(menu, screenWidth, screenHeight);
 

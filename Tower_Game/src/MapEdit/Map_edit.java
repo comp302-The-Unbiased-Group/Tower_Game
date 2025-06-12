@@ -1,13 +1,15 @@
 package MapEdit;
 
+import UI.GameScreen;
 import game.Map;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextInputDialog;
+import javafx.stage.FileChooser;
 import tile.PathTile;
 
 import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -120,22 +122,35 @@ public class Map_edit {
     public boolean saveMap(String filename) {
         Point startTile = findEdgePathTile(true);
         Point endTile = findEdgePathTile(false);
-        try (FileWriter fw = new FileWriter(filename)) {
-            if (startTile != null && endTile != null) {
-                fw.write("START:" + startTile.x + "," + startTile.y + "\n");
-                fw.write("END:" + endTile.x + "," + endTile.y + "\n");
-            }
-            for (TileType[] row : grid) {
-                for (TileType t : row) {
-                    fw.write(t.name() + " ");
+
+        try {
+            File file = new File(filename);
+            File dir = file.getParentFile();
+
+            if (dir != null && !dir.exists()) dir.mkdirs();  // create parent if needed
+
+            try (FileWriter fw = new FileWriter(file)) {
+                if (startTile != null && endTile != null) {
+                    fw.write("START:" + startTile.x + "," + startTile.y + "\n");
+                    fw.write("END:" + endTile.x + "," + endTile.y + "\n");
                 }
-                fw.write("\n");
+
+                for (TileType[] row : grid) {
+                    for (TileType t : row) {
+                        fw.write(t.name() + " ");
+                    }
+                    fw.write("\n");
+                }
             }
+
+            System.out.println("Saved to: " + file.getAbsolutePath());
+            return true;
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
-        return true;
     }
+
 
     private boolean isConnected(Point start, Point end) {
         boolean[][] visited = new boolean[height][width];

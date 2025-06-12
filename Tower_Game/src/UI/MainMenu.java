@@ -49,15 +49,13 @@ public class MainMenu extends StackPane {
         });
 
         loadSavedMapGame.setOnAction(e -> {
-            File savedMap = new File("custom_map.txt");  // relative path
-            if (savedMap.exists()) {
-                GameScreen game = new GameScreen(primaryStage, savedMap);
+            MapSelectionWindow mapWindow = new MapSelectionWindow(primaryStage, selectedFile -> {
+                GameScreen game = new GameScreen(primaryStage, selectedFile);
                 Scene gameScene = new Scene(game);
                 primaryStage.setScene(gameScene);
                 primaryStage.setFullScreen(true);
-            } else {
-                System.err.println("Map file not found: " + savedMap.getAbsolutePath());
-            }
+            });
+            primaryStage.setScene(new Scene(mapWindow, 600, 600));
         });
         
         quit.setOnAction(new EventHandler <ActionEvent>() {

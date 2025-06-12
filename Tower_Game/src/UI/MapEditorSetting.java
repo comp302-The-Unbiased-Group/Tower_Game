@@ -16,11 +16,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.awt.SystemColor.text;
 
 public class MapEditorSetting extends BorderPane {
     private static int TILE_SIZE = 32;
@@ -103,21 +107,28 @@ public class MapEditorSetting extends BorderPane {
         saveBtn.setOnAction(e -> {
             String error = logic.validateMap();
             if (error != null) {
-                showError(error); // popup will show but app will keep running
+                showError(error);
             } else {
-                if (logic.saveMap("custom_map.txt")) {
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Success");
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Your Map");
+                fileChooser.setInitialDirectory(new File("saved_maps"));
+                fileChooser.setInitialFileName("my_map.txt");
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+
+                File file = fileChooser.showSaveDialog(stage);
+
+                if (file != null && logic.saveMap(file.getAbsolutePath())) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Map Saved");
                     alert.setHeaderText(null);
-                    alert.setContentText("Map saved successfully!");
+                    alert.setContentText("Map saved as: " + file.getName());
                     alert.showAndWait();
 
-                    // Return to main screen after saving
-                    // Replace this with your actual main menu scene class or logic
-                    MainMenu mainMenu = new MainMenu(stage);  // assuming you have this
-                    Scene scene = new Scene(mainMenu, 800, 600); // adjust size if needed
+
+                    MainMenu mainMenu = new MainMenu(stage);
+                    Scene scene = new Scene(mainMenu, 800, 600);
                     stage.setScene(scene);
-                } else {
+                } else if (file != null) {
                     showError("Failed to save map.");
                 }
             }
@@ -125,11 +136,14 @@ public class MapEditorSetting extends BorderPane {
 
         Label title = new Label("Map Editor");
         title.setStyle("""
-        -fx-font-size: 30px;
-        -fx-font-family: 'Comic Sans MS', 'Arial';
-        -fx-text-fill: #3e3e3e;
-        -fx-effect: dropshadow(gaussian, lightgray, 2, 0, 1, 1);
-        """);
+    -fx-font-size: 32px;
+     -fx-font-family: 'Trebuchet MS', 'Verdana', sans-serif;
+    -fx-text-fill: linear-gradient(to right, #444, #222);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 4, 0.2, 2, 2);
+    -fx-padding: 10 20 10 20;
+    -fx-background-color: transparent;
+""");
+
 
         Region leftSpacer = new Region();
         Region rightSpacer = new Region();
@@ -141,7 +155,8 @@ public class MapEditorSetting extends BorderPane {
         topBar.setAlignment(Pos.CENTER);
         topBar.setPadding(new Insets(20, 30, 10, 30));
         topBar.setSpacing(10);
-        topBar.setStyle("-fx-background-color: #ffffff;");
+        topBar.setStyle("-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);");
+
 
         StackPane canvasWrapper = new StackPane(canvas);
         canvasWrapper.setStyle("-fx-background-color: #8FC645;");
@@ -158,7 +173,7 @@ public class MapEditorSetting extends BorderPane {
         ScrollPane tilePalette = createTileSelector();
         tilePalette.setPrefWidth(200);
         tilePalette.setStyle("""
-        -fx-background-color: #fff9dc;
+        -fx-background-color: linear-gradient(to right, #6ed386, #ffffff);
         -fx-border-color: #cfcfcf;
         -fx-border-width: 1;
         """);
@@ -168,7 +183,7 @@ public class MapEditorSetting extends BorderPane {
         HBox.setHgrow(canvasScroll, Priority.ALWAYS);
 
         VBox fullLayout = new VBox(topBar, layout);
-        fullLayout.setStyle("-fx-background-color: #fefefe;");
+        fullLayout.setStyle("-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);");
         fullLayout.setSpacing(5);
         fullLayout.setAlignment(Pos.TOP_CENTER);
 
@@ -220,7 +235,9 @@ public class MapEditorSetting extends BorderPane {
         VBox content = new VBox(20);
         content.setAlignment(Pos.TOP_CENTER);
         content.setStyle("-fx-padding: 10;");
+
         content.getChildren().add(makeHeader("Grass"));
+
 
         content.getChildren().add(createTileButton(Map_edit.TileType.GRASS, "Delete tile (reset to grass)"));
 
@@ -257,7 +274,12 @@ public class MapEditorSetting extends BorderPane {
 
     private Label makeHeader(String text) {
         Label header = new Label(text);
-        header.setStyle("-fx-font-size: 14px; -fx-text-fill: #3a3a3a; -fx-font-weight: bold;");
+        header.setStyle("""
+        -fx-font-size: 20px;
+        -fx-font-weight: bold;
+        -fx-font-family: 'Arial', sans-serif;
+        -fx-text-fill: #333;
+    """);
         return header;
     }
 
@@ -287,7 +309,7 @@ public class MapEditorSetting extends BorderPane {
         -fx-effect: dropshadow(gaussian, #bbbbbb, 2, 0, 0, 1);
         """);
 
-        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #f7f7f7; -fx-border-color: #888888;"));
+        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #6ed386; -fx-border-color: #888888;"));
         btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: #ffffff; -fx-border-color: #aaaaaa;"));
 
         btn.setOnDragDetected(e -> {
