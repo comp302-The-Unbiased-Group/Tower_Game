@@ -16,9 +16,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -103,21 +105,28 @@ public class MapEditorSetting extends BorderPane {
         saveBtn.setOnAction(e -> {
             String error = logic.validateMap();
             if (error != null) {
-                showError(error); // popup will show but app will keep running
+                showError(error);
             } else {
-                if (logic.saveMap("custom_map.txt")) {
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Success");
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Save Your Map");
+                fileChooser.setInitialDirectory(new File("saved_maps"));
+                fileChooser.setInitialFileName("my_map.txt");
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+
+                File file = fileChooser.showSaveDialog(stage);
+
+                if (file != null && logic.saveMap(file.getAbsolutePath())) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Map Saved");
                     alert.setHeaderText(null);
-                    alert.setContentText("Map saved successfully!");
+                    alert.setContentText("Map saved as: " + file.getName());
                     alert.showAndWait();
 
-                    // Return to main screen after saving
-                    // Replace this with your actual main menu scene class or logic
-                    MainMenu mainMenu = new MainMenu(stage);  // assuming you have this
-                    Scene scene = new Scene(mainMenu, 800, 600); // adjust size if needed
+
+                    MainMenu mainMenu = new MainMenu(stage);
+                    Scene scene = new Scene(mainMenu, 800, 600);
                     stage.setScene(scene);
-                } else {
+                } else if (file != null) {
                     showError("Failed to save map.");
                 }
             }

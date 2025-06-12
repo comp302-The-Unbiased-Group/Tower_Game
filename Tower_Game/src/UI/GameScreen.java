@@ -242,12 +242,12 @@ public class GameScreen extends Pane {
      // Load towers if file was provided
         if (file != null) {
             for (Map.TowerPlacement spawn : map.getTowerPlacements()) {
-                
+
 
                 Tower tower = switch (spawn.type) {
-                    case "ARCHER_TOWER" -> new tower_Archer(spawn.x, spawn.y, (int)tileWidth, this);
-                    case "MAGE_TOWER" -> new tower_Mage(spawn.x, spawn.y, (int)tileWidth, this);
-                    case "ARTILLERY_TOWER" -> new tower_Artillery(spawn.x, spawn.y, (int)tileWidth, this);
+                    case "ARCHER_TOWER" -> new tower_Archer(spawn.x * (int)tileWidth, spawn.y * (int)tileHeight, (int)tileWidth, this);
+                    case "MAGE_TOWER" -> new tower_Mage(spawn.x * (int)tileWidth, spawn.y * (int)tileHeight, (int)tileWidth, this);
+                    case "ARTILLERY_TOWER" -> new tower_Artillery(spawn.x * (int)tileWidth, spawn.y * (int)tileHeight, (int)tileWidth, this);
                     default -> null;
                 };
 
@@ -353,6 +353,7 @@ public class GameScreen extends Pane {
     
     public void loadFromFile(String path, game.Map map) throws IOException {
         List<String> lines = Files.readAllLines(Paths.get(path));
+
         if (lines.size() < 3) throw new IOException("Invalid map file");
 
         String[] startParts = lines.get(0).replace("START:", "").trim().split(",");
