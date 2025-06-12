@@ -1,6 +1,7 @@
 package UI;
 
 import MapEdit.Map_edit;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,9 +21,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.awt.SystemColor.text;
 
@@ -30,12 +33,12 @@ public class MapEditorSetting extends BorderPane {
     private static int TILE_SIZE = 32;
     private static final int GRID_WIDTH = 20;
     private static final int GRID_HEIGHT = 15;
-
+    private final Label errorLabel = new Label();
     private final Map_edit logic = new Map_edit(GRID_WIDTH, GRID_HEIGHT);
     private final Canvas canvas = new Canvas(GRID_WIDTH * TILE_SIZE, GRID_HEIGHT * TILE_SIZE);
     private final GraphicsContext gc = canvas.getGraphicsContext2D();
     private final Map<Map_edit.TileType, Image> tileImages = new HashMap<>();
-
+    private Button resetBtn;
     public MapEditorSetting(Stage stage) {
         double width = Screen.getPrimary().getBounds().getWidth() * 0.75;
         double height = Screen.getPrimary().getBounds().getHeight() * 0.75;
@@ -49,6 +52,22 @@ public class MapEditorSetting extends BorderPane {
         setupUI(stage);
         drawGrid();
     }
+    private EventHandler<javafx.event.ActionEvent> getResetHandler() {
+        return e -> {
+            errorLabel.setText("⚠ Click again to confirm reset!");
+            errorLabel.setTextFill(Color.ORANGE);
+            errorLabel.setVisible(true);
+
+            resetBtn.setOnAction(confirm -> {
+                logic.initializeGrid();
+                drawGrid();
+                errorLabel.setText("🧹 Map reset to default.");
+                errorLabel.setTextFill(Color.GREEN);
+                resetBtn.setOnAction(getResetHandler());
+            });
+        };
+    }
+
 
     private void loadTileImages() {
         try {
@@ -74,7 +93,7 @@ public class MapEditorSetting extends BorderPane {
 
     private void setupUI(Stage stage) {
 
-        Button resetBtn = new Button("🔄 Reset Map");
+        resetBtn = new Button("🔄 Reset Map");
         resetBtn.setStyle("""
     -fx-background-color: linear-gradient(to bottom, #f44336, #d32f2f);
     -fx-text-fill: white;
@@ -86,13 +105,17 @@ public class MapEditorSetting extends BorderPane {
     -fx-cursor: hand;
 """);
 
-        resetBtn.setOnAction(e -> {
-            boolean confirm = confirmReset();
-            if (confirm) {
-                logic.initializeGrid();
-                drawGrid();
-            }
+        resetBtn.setOnAction(confirm -> {
+            logic.initializeGrid();
+            drawGrid();
+            errorLabel.setText("🧹 Map reset to default.");
+            errorLabel.setTextFill(Color.GREEN);
+
+            // Restore original handler
+            resetBtn.setOnAction(getResetHandler());
         });
+
+
         Button saveBtn = new Button("💾 Save Map");
         saveBtn.setStyle("""
         -fx-background-color: linear-gradient(to bottom, #4CAF50, #388E3C);
@@ -121,13 +144,11 @@ public class MapEditorSetting extends BorderPane {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Map Saved");
                     alert.setHeaderText(null);
-                    alert.setContentText("Map saved as: " + file.getName());
+                    alert.setContentText("✅ Map saved as: " + file.getName());
                     alert.showAndWait();
 
 
-                    MainMenu mainMenu = new MainMenu(stage);
-                    Scene scene = new Scene(mainMenu, 800, 600);
-                    stage.setScene(scene);
+
                 } else if (file != null) {
                     showError("Failed to save map.");
                 }
@@ -149,6 +170,7 @@ public class MapEditorSetting extends BorderPane {
         Region rightSpacer = new Region();
         HBox.setHgrow(leftSpacer, Priority.ALWAYS);
         HBox.setHgrow(rightSpacer, Priority.ALWAYS);
+        leftSpacer.setMinWidth(300);
 
         HBox topBar = new HBox(leftSpacer, title, rightSpacer, saveBtn, resetBtn);
 
@@ -186,6 +208,15 @@ public class MapEditorSetting extends BorderPane {
         fullLayout.setStyle("-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);");
         fullLayout.setSpacing(5);
         fullLayout.setAlignment(Pos.TOP_CENTER);
+        errorLabel.setStyle("""
+    -fx-text-fill: red;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
+""");
+        errorLabel.setVisible(false); // hidden by default
+
+        fullLayout.getChildren().add(1, errorLabel);
 
         setCenter(fullLayout);
 
@@ -384,11 +415,8 @@ public class MapEditorSetting extends BorderPane {
     }
 
     private void showError(String message) {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        errorLabel.setText("❌"+message);
+        errorLabel.setVisible(true);
     }
 }
 
