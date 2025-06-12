@@ -5,14 +5,17 @@ import UI.GameOverScreen;
 import UI.MainMenu;
 import UI.OptionScreen;
 import application.*;
-import enemy.Enemy;
+import enemy.*;
 import game.Map;
 import game.Manage_game;
 import tile.*;
 import tower.*;
+
+
 import enemy.enemy_Goblin;
 import enemy.enemy_Knight;
 import enemy.enemy_TNT;
+
 import utils.OptionsHandler;
 import game.TrackEnemyWave;
 
@@ -114,6 +117,7 @@ public class GameScreen extends Pane {
     // for special effects on enemies
     Image thunderIcon;
     Image snowIcon;
+    Image healIcon;
 
     public GameScreen(Stage stage, File file) {
 
@@ -592,9 +596,12 @@ public class GameScreen extends Pane {
         	upgrade_button.setOnMouseClicked(event -> {
         		Tower upgraded = new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
         		int tower_cost = upgraded.getCost();
-                towers.remove(existingTower);
-                manage_game.player.add_gold(-tower_cost);
-                towers.add(new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
+                if (manage_game.player.get_gold()>= tower_cost) {
+                    towers.remove(existingTower);
+                    manage_game.player.add_gold(-tower_cost);
+                    towers.add(new tower_ArcherUp(x * (int) tileWidth, y * (int) tileHeight, (int) tileWidth, this));
+                    closeTowerMenu();
+                }
                 closeTowerMenu();
             });
         } 
@@ -603,9 +610,12 @@ public class GameScreen extends Pane {
         	upgrade_button.setOnMouseClicked(event -> {
         		Tower upgraded = new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
         		int tower_cost = upgraded.getCost();
-                towers.remove(existingTower);
-                manage_game.player.add_gold(-tower_cost);
-                towers.add(new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
+                if (manage_game.player.get_gold()>= tower_cost) {
+                    towers.remove(existingTower);
+                    manage_game.player.add_gold(-tower_cost);
+                    towers.add(new tower_MageUp(x * (int) tileWidth, y * (int) tileHeight, (int) tileWidth, this));
+                    closeTowerMenu();
+                }
                 closeTowerMenu();
             });
         }
@@ -614,9 +624,12 @@ public class GameScreen extends Pane {
         	upgrade_button.setOnMouseClicked(event -> {
         		Tower upgraded = new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
         		int tower_cost = upgraded.getCost();
-                towers.remove(existingTower);
-                manage_game.player.add_gold(-tower_cost);
-                towers.add(new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
+                if (manage_game.player.get_gold()>= tower_cost) {
+                    towers.remove(existingTower);
+                    manage_game.player.add_gold(-tower_cost);
+                    towers.add(new tower_ArtilleryUp(x * (int) tileWidth, y * (int) tileHeight, (int) tileWidth, this));
+                    closeTowerMenu();
+                }
                 closeTowerMenu();
             });
         }
@@ -629,10 +642,10 @@ public class GameScreen extends Pane {
         });
         
         if (manage_game.player.get_gold() < 100) {
-        	upgrade_button.setDisable(true);
+
         	upgrade_button.setOpacity(0.5);
         } else {
-        	upgrade_button.setDisable(false);
+
         	upgrade_button.setOpacity(1.0);
         }
         
@@ -964,6 +977,13 @@ public class GameScreen extends Pane {
 
                 g.drawImage(tnt.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
             }
+            if (enemy instanceof Enemy_Healer) {
+                Enemy_Healer heal = (Enemy_Healer) enemy;
+                heal.updateAnimation(System.nanoTime());
+
+                g.drawImage(heal.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+
 
             // thunder icon
             if (enemy instanceof enemy_Knight && ((enemy_Knight) enemy).hasSynergy()) {
@@ -975,6 +995,16 @@ public class GameScreen extends Pane {
                 g.drawImage(thunderIcon, enemy_x+ tileWidth/2.8, enemy_y - offsetY, thunderwidth, thunderheight);
 
             }
+            if (enemy instanceof Enemy_Healer && ((Enemy_Healer) enemy).isHealing_on()) {
+
+                healIcon = new Image("file:Tower_Game/Enemy_effects/health_icon.png");
+                double offsetY = tileHeight * 0.5;
+                double healwidth = tileWidth / 2.8;
+                double healheight = tileHeight / 2.8;
+                g.drawImage(healIcon, enemy_x+ tileWidth/2.8, enemy_y - offsetY, healwidth, healheight);
+
+            }
+
 
             // health bar
             int bar_width = (int)(tileWidth / 2);

@@ -71,6 +71,11 @@ public abstract class Enemy {
         hp -= damage;
     }
 
+    public void healed(int heal){
+        hp += heal;
+
+    }
+
     public boolean is_alive() {
         return hp > 0;
     }
