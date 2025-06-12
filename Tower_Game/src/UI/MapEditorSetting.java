@@ -148,7 +148,9 @@ public class MapEditorSetting extends BorderPane {
                     alert.showAndWait();
 
 
-
+                    MainMenu mainMenu = new MainMenu(stage);
+                    Scene scene = new Scene(mainMenu, 800, 600);
+                    stage.setScene(scene);
                 } else if (file != null) {
                     showError("Failed to save map.");
                 }
