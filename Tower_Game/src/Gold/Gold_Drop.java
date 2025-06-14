@@ -69,7 +69,5 @@ public class Gold_Drop {
         }
     }
 
-    public Image getCurrentImage() {
-        return frames[currentFrame];
-    }
+
 }

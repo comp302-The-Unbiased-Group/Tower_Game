@@ -1,4 +1,5 @@
 package game;
+import enemy.Barrel_Enemy;
 import enemy.Enemy;
 import enemy.Enemy_Healer;
 import enemy.enemy_Knight;
@@ -6,6 +7,7 @@ import tower.Tower;
 import UI.GameOverListener;
 import utils.EndGameStatsHandler;
 import utils.GoldDropHandler;
+import utils.MeatDropHandler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,6 +29,7 @@ public class Manage_game {
     private GameOverListener gameOverListener;
     private EndGameStatsHandler endGameStatsHandler;
     private GoldDropHandler goldDropHandler;
+    private MeatDropHandler meatDropHandler;
 
     public void set_go_Listener(GameOverListener listener) {
         this.gameOverListener = listener;
@@ -36,9 +39,15 @@ public class Manage_game {
         this.goldDropHandler = goldhandler;
     }
 
+    public void set_meat_handler(MeatDropHandler meathandler) {
+        this.meatDropHandler = meathandler;
+    }
+
     public void set_gs_handler(EndGameStatsHandler handler) {
         this.endGameStatsHandler = handler;
     }
+
+
     public void initialize_player(int initialGold, int initialLives) {
         player = new Player(initialGold, initialLives);
     }
@@ -58,12 +67,13 @@ public class Manage_game {
         for (Enemy enemy : enemies) {
             if (enemy instanceof enemy_Knight) {
                 ((enemy_Knight) enemy).move(speedMultiplier, enemies, tileSize);
-            } else {
-                enemy.move(speedMultiplier);
             }
-            if (enemy instanceof Enemy_Healer) {
-                ((Enemy_Healer) enemy).heal(enemies,tileSize);
+
+            else if (enemy instanceof Enemy_Healer) {
+                ((Enemy_Healer) enemy).movehealer(speedMultiplier,enemies,tileSize);
             }
+            else {
+                enemy.move(speedMultiplier);}
         }
 
         for (Tower tower : towers) {
@@ -82,6 +92,9 @@ public class Manage_game {
                 player.add_gold(current_enemy.getGoldValue());
                 enemies_killed++;
 
+                if (current_enemy instanceof Barrel_Enemy && meatDropHandler != null) {
+                    meatDropHandler.droping_meat(1,enemyX,enemyY);
+                }
                 if (Math.random() < 0.20 && goldDropHandler != null) {
 
                     int max = 25; // half of level 1 archer tower
