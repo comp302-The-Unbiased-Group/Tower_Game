@@ -1,5 +1,6 @@
 package UI;
 import MapEdit.Map_edit;
+import Meat.Meat_Drop;
 import UI.EndGameStats;
 import UI.GameOverScreen;
 import UI.MainMenu;
@@ -89,7 +90,10 @@ public class GameScreen extends Pane {
     private Map map;
     private Canvas canvas;
     private List<projectile> projectiles = new ArrayList<>();
+
     private List<Gold_Drop> goldDropList = new ArrayList<>();
+    private List<Meat_Drop> meatDropList = new ArrayList<>();
+
     private Group towerMenu;
     private BuildableTile hoveredTile;
     
@@ -279,8 +283,16 @@ public class GameScreen extends Pane {
         manage_game.set_gold_handler((amount, x, y) -> {
 
             Gold_Drop drop = new Gold_Drop(amount, x, y,this, manage_game.getPlayer());
-            goldDropList.add(drop); // if you're tracking them
+            goldDropList.add(drop);
         });
+
+        manage_game.set_meat_handler((amount, x, y) -> {
+
+            Meat_Drop mdrop = new Meat_Drop(amount, x, y,this, manage_game.getPlayer());
+            meatDropList.add(mdrop);
+        });
+
+
         enemies = manage_game.enemies;
         
         // mouse clicking for placing towers
@@ -927,6 +939,14 @@ public class GameScreen extends Pane {
                 g.drawImage(heal.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
             }
 
+            if (enemy instanceof Barrel_Enemy) {
+
+                Barrel_Enemy barrel = (Barrel_Enemy) enemy;
+                barrel.updateAnimation(System.nanoTime());
+
+                g.drawImage(barrel.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+
 
             // thunder icon
             if (enemy instanceof enemy_Knight && ((enemy_Knight) enemy).hasSynergy()) {
@@ -981,6 +1001,10 @@ public class GameScreen extends Pane {
 
             drop.update_goldAnimation(now,this);
 
+        }
+
+        for(Meat_Drop drop : meatDropList) {
+            drop.update_meatAnimation(now,this);
         }
     }
 }

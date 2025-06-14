@@ -19,6 +19,10 @@ public class Player {
         gold += amount;
     }
 
+    public void add_lives(int amount) {
+        lives += amount;
+    }
+
     public void reduce_life() {
         lives = lives - OptionsHandler.getInstance().getPlayerDamage();
     }

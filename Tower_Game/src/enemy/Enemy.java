@@ -18,6 +18,7 @@ public abstract class Enemy {
     protected boolean fastMode = false; //for toggle enemy speed in the game
     private boolean slowed_enemy = false;
     private long slowed_end_time = 0;
+    private boolean healed = false;
 
 
     public Enemy(List<Point> path, int hp, double base_speed, int gold_value) {
@@ -146,6 +147,13 @@ public abstract class Enemy {
         double distance_x = position.x - start.x;
         double distance_y = position.y - start.y;
         return Math.sqrt((distance_x * distance_x) + (distance_y * distance_y));
+    }
+
+    public boolean hasbeenHealed() {
+        return healed;
+    }
+    public void setHealed() {
+        this.healed = true;
     }
 
 }

@@ -43,7 +43,7 @@ public class Enemy_Healer extends Enemy {
             lastFrameTime = now;
         }
     }
-    public void heal(List<Enemy> allEnemies, double tileWidth) {
+    public void movehealer(double speedMultiplier,List<Enemy> allEnemies, double tileWidth) {
         boolean enemy_is_close = false;
 
         for (Enemy e : allEnemies) {
@@ -51,19 +51,27 @@ public class Enemy_Healer extends Enemy {
 
                 double dist = position.distance(e.getPosition());
 
-                if (dist < (tileWidth*2.5) && e.getHp() < e.getMaxHp() / 2) {
-                    enemy_is_close = true;
-                    e.healed(e.getMaxHp()/3);
-                    this.hashealed = true;
-                    healedAt = System.currentTimeMillis();
-                    break;
+                if (dist < tileWidth*1.2) {
 
+                    if (e.getHp() < (e.getMaxHp()/2)) {
+                        e.healed(e.getMaxHp()/4);
+                        enemy_is_close = true;
+                        e.setHealed();
+                        break;
+                    }
+                    else if(e.hasbeenHealed()){
+                        enemy_is_close = true;
+                        break;
+                    }
                 }
             }
         }
 
 
         this.healing_on = enemy_is_close;
+
+
+        super.move(speedMultiplier);
     }
 
     public Image getCurrentImage() {
@@ -71,12 +79,8 @@ public class Enemy_Healer extends Enemy {
     }
 
     public boolean isHealing_on() {
-        if (hashealed) {
-            if (this.healing_on || (System.currentTimeMillis() - healedAt > heal_icon_duration)) {
-                return true;
-            }
-        }
-        return false;
+     return healing_on;
+
     }
 }
 

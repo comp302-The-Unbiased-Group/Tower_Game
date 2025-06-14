@@ -23,25 +23,27 @@ public class TrackEnemyWave {
     private long lastSpawnTime = 0;
     
     private List<waveSetting> waves = Arrays.asList(
-            new waveSetting(3, 0, 0,1),    // Wave 1
-            new waveSetting(5, 0, 0,1),    // Wave 2
-            new waveSetting(5, 1, 1,1),   // Wave 3
-            new waveSetting(7, 2, 1,0),   // Wave 4
-            new waveSetting(9, 4, 1,2),   // Wave 5
-            new waveSetting(8, 6, 1,2),    // Wave 6
-            new waveSetting(12, 6, 1,2),   // Wave 7
-            new waveSetting(6, 10, 1,2)    // Wave 8
+            new waveSetting(3, 0, 0,1,2),    // Wave 1
+            new waveSetting(5, 0, 0,1,0),    // Wave 2
+            new waveSetting(5, 1, 1,1,0),   // Wave 3
+            new waveSetting(7, 2, 1,0,2),   // Wave 4
+            new waveSetting(9, 4, 1,2,0),   // Wave 5
+            new waveSetting(8, 6, 1,2,0),    // Wave 6
+            new waveSetting(12, 6, 1,2,2),   // Wave 7
+            new waveSetting(6, 10, 1,2,3)    // Wave 8
         );
     
     private int goblins_should_Spawn = 0;
     private int knights_should_Spawn = 0;
     private int tnts_should_Spawn = 0;
     private int healer_should_Spawn = 0;
+    private int barrel_should_Spawn = 0;
 
     private int goblinsSpawned = 0;
     private int knightsSpawned = 0;
     private int tntsSpawned = 0;
     private int healerSpawned = 0;
+    private int barrelSpawned = 0;
 
     
 
@@ -57,11 +59,13 @@ public class TrackEnemyWave {
         knights_should_Spawn = 0;
         tnts_should_Spawn = 0;
         healer_should_Spawn = 0;
+        barrel_should_Spawn = 0;
 
         goblinsSpawned = 0;
         knightsSpawned = 0;
         tntsSpawned = 0;
         healerSpawned = 0;
+        barrelSpawned = 0;
 
     }
 
@@ -75,17 +79,20 @@ public class TrackEnemyWave {
             knights_should_Spawn = config.knights;
             tnts_should_Spawn = config.tnts;
             healer_should_Spawn = config.healers;
+            barrel_should_Spawn = config.barrels;
         } else {
             goblins_should_Spawn = 0;
             knights_should_Spawn = 0;
             tnts_should_Spawn = 0;
             healer_should_Spawn = 0;
+            barrel_should_Spawn = 0;
 
         }
         goblinsSpawned = 0;
         knightsSpawned = 0;
         tntsSpawned = 0;
         healerSpawned =0;
+        barrelSpawned = 0;
 
         lastSpawnTime = System.currentTimeMillis();
         current_wave++;
@@ -111,6 +118,10 @@ public class TrackEnemyWave {
             enemies.add(new Enemy_Healer(path));
             healerSpawned++;
         }
+        else if (barrelSpawned < barrel_should_Spawn) {
+            enemies.add(new Barrel_Enemy(path));
+            barrelSpawned++;
+        }
     	  lastSpawnTime = System.currentTimeMillis();
     	    
     }
@@ -124,7 +135,7 @@ public class TrackEnemyWave {
             startWave(enemies);
         }
 
-        if (waveOn && (goblinsSpawned < goblins_should_Spawn || knightsSpawned < knights_should_Spawn || healerSpawned < healer_should_Spawn)) {
+        if (waveOn && (goblinsSpawned < goblins_should_Spawn || knightsSpawned < knights_should_Spawn || healerSpawned < healer_should_Spawn || barrelSpawned < barrel_should_Spawn)) {
             if (currentTime - lastSpawnTime >= SPAWN_DELAY_MS) {
                 spawnOneEnemy(enemies);
             }
