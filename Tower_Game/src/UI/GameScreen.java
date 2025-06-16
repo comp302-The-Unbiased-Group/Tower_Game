@@ -88,6 +88,8 @@ public class GameScreen extends Pane {
 
     private Group towerMenu;
     private BuildableTile hoveredTile;
+    private Tower hoveredTower = null;
+
     
     public void addProjectile(projectile p) {
         projectiles.add(p);
@@ -220,7 +222,9 @@ public class GameScreen extends Pane {
         map.set_tile(18, 12, new DecorativeTile(18,12,"skelaton"));
         map.set_tile(19, 12, new DecorativeTile(19,12,"skelaton"));
         
-        }else {
+        }
+        
+        else {
             // Load map from file
             try {
                 loadFromFile(file.getAbsolutePath(), map);
@@ -300,6 +304,15 @@ public class GameScreen extends Pane {
         canvas.addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
         	int x = (int)(e.getX() / tileWidth);
             int y = (int)(e.getY() / tileHeight);
+            
+            Tower hover = towers.stream()
+                    .filter(t -> (int)(t.getX() / tileWidth) == x && (int)(t.getY() / tileHeight) == y)
+                    .findFirst().orElse(null);
+
+                if (hoveredTower != hover) {
+                    hoveredTower = hover;
+                    draw();
+                }
 
             Tile tile = map.get_tile(x, y);
             
@@ -859,6 +872,7 @@ public class GameScreen extends Pane {
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         
+        
       
 
      // drawing each tile on grid
@@ -896,9 +910,7 @@ public class GameScreen extends Pane {
                     }
                 }
 
-                // Draw tile border for all tiles
-                g.setStroke(Color.BLACK);
-                g.strokeRect(px, py, tileWidth, tileHeight);
+             
             }
         }
 
@@ -996,12 +1008,17 @@ public class GameScreen extends Pane {
             double barX = enemy_x + (tileWidth - bar_width) / 2.5;
             double barY = enemy_y + tileHeight + 1.8;
 
+            g.setGlobalAlpha(1.0); 
             g.setFill(Color.GRAY);
             g.fillRect(barX, barY, bar_width, bar_height);
+
             g.setFill(Color.RED);
             g.fillRect(barX, barY, filled, bar_height);
+
             g.setStroke(Color.WHITE);
+            g.setLineWidth(1.0);
             g.strokeRect(barX, barY, bar_width, bar_height);
+
             
             if  (enemy.isSlowed()) {
                 Image snowflake = new Image("file:Tower_Game/Enemy_effects/snow flake icon.png");
@@ -1022,6 +1039,18 @@ public class GameScreen extends Pane {
 
         for(Meat_Drop drop : meatDropList) {
             drop.update_meatAnimation(now,this);
+        }
+        
+        if (hoveredTower != null) {
+            double centerX = hoveredTower.getX() + tileWidth / 2.0;
+            double centerY = hoveredTower.getY() + tileHeight / 2.0;
+            double rangeRadius = hoveredTower.getRange();
+            g.setGlobalAlpha(0.3); 
+            g.setStroke(Color.DEEPPINK);
+            g.setLineWidth(3);
+            g.strokeOval(centerX - rangeRadius, centerY - rangeRadius, rangeRadius * 2, rangeRadius * 2);
+            g.setGlobalAlpha(1.0);
+   
         }
     }
 }

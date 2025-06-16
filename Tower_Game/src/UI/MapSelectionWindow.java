@@ -24,26 +24,38 @@ public class MapSelectionWindow extends VBox {
         setAlignment(Pos.CENTER);
         setStyle("-fx-background-color: linear-gradient(to bottom, #2c3e50, #3498db);");
 
-        Label title = new Label("Select a Saved Map");
+        Label title = new Label("Select a Map to Start");
         title.setStyle("-fx-font-size: 26px; -fx-text-fill: white;");
 
+      
+        Button defaultMapButton = new Button("Play Default Map");
+        defaultMapButton.setPrefWidth(300);
+        defaultMapButton.setStyle(
+            "-fx-background-color: #27ae60;" +
+            "-fx-font-size: 18px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-radius: 12;"
+        );
+        defaultMapButton.setOnAction(e -> {
+            callback.accept(null);
+        });
+
+       
         File mapDir = new File("saved_maps");
         File[] maps = mapDir.listFiles((dir, name) -> name.endsWith(".txt"));
-        if (maps == null || maps.length == 0) {
-            Label noMaps = new Label("No saved maps found.");
-            noMaps.setStyle("-fx-text-fill: white;");
-            getChildren().addAll(title, noMaps);
-            return;
-        }
-
-        Arrays.sort(maps, Comparator.comparing(File::getName));
 
         TextField filterField = new TextField();
         filterField.setPromptText("Filter maps by name...");
 
         ListView<File> mapListView = new ListView<>();
         mapListView.setPrefHeight(300);
-        mapListView.getItems().addAll(maps);
+
+        if (maps != null && maps.length > 0) {
+            Arrays.sort(maps, Comparator.comparing(File::getName));
+            mapListView.getItems().addAll(maps);
+        }
+
         mapListView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(File file, boolean empty) {
@@ -53,13 +65,15 @@ public class MapSelectionWindow extends VBox {
         });
 
         filterField.textProperty().addListener((obs, oldText, newText) -> {
-            mapListView.getItems().setAll(Arrays.stream(maps)
-                    .filter(f -> f.getName().toLowerCase().contains(newText.toLowerCase()))
-                    .collect(Collectors.toList()));
+            if (maps != null) {
+                mapListView.getItems().setAll(Arrays.stream(maps)
+                        .filter(f -> f.getName().toLowerCase().contains(newText.toLowerCase()))
+                        .collect(Collectors.toList()));
+            }
         });
 
-        Button playButton = new Button("Start Game");
-        playButton.setPrefWidth(200);
+        Button playButton = new Button("Start Game With Selected Map");
+        playButton.setPrefWidth(300);
         playButton.setStyle("-fx-font-size: 16px;");
         playButton.setOnAction(e -> {
             File selected = mapListView.getSelectionModel().getSelectedItem();
@@ -69,7 +83,7 @@ public class MapSelectionWindow extends VBox {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 alert.setTitle("No Map Selected");
                 alert.setHeaderText(null);
-                alert.setContentText("Please select a map from the list.");
+                alert.setContentText("Please select a map from the list or use 'Play Default Map'.");
                 alert.showAndWait();
             }
         });
@@ -86,6 +100,25 @@ public class MapSelectionWindow extends VBox {
         HBox buttonBox = new HBox(20, playButton, backButton);
         buttonBox.setAlignment(Pos.CENTER);
 
-        getChildren().addAll(title, filterField, mapListView, buttonBox);
+        
+        if (maps == null || maps.length == 0) {
+            Label noMaps = new Label("No saved maps found. You can still play the default map!");
+            noMaps.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+            getChildren().addAll(
+                title,
+                defaultMapButton,
+                noMaps,
+                backButton
+            );
+        } else {
+            getChildren().addAll(
+                title,
+                defaultMapButton,
+                filterField,
+                mapListView,
+                buttonBox
+            );
+        }
     }
 }
+

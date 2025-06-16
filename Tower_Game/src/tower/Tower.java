@@ -6,6 +6,7 @@ import java.util.List;
 
 import UI.GameScreen;
 import javafx.scene.image.Image;
+import utils.OptionsHandler;
 
 public abstract class Tower {
     public int x, y;
@@ -68,6 +69,26 @@ public abstract class Tower {
 	public void setFire_rate(double fire_rate) {
 		this.fire_rate = fire_rate;
 	}
+	
+	
+	
+	 public void setRange(int range) {
+		 this.range = range;
+		 }
+	 
+	 public static int calculateRange(int baseRange) {
+		    String rangeOption = OptionsHandler.getInstance().getTowerRange();
+		    if (rangeOption == null) 
+		    	
+		    	return baseRange;
+		    
+		    return switch (rangeOption) {
+		        case "Short" -> (int)(baseRange * 0.75);
+		        case "Long" -> (int)(baseRange * 1.3);
+		        default -> baseRange;
+		    };
+		}
+
 
 
 
