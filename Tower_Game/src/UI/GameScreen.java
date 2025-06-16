@@ -29,11 +29,14 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.awt.geom.Point2D;
@@ -67,6 +70,7 @@ public class GameScreen extends Pane {
     private double tileHeight;
     private double screenWidth;
     private double screenHeight;
+
     
    
 
@@ -89,6 +93,7 @@ public class GameScreen extends Pane {
     private Group towerMenu;
     private BuildableTile hoveredTile;
     private Tower hoveredTower = null;
+    private StackPane optionsOverlay;
 
     
     public void addProjectile(projectile p) {
@@ -118,7 +123,6 @@ public class GameScreen extends Pane {
     Image healIcon;
 
     public GameScreen(Stage stage, File file) {
-
         // set size of game screen and create canvas
     	Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     	this.screenWidth = screenBounds.getWidth();
@@ -706,86 +710,153 @@ public class GameScreen extends Pane {
     
   //PAUSE GAME STARTS
     private void pauseUI() {
-        getChildren().clear();
-        getChildren().add(canvas);
+    getChildren().clear();
+    getChildren().add(canvas);
 
-        if (pause == null) {
-            Image pauseImage = new Image("file:Tower_Game/UI_assets/pause_button.png");
-            pauseIcon = new ImageView(pauseImage);
-            Image resumeImage = new Image("file:Tower_Game/UI_assets/resume_button.png");
-            resumeIcon = new ImageView(resumeImage);
-            
-            pauseIcon.setFitWidth(30);
-            pauseIcon.setFitHeight(30);
-            resumeIcon.setFitWidth(30);
-            resumeIcon.setFitHeight(30);
-            
-            pause = new Button();
-            pause.setGraphic(pauseIcon);
-            pause.getStyleClass().add("pause-button");
-            pause.setLayoutX(screenWidth - 50);
-            pause.setLayoutY(10);
-            
-            pause.setPadding(Insets.EMPTY);
-            pause.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
-            pause.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
-        }
-        
-        if (speedButton == null) {
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    double screenWidth = screenBounds.getWidth();
+    double screenHeight = screenBounds.getHeight();
 
-            Image normal_speed = new Image("file:Tower_Game/UI_assets/speed.png");
-            Image fast = new Image("file:Tower_Game/UI_assets/resume_button.png");
+    if (pause == null) {
+        Image pauseImage = new Image("file:Tower_Game/UI_assets/pause_button.png");
+        pauseIcon = new ImageView(pauseImage);
+        Image resumeImage = new Image("file:Tower_Game/UI_assets/resume_button.png");
+        resumeIcon = new ImageView(resumeImage);
 
-            ImageView speedView = new ImageView(normal_speed);
-            speedView.setFitWidth(30);
-            speedView.setFitHeight(30);
+        pauseIcon.setFitWidth(30);
+        pauseIcon.setFitHeight(30);
+        resumeIcon.setFitWidth(30);
+        resumeIcon.setFitHeight(30);
 
-            speedButton = new Button();
-            speedButton.setGraphic(speedView);
-            speedButton.getStyleClass().add("speed-button");
-            
-            Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-            double screenWidth = screenBounds.getWidth();
-            speedButton.setLayoutX(screenWidth - 150);
-            speedButton.setLayoutY(10);
-            speedButton.setPadding(Insets.EMPTY);
-            pause.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
-            pause.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
-            
-            speedButton.setOnAction(e -> {
+        pause = new Button();
+        pause.setGraphic(pauseIcon);
+        pause.getStyleClass().add("pause-button");
+        pause.setLayoutX(screenWidth - 100);
+        pause.setLayoutY(10);
+        pause.setPadding(Insets.EMPTY);
+        pause.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        pause.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+    }
 
-                if (speedMultiplier == OptionsHandler.getInstance().getspeedmultiplier()) {
+    if (speedButton == null) {
+        Image normalSpeed = new Image("file:Tower_Game/UI_assets/speed.png");
+        Image fastSpeed = new Image("file:Tower_Game/UI_assets/resume_button.png");
 
-                    speedMultiplier = speedMultiplier * 2.0;
-                    speedView.setImage(fast);
-                } else {
+        ImageView speedView = new ImageView(normalSpeed);
+        speedView.setFitWidth(30);
+        speedView.setFitHeight(30);
 
-                    speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
-                    speedView.setImage(normal_speed);
-                }
-            });
-        }
+        speedButton = new Button();
+        speedButton.setGraphic(speedView);
+        speedButton.getStyleClass().add("speed-button");
+        speedButton.setLayoutX(screenWidth - 150);
+        speedButton.setLayoutY(10);
+        speedButton.setPadding(Insets.EMPTY);
+        speedButton.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        speedButton.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
 
-        if (createPause == null) {
-            Rectangle overlay = new Rectangle(screenWidth, screenHeight, Color.rgb(0, 0, 0, 0.5));
-            createPause = new StackPane(overlay);
-            createPause.setVisible(false);
-            createPause.getStyleClass().add("pause-overlay");
-            createPause.setMouseTransparent(true);
-        }
-
-        getChildren().addAll(pause,speedButton,createPause);
-        
-        pause.setOnAction(new EventHandler <ActionEvent>() {
-        	public void handle(ActionEvent arg0) {
-        		 isPaused = !isPaused;
-        	     createPause.setVisible(isPaused);
-        	     pause.setGraphic(isPaused ? resumeIcon : pauseIcon);
-        	}
-
+        speedButton.setOnAction(e -> {
+            if (speedMultiplier == OptionsHandler.getInstance().getspeedmultiplier()) {
+                speedMultiplier *= 2.0;
+                speedView.setImage(fastSpeed);
+            } else {
+                speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
+                speedView.setImage(normalSpeed);
+            }
         });
-    } // PAUSE GAME ENDS
-    
+    }
+
+    if (optionsOverlay == null) {
+        Rectangle dimBackground = new Rectangle(screenWidth, screenHeight);
+        dimBackground.setFill(Color.rgb(0, 0, 0, 0.6));
+
+        Button mainMenuButton = new Button("Main Menu");
+        String mainFont = "'Courier New'";
+        mainMenuButton.setFont(Font.font("Courier New", 30));
+        mainMenuButton.setTextFill(Color.WHITE);
+        mainMenuButton.setBackground(Background.EMPTY);
+        mainMenuButton.setBorder(Border.EMPTY);
+        mainMenuButton.setStyle("-fx-font-family: " + mainFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;");
+
+        mainMenuButton.setOnMouseEntered(e -> mainMenuButton.setStyle(
+                "-fx-font-family: " + mainFont + "; -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);"));
+        mainMenuButton.setOnMouseExited(e -> mainMenuButton.setStyle(
+                "-fx-font-family: " + mainFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;"));
+
+        mainMenuButton.setOnAction(e -> {
+            Stage currentStage = (Stage) mainMenuButton.getScene().getWindow();
+            MainMenu menu = new MainMenu(currentStage);
+            Scene menuScene = menu.newScene();
+            currentStage.setScene(menuScene);
+            currentStage.setFullScreen(true);
+            optionsOverlay.setVisible(false);
+        });
+
+        Button quitButton = new Button("Quit Game");
+        String quitFont = "'Courier New'";
+        quitButton.setFont(Font.font("Courier New", 30));
+        quitButton.setTextFill(Color.WHITE);
+        quitButton.setBackground(Background.EMPTY);
+        quitButton.setBorder(Border.EMPTY);
+        quitButton.setStyle("-fx-font-family: " + quitFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;");
+
+        quitButton.setOnMouseEntered(e -> quitButton.setStyle(
+                "-fx-font-family: " + quitFont + "; -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);"));
+        quitButton.setOnMouseExited(e -> quitButton.setStyle(
+                "-fx-font-family: " + quitFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;"));
+
+        quitButton.setOnAction(e -> Platform.exit());
+
+        VBox buttonsBox = new VBox(15, mainMenuButton, quitButton);
+        buttonsBox.setAlignment(Pos.CENTER);
+
+        optionsOverlay = new StackPane(dimBackground, buttonsBox);
+        optionsOverlay.setVisible(false);
+    }
+
+    if (optionsButton == null) {
+        Image optionsImage = new Image("file:Tower_Game/UI_assets/options.png");
+        ImageView optionsView = new ImageView(optionsImage);
+        optionsView.setFitWidth(30);
+        optionsView.setFitHeight(30);
+
+        optionsButton = new Button();
+        optionsButton.setGraphic(optionsView);
+        optionsButton.getStyleClass().add("options-button");
+        optionsButton.setLayoutX(screenWidth - 50);
+        optionsButton.setLayoutY(10);
+        optionsButton.setPadding(Insets.EMPTY);
+        optionsButton.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        optionsButton.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+
+        optionsButton.setOnAction(e -> {
+        	boolean showing = !optionsOverlay.isVisible();
+            optionsOverlay.setVisible(showing);
+            
+            isPaused = showing;
+            createPause.setVisible(showing);
+            pause.setGraphic(showing ? resumeIcon : pauseIcon);
+        });
+    }
+
+    if (createPause == null) {
+        Rectangle overlay = new Rectangle(screenWidth, screenHeight, Color.rgb(0, 0, 0, 0.5));
+        createPause = new StackPane(overlay);
+        createPause.setVisible(false);
+        createPause.getStyleClass().add("pause-overlay");
+        createPause.setMouseTransparent(true);
+    }
+
+    getChildren().addAll(pause, speedButton, optionsButton, createPause, optionsOverlay);
+
+    pause.setOnAction(e -> {
+        isPaused = !isPaused;
+        createPause.setVisible(isPaused);
+        pause.setGraphic(isPaused ? resumeIcon : pauseIcon);
+    });
+}
+ // PAUSE GAME ENDS
+        
     //GOLD LIFE SHIELD UI STARTS
     private void gold_life_shieldUI() {
     	Image coin = new Image("file:Tower_Game/UI_assets/coin.png");

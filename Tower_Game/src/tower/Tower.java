@@ -78,20 +78,19 @@ public abstract class Tower {
 	 
 	 public static int calculateRange(int baseRange) {
 		    String rangeOption = OptionsHandler.getInstance().getTowerRange();
-		    if (rangeOption == null) 
-		    	
-		    	return baseRange;
-		    
-		    return switch (rangeOption) {
-		        case "Short" -> (int)(baseRange * 0.75);
-		        case "Long" -> (int)(baseRange * 1.3);
-		        default -> baseRange;
-		    };
+		    if (rangeOption == null) {
+		        return baseRange;
+		    }
+
+		    switch (rangeOption) {
+		        case "Short":
+		            return (int)(baseRange * 0.75);
+		        case "Long":
+		            return (int)(baseRange * 1.3);
+		        default:
+		            return baseRange;
+		    }
 		}
-
-
-
-
 }
 
 	
