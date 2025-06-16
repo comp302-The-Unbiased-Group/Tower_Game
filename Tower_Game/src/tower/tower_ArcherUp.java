@@ -14,7 +14,7 @@ public class tower_ArcherUp extends tower_Archer {
    
 
     public tower_ArcherUp(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, tileWidth, gameScreen);
+    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), gameScreen);
     	this.range = (int)(1.5 * this.range);  // 50% range increase
         this.fire_rate = 2 * this.fire_rate;
         this.cost = 100;

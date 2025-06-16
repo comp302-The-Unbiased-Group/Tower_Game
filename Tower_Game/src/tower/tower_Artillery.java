@@ -19,7 +19,7 @@ public class tower_Artillery extends Tower {
     }
 
     public tower_Artillery(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 50, 30, 1, gameScreen);
+    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), 50, 30, 1, gameScreen);
     }
     
   

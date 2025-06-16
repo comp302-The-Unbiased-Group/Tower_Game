@@ -24,8 +24,9 @@ public class Player {
     }
 
     public void reduce_life() {
-        lives = lives - OptionsHandler.getInstance().getPlayerDamage();
+        lives = Math.max(0, lives - OptionsHandler.getInstance().getPlayerDamage());
     }
+
 
     public int get_lives() {
         return lives;

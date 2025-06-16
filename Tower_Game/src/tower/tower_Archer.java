@@ -22,7 +22,7 @@ public class tower_Archer extends Tower {
 	}
 
 	public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 50, 20, 1, gameScreen);
+    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), 50, 20, 1, gameScreen);
     }
     
     /**

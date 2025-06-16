@@ -13,9 +13,9 @@ public class Barrel_Enemy extends Enemy {
     private static final long FRAME_DURATION = 150_000_000;
 
 
-    public Barrel_Enemy(List<Point> path) {
+    public Barrel_Enemy(List<Point> path, double speed) {
 
-        super(path, 30, 3.5, 5);
+        super(path, 30, speed, 5);
 
         for (int i = 0; i < 7; i++) {
             frames[i] = new Image("file:Tower_Game/Enemies/barrel" + i + ".png");

@@ -24,8 +24,12 @@ public class OptionScreen {
 
     private final Map<String, ComboBox<String>> select = new HashMap<>();
     private Button save;
+    private Button resetButton;
 
     public Scene newScene(Stage stage) {
+    	
+    	OptionsHandler.getInstance().loadFromFile();
+    	 
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         double screenWidth = screenBounds.getWidth();
         double screenHeight = screenBounds.getHeight();
@@ -59,13 +63,12 @@ public class OptionScreen {
         );
 
         // settings
-        createOption(content, "Difficulty", Arrays.asList("Easy", "Normal", "Expert"));
-        createOption(content, "Wave Count", Arrays.asList("1", "2", "3"));
-        createOption(content, "Delay", Arrays.asList("No Delay", "Short(5s)", "Long(30s)"));
-        createOption(content, "Player Lives", Arrays.asList("10", "25", "50"));
+        createOption(content, "Tower Range", Arrays.asList("Short", "Normal", "Long"));
+        createOption(content, "Movement Speed", Arrays.asList("Low", "Normal", "Fast"));
+        createOption(content, "Wave Count", Arrays.asList("5", "8", "11"));
+        createOption(content, "Delay between waves", Arrays.asList("No Delay", "Normal(4s)", "Long(10s)"));
+        createOption(content, "Player Hit Point", Arrays.asList("10", "25", "50"));
         createOption(content, "Player Hit Damage", Arrays.asList("1", "2", "3"));
-        createOption(content, "Composition", Arrays.asList("Mixed", "Goblin only", "Knight only"));
-        createOption(content, "Gold Amount Earned", Arrays.asList("25", "50", "75"));
         createOption(content, "Gold Amount Start", Arrays.asList("50", "100", "200"));
         
         // save settings
@@ -80,7 +83,7 @@ public class OptionScreen {
         );
         
         VBox.setMargin(save, new Insets(20, 0, 0, 0));
-        content.getChildren().add(save);
+        
         save.setMaxWidth(Double.MAX_VALUE);
         save.setAlignment(Pos.CENTER);
         
@@ -88,11 +91,34 @@ public class OptionScreen {
         save.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             Map<String, String> options = getSelected();
             OptionsHandler.getInstance().process(options);
+            OptionsHandler.getInstance().saveToFile();
             MainMenu mainMenu = new MainMenu(stage);
             Scene mainMenuScene = mainMenu.newScene();
             stage.setScene(mainMenuScene);
             stage.setFullScreen(false);
         });
+        
+     
+        resetButton = new Button("RESET TO DEFAULTS");
+        resetButton.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        resetButton.setTextFill(Color.WHITE);
+        resetButton.setStyle(
+                "-fx-background-color: #c0392b;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 30 10 30;"
+        );
+        VBox.setMargin(resetButton, new Insets(10, 0, 0, 0));
+        resetButton.setMaxWidth(Double.MAX_VALUE);
+        resetButton.setAlignment(Pos.CENTER);
+
+        resetButton.setOnAction(e -> {
+            OptionsHandler.getInstance().resetToDefaults();
+            OptionsHandler.getInstance().saveToFile();
+            updateComboBoxesWithCurrentOptions();
+        });
+
+        content.getChildren().addAll(save, resetButton);
         
         VBox container = new VBox(content);
         container.setAlignment(Pos.CENTER);
@@ -120,6 +146,13 @@ public class OptionScreen {
     	    );
     	    comboBox.getSelectionModel().selectFirst();
     	    comboBox.setPrefWidth(180);
+    	    
+    	 
+            String initial = getCurrentValueForLabel(label);
+            if (choices.contains(initial))
+                comboBox.setValue(initial);
+            else
+                comboBox.getSelectionModel().selectFirst();
 
     	    HBox row = new HBox(15, optionsL, comboBox);
     	    row.setAlignment(Pos.CENTER_LEFT);
@@ -127,6 +160,32 @@ public class OptionScreen {
     	    container.getChildren().add(row);
 
     	    select.put(label, comboBox);
+    }
+    
+    
+    
+    private void updateComboBoxesWithCurrentOptions() {
+        for (var entry : select.entrySet()) {
+            String label = entry.getKey();
+            ComboBox<String> combo = entry.getValue();
+            String newValue = getCurrentValueForLabel(label);
+            if (combo.getItems().contains(newValue))
+                combo.setValue(newValue);
+        }
+    }
+    
+    private String getCurrentValueForLabel(String label) {
+        var oh = OptionsHandler.getInstance();
+        return switch (label) {
+            case "Tower Range" -> oh.getTowerRange();
+            case "Movement Speed" -> oh.getMovementSpeed();
+            case "Wave Count" -> String.valueOf(oh.getWaveCount());
+            case "Delay between waves" -> oh.getDelay();
+            case "Player Hit Point" -> String.valueOf(oh.getPlayerHP());
+            case "Player Hit Damage" -> String.valueOf(oh.getPlayerDamage());
+            case "Gold Amount Start" -> String.valueOf(oh.getStartGold());
+            default -> "";
+        };
     }
     
     public Map<String, String> getSelected() {
@@ -141,8 +200,11 @@ public class OptionScreen {
         save.setOnAction(e -> {
             Map<String, String> options = getSelected();
             OptionsHandler.getInstance().process(options);
+            OptionsHandler.getInstance().saveToFile();
             saveHandler.run();
         });
     }
+    
+    
 }
 

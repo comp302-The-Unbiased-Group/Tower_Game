@@ -13,9 +13,9 @@ public class enemy_Goblin extends Enemy {
     private static final long FRAME_DURATION = 150_000_000; 
 
     
-    public enemy_Goblin(List<Point> path) {
+    public enemy_Goblin(List<Point> path,double speed) {
     	
-        super(path, 30, 3.5, 5);
+        super(path, 30, speed, 5);
 
         for (int i = 0; i < 6; i++) {
             frames[i] = new Image("file:Tower_Game/Enemies/goblin_" + i + ".png");

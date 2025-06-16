@@ -27,36 +27,36 @@ public class MainMenu extends StackPane {
 
     public MainMenu(Stage primaryStage) {
         startNewGame = new Button("NEW GAME");
-        loadSavedMapGame = new Button("LOAD SAVED MAP");
+        
         editMap = new Button("MAP EDITOR");
         options = new Button("OPTIONS");
         quit = new Button("QUIT");
 
         startNewGame.setId("startNewGame");
-        loadSavedMapGame.setId("loadSavedMapGame");
+        
         editMap.setId("editMap");
         options.setId("setting");
         quit.setId("quit");
 
        
         startNewGame.setOnAction(e -> {
-            
-
-            GameScreen game = new GameScreen(primaryStage,null);
-            Scene gameScene = new Scene(game);
-            primaryStage.setScene(gameScene);
-            primaryStage.setFullScreen(true);
-        });
-
-        loadSavedMapGame.setOnAction(e -> {
             MapSelectionWindow mapWindow = new MapSelectionWindow(primaryStage, selectedFile -> {
                 GameScreen game = new GameScreen(primaryStage, selectedFile);
                 Scene gameScene = new Scene(game);
                 primaryStage.setScene(gameScene);
                 primaryStage.setFullScreen(true);
             });
-            primaryStage.setScene(new Scene(mapWindow, 600, 600));
+
+            double screenWidth = Screen.getPrimary().getBounds().getWidth();
+            double screenHeight = Screen.getPrimary().getBounds().getHeight();
+
+            Scene mapScene = new Scene(mapWindow, screenWidth, screenHeight);
+            primaryStage.setScene(mapScene);
+            primaryStage.setFullScreen(true);
         });
+
+
+      
         
         quit.setOnAction(new EventHandler <ActionEvent>() {
         	public void handle(ActionEvent arg0) {
@@ -77,7 +77,7 @@ public class MainMenu extends StackPane {
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
         layout.setPadding(new Insets(20));
-        layout.getChildren().addAll(startNewGame, loadSavedMapGame, editMap, options, quit);
+        layout.getChildren().addAll(startNewGame, editMap, options, quit);
         layout.getStylesheets().add(getClass().getResource("/UI/application.css").toExternalForm());
 
         Image mainScreenImage = new Image("file:Tower_Game/KuTowerDefence1.jpg");

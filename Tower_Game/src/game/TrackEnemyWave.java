@@ -16,22 +16,14 @@ public class TrackEnemyWave {
     private long lastWaveTime = 0;
     private boolean waveOn = false;
     private static final long FIRST_DELAY_MS = 4000;
-    private static final long WAVE_DELAY_MS = 4000;
+    private long waveDelayMs = 4000;
+
     private static final long SPAWN_DELAY_MS = 500;
     private List<Point> path;
     
     private long lastSpawnTime = 0;
     
-    private List<waveSetting> waves = Arrays.asList(
-            new waveSetting(3, 0, 0,1,2),    // Wave 1
-            new waveSetting(5, 0, 0,1,0),    // Wave 2
-            new waveSetting(5, 1, 1,1,0),   // Wave 3
-            new waveSetting(7, 2, 1,0,2),   // Wave 4
-            new waveSetting(9, 4, 1,2,0),   // Wave 5
-            new waveSetting(8, 6, 1,2,0),    // Wave 6
-            new waveSetting(12, 6, 1,2,2),   // Wave 7
-            new waveSetting(6, 10, 1,2,3)    // Wave 8
-        );
+    private List<waveSetting> waves;
     
     private int goblins_should_Spawn = 0;
     private int knights_should_Spawn = 0;
@@ -52,7 +44,9 @@ public class TrackEnemyWave {
         current_wave = 0;
         lastWaveTime = System.currentTimeMillis();
         waveOn = false;
-        
+        waveDelayMs = OptionsHandler.getInstance().getWaveDelayMs();
+
+
         goblins_should_Spawn = 0;
         knights_should_Spawn = 0;
         tnts_should_Spawn = 0;
@@ -65,6 +59,21 @@ public class TrackEnemyWave {
         healerSpawned = 0;
         barrelSpawned = 0;
 
+        
+        int waveCount = OptionsHandler.getInstance().getWaveCount();
+        waves = new java.util.ArrayList<>();
+        for (int i = 0; i < waveCount; i++) {
+            
+            waves.add(
+                new waveSetting(
+                    3 + i * 2,    
+                    i,          
+                    i % 2,       
+                    i / 2,        
+                    (i > 5 ? 1 : 0) 
+                )
+            );
+        }
     }
 
     public void startWave(List<Enemy> enemies) {
@@ -102,22 +111,22 @@ public class TrackEnemyWave {
     	
     	if (tntsSpawned < tnts_should_Spawn) {
     		
-            enemies.add(new enemy_TNT(path));
+            enemies.add(new enemy_TNT(path,OptionsHandler.getInstance().getTntSpeed() * OptionsHandler.getInstance().getspeedmultiplier()));
             tntsSpawned++;}
     	        
             else if (goblinsSpawned < goblins_should_Spawn) {
-    	       enemies.add(new enemy_Goblin(path));
+    	       enemies.add(new enemy_Goblin(path, OptionsHandler.getInstance().getGoblinSpeed() * OptionsHandler.getInstance().getspeedmultiplier()));
     	       goblinsSpawned++;
     	} else if (knightsSpawned < knights_should_Spawn) {
-    	       enemies.add(new enemy_Knight(path));
+    	       enemies.add(new enemy_Knight(path, OptionsHandler.getInstance().getKnightSpeed() * OptionsHandler.getInstance().getspeedmultiplier()));
     	       knightsSpawned++;
     	 }
         else if (healerSpawned < healer_should_Spawn) {
-            enemies.add(new Enemy_Healer(path));
+            enemies.add(new Enemy_Healer(path, OptionsHandler.getInstance().getHealerSpeed() * OptionsHandler.getInstance().getspeedmultiplier()));
             healerSpawned++;
         }
         else if (barrelSpawned < barrel_should_Spawn) {
-            enemies.add(new Barrel_Enemy(path));
+            enemies.add(new Barrel_Enemy(path, OptionsHandler.getInstance().getBarrelSpeed() * OptionsHandler.getInstance().getspeedmultiplier()));
             barrelSpawned++;
         }
     	  lastSpawnTime = System.currentTimeMillis();
@@ -129,9 +138,10 @@ public class TrackEnemyWave {
 
         if (firstWave && (currentTime - lastWaveTime >= FIRST_DELAY_MS)) {
             startWave(enemies);
-        } else if (!waveOn && !firstWave && (currentTime - lastWaveTime >= WAVE_DELAY_MS)) {
+        } else if (!waveOn && !firstWave && (currentTime - lastWaveTime >= waveDelayMs)) {
             startWave(enemies);
         }
+
 
         if (waveOn && (goblinsSpawned < goblins_should_Spawn || knightsSpawned < knights_should_Spawn || healerSpawned < healer_should_Spawn || barrelSpawned < barrel_should_Spawn)) {
             if (currentTime - lastSpawnTime >= SPAWN_DELAY_MS) {

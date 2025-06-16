@@ -18,9 +18,9 @@ public class Enemy_Healer extends Enemy {
 
     private boolean healing_on;
 
-    public Enemy_Healer(List<Point> path) {
+    public Enemy_Healer(List<Point> path,double speed) {
 
-        super(path, 75, 3.5, 50); //add 100 gold  to player
+        super(path, 75, speed, 50); 
 
         for (int i = 0; i < 6; i++) {
 
