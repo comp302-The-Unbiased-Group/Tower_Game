@@ -165,27 +165,36 @@ public class OptionScreen {
     
     
     private void updateComboBoxesWithCurrentOptions() {
-        for (var entry : select.entrySet()) {
+        for (Map.Entry<String, ComboBox<String>> entry : select.entrySet()) {
             String label = entry.getKey();
             ComboBox<String> combo = entry.getValue();
             String newValue = getCurrentValueForLabel(label);
-            if (combo.getItems().contains(newValue))
+            if (combo.getItems().contains(newValue)) {
                 combo.setValue(newValue);
+            }
         }
     }
     
     private String getCurrentValueForLabel(String label) {
-        var oh = OptionsHandler.getInstance();
-        return switch (label) {
-            case "Tower Range" -> oh.getTowerRange();
-            case "Movement Speed" -> oh.getMovementSpeed();
-            case "Wave Count" -> String.valueOf(oh.getWaveCount());
-            case "Delay between waves" -> oh.getDelay();
-            case "Player Hit Point" -> String.valueOf(oh.getPlayerHP());
-            case "Player Hit Damage" -> String.valueOf(oh.getPlayerDamage());
-            case "Gold Amount Start" -> String.valueOf(oh.getStartGold());
-            default -> "";
-        };
+        OptionsHandler oh = OptionsHandler.getInstance();
+        switch (label) {
+            case "Tower Range":
+                return oh.getTowerRange();
+            case "Movement Speed":
+                return oh.getMovementSpeed();
+            case "Wave Count":
+                return String.valueOf(oh.getWaveCount());
+            case "Delay between waves":
+                return oh.getDelay();
+            case "Player Hit Point":
+                return String.valueOf(oh.getPlayerHP());
+            case "Player Hit Damage":
+                return String.valueOf(oh.getPlayerDamage());
+            case "Gold Amount Start":
+                return String.valueOf(oh.getStartGold());
+            default:
+                return "";
+        }
     }
     
     public Map<String, String> getSelected() {
