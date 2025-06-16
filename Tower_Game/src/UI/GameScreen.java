@@ -1,11 +1,5 @@
 package UI;
-import MapEdit.Map_edit;
 import Meat.Meat_Drop;
-import UI.EndGameStats;
-import UI.GameOverScreen;
-import UI.MainMenu;
-import UI.OptionScreen;
-import application.*;
 import enemy.*;
 import game.Map;
 import game.Manage_game;
@@ -33,8 +27,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -248,12 +240,21 @@ public class GameScreen extends Pane {
             for (Map.TowerPlacement spawn : map.getTowerPlacements()) {
 
 
-                Tower tower = switch (spawn.type) {
-                    case "ARCHER_TOWER" -> new tower_Archer(spawn.x * (int)tileWidth, spawn.y * (int)tileHeight, (int)tileWidth, this);
-                    case "MAGE_TOWER" -> new tower_Mage(spawn.x * (int)tileWidth, spawn.y * (int)tileHeight, (int)tileWidth, this);
-                    case "ARTILLERY_TOWER" -> new tower_Artillery(spawn.x * (int)tileWidth, spawn.y * (int)tileHeight, (int)tileWidth, this);
-                    default -> null;
-                };
+            	Tower tower;
+            	switch (spawn.type) {
+            	    case "ARCHER_TOWER":
+            	        tower = new tower_Archer(spawn.x * (int) tileWidth, spawn.y * (int) tileHeight, (int) tileWidth, this);
+            	        break;
+            	    case "MAGE_TOWER":
+            	        tower = new tower_Mage(spawn.x * (int) tileWidth, spawn.y * (int) tileHeight, (int) tileWidth, this);
+            	        break;
+            	    case "ARTILLERY_TOWER":
+            	        tower = new tower_Artillery(spawn.x * (int) tileWidth, spawn.y * (int) tileHeight, (int) tileWidth, this);
+            	        break;
+            	    default:
+            	        tower = null;
+            	        break;
+            	}
 
                 if (tower != null) {
                     manage_game.addTower(tower);
@@ -385,36 +386,53 @@ public class GameScreen extends Pane {
                 String token = tokens[x].trim();
 
                 switch (token) {
-                    case "PATH_HORIZONTAL" -> {
-                        map.set_tile(x, y, new PathTile(x, y, HORIZONTAL));
-                        isPath[x][y] = true;
-                    }
-                    case "PATH_VERTICAL" -> {
-                        map.set_tile(x, y, new PathTile(x, y, VERTICAL));
-                        isPath[x][y] = true;
-                    }
-                    case "PATH_TOP_LEFT" -> {
-                        map.set_tile(x, y, new PathTile(x, y, CORNER_TOPLEFT));
-                        isPath[x][y] = true;
-                    }
-                    case "PATH_TOP_RIGHT" -> {
-                        map.set_tile(x, y, new PathTile(x, y, CORNER_TOPRIGHT));
-                        isPath[x][y] = true;
-                    }
-                    case "PATH_BOTTOM_LEFT" -> {
-                        map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMLEFT));
-                        isPath[x][y] = true;
-                    }
-                    case "PATH_BOTTOM_RIGHT" -> {
-                        map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMRIGHT));
-                        isPath[x][y] = true;
-                    }
-                    case "ARCHER_TOWER", "MAGE_TOWER", "ARTILLERY_TOWER" -> {
-                        map.getTowerPlacements().add(new Map.TowerPlacement(x, y, token));
-                    }
-                    case "TOWER_EMPTY" -> map.set_tile(x, y, new BuildableTile(x, y));
-                    case "DECORATIVE" -> map.set_tile(x, y, new DecorativeTile(x, y, "tree"));
-                    default -> map.set_tile(x, y, new DecorativeTile(x, y, "grass"));
+                case "PATH_HORIZONTAL":
+                    map.set_tile(x, y, new PathTile(x, y, HORIZONTAL));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_VERTICAL":
+                    map.set_tile(x, y, new PathTile(x, y, VERTICAL));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_TOP_LEFT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_TOPLEFT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_TOP_RIGHT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_TOPRIGHT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_BOTTOM_LEFT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMLEFT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_BOTTOM_RIGHT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMRIGHT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "ARCHER_TOWER":
+                case "MAGE_TOWER":
+                case "ARTILLERY_TOWER":
+                    map.getTowerPlacements().add(new Map.TowerPlacement(x, y, token));
+                    break;
+
+                case "TOWER_EMPTY":
+                    map.set_tile(x, y, new BuildableTile(x, y));
+                    break;
+
+                case "DECORATIVE":
+                    map.set_tile(x, y, new DecorativeTile(x, y, "tree"));
+                    break;
+
+                default:
+                    map.set_tile(x, y, new DecorativeTile(x, y, "grass"));
+                    break;
                 }
             }
         }
@@ -778,7 +796,6 @@ public class GameScreen extends Pane {
         goldText = new Text("0");
         livesText = new Text("0");
         WaveCounterText = new Text("0");
-//        shieldsText = new Text(); will need after we write the shield thing
         
         goldText.setFill(Color.WHITE);
         livesText.setFill(Color.WHITE);

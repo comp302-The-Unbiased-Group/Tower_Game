@@ -44,11 +44,19 @@ public class OptionScreen {
 
         // overlay filter
         Rectangle overlay = new Rectangle(screenWidth, screenHeight);
-        overlay.setFill(new Color(0, 0, 0, 0.35));
+        overlay.setFill(new Color(0, 0, 0, 0.45));
 
-        VBox content = new VBox(12);
+        VBox content = new VBox(15);
         content.setPadding(new Insets(30));
         content.setAlignment(Pos.TOP_CENTER);
+        content.setMaxWidth(450);
+        content.setStyle(
+            "-fx-background-color: rgba(0, 0, 0, 0.7);" +
+            "-fx-background-radius: 15;" +
+            "-fx-border-radius: 15;" +
+            "-fx-border-color: white;" +
+            "-fx-border-width: 2;"
+        );
 
         // settings
         createOption(content, "Difficulty", Arrays.asList("Easy", "Normal", "Expert"));
@@ -57,16 +65,26 @@ public class OptionScreen {
         createOption(content, "Player Lives", Arrays.asList("10", "25", "50"));
         createOption(content, "Player Hit Damage", Arrays.asList("1", "2", "3"));
         createOption(content, "Composition", Arrays.asList("Mixed", "Goblin only", "Knight only"));
-        createOption(content, "Tower Range", Arrays.asList("Short", "Medium", "Long"));
-        createOption(content, "Movement Speed", Arrays.asList("Slowed", "Normal", "Fast"));
         createOption(content, "Gold Amount Earned", Arrays.asList("25", "50", "75"));
         createOption(content, "Gold Amount Start", Arrays.asList("50", "100", "200"));
-
+        
         // save settings
         save = new Button("SAVE");
         save.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+        save.setTextFill(Color.WHITE);
+        save.setStyle(
+            "-fx-background-color: linear-gradient(to right, #4CAF50, #388E3C);" +
+            "-fx-background-radius: 10;" +
+            "-fx-cursor: hand;" +
+            "-fx-padding: 10 30 10 30;"
+        );
+        
+        VBox.setMargin(save, new Insets(20, 0, 0, 0));
         content.getChildren().add(save);
-
+        save.setMaxWidth(Double.MAX_VALUE);
+        save.setAlignment(Pos.CENTER);
+        
+        
         save.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             Map<String, String> options = getSelected();
             OptionsHandler.getInstance().process(options);
@@ -75,30 +93,42 @@ public class OptionScreen {
             stage.setScene(mainMenuScene);
             stage.setFullScreen(false);
         });
+        
+        VBox container = new VBox(content);
+        container.setAlignment(Pos.CENTER);
+        container.setPrefSize(screenWidth, screenHeight);
 
-        root.getChildren().addAll(overlay, content);
+        root.getChildren().addAll(overlay, container);
+
 
         return new Scene(root, screenWidth, screenHeight);
     }
 
     private void createOption(VBox container, String label, List<String> choices) {
-        Label optionsL = new Label(label);
-        optionsL.setFont(Font.font("Arial", FontWeight.BOLD, 19));
-        optionsL.setTextFill(Color.WHITE);
+    	 Label optionsL = new Label(label);
+    	    optionsL.setFont(Font.font("Arial", FontWeight.BOLD, 16));
+    	    optionsL.setTextFill(Color.WHITE);
+    	    optionsL.setPrefWidth(180);
 
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(choices);
-        comboBox.setStyle("-fx-background-color: yellow;");
-        comboBox.getSelectionModel().selectFirst();
+    	    ComboBox<String> comboBox = new ComboBox<>();
+    	    comboBox.getItems().addAll(choices);
+    	    comboBox.setStyle(
+    	        "-fx-background-color: white;" +
+    	        "-fx-text-fill: white;" +
+    	        "-fx-border-radius: 5;" +
+    	        "-fx-background-radius: 5;"
+    	    );
+    	    comboBox.getSelectionModel().selectFirst();
+    	    comboBox.setPrefWidth(180);
 
-        select.put(label, comboBox);
+    	    HBox row = new HBox(15, optionsL, comboBox);
+    	    row.setAlignment(Pos.CENTER_LEFT);
+    	    row.setPadding(new Insets(5, 0, 5, 0));
+    	    container.getChildren().add(row);
 
-        HBox row = new HBox(15, optionsL, comboBox);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(5));
-        container.getChildren().add(row);
+    	    select.put(label, comboBox);
     }
-
+    
     public Map<String, String> getSelected() {
         Map<String, String> res = new HashMap<>();
         for (Map.Entry<String, ComboBox<String>> entry : select.entrySet()) {

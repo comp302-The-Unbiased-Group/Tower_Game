@@ -75,12 +75,17 @@ public class Map_edit {
     }
 
     private boolean isPathType(TileType type) {
-        return switch (type) {
-            case PATH_HORIZONTAL, PATH_VERTICAL,
-                 PATH_TOP_LEFT, PATH_TOP_RIGHT,
-                 PATH_BOTTOM_LEFT, PATH_BOTTOM_RIGHT -> true;
-            default -> false;
-        };
+    	 switch (type) {
+         case PATH_HORIZONTAL:
+         case PATH_VERTICAL:
+         case PATH_TOP_LEFT:
+         case PATH_TOP_RIGHT:
+         case PATH_BOTTOM_LEFT:
+         case PATH_BOTTOM_RIGHT:
+             return true;
+         default:
+             return false;
+    	 }
     }
 
     private Point findEdgePathTile(boolean fromTopLeft) {
