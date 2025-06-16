@@ -87,8 +87,6 @@ public class OptionsHandler {
         return delay;
     }
 
-
-
     public String getTowerRange() {
         return towerRange;
     }

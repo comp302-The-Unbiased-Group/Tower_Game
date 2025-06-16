@@ -45,8 +45,6 @@ public class TrackEnemyWave {
     private int healerSpawned = 0;
     private int barrelSpawned = 0;
 
-    
-
 
     public void setupWaves(List<Point> path) {
         this.path = path;

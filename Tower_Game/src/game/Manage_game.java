@@ -53,10 +53,10 @@ public class Manage_game {
     }
 
     public void startGame(Map map, int gold,int lives) {
-        this.map = map;
-        initialize_player(gold, lives);
-        wave_manager.setupWaves(map.get_path());
-        this.maxlives = lives;
+    	 this.map = map;
+         initialize_player(gold, lives);
+         wave_manager.setupWaves(map.get_path());
+         this.maxlives = lives;
     }
 
     public void updateGame(double speedMultiplier, double tileSize) {
@@ -97,7 +97,7 @@ public class Manage_game {
                 }
                 if (Math.random() < 0.20 && goldDropHandler != null) {
 
-                    int max = 25; // half of level 1 archer tower
+                    int max = 25;
                     int goldAmount = 2 + (int)(Math.random() * (max));
 
                     goldDropHandler.droping_gold(goldAmount, enemyX, enemyY);

@@ -94,16 +94,16 @@ public class MapEditorSetting extends BorderPane {
     private void setupUI(Stage stage) {
 
         resetBtn = new Button("🔄 Reset Map");
-        resetBtn.setStyle("""
-    -fx-background-color: linear-gradient(to bottom, #f44336, #d32f2f);
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-font-size: 16px;
-    -fx-padding: 10 20;
-    -fx-background-radius: 25;
-    -fx-border-radius: 25;
-    -fx-cursor: hand;
-""");
+        resetBtn.setStyle(
+        	    "-fx-background-color: linear-gradient(to bottom, #f44336, #d32f2f);" +
+        	    "-fx-text-fill: white;" +
+        	    "-fx-font-weight: bold;" +
+        	    "-fx-font-size: 16px;" +
+        	    "-fx-padding: 10 20;" +
+        	    "-fx-background-radius: 25;" +
+        	    "-fx-border-radius: 25;" +
+        	    "-fx-cursor: hand;"
+        	);
 
         resetBtn.setOnAction(confirm -> {
             logic.initializeGrid();
@@ -117,16 +117,16 @@ public class MapEditorSetting extends BorderPane {
 
 
         Button saveBtn = new Button("💾 Save Map");
-        saveBtn.setStyle("""
-        -fx-background-color: linear-gradient(to bottom, #4CAF50, #388E3C);
-        -fx-text-fill: white;
-        -fx-font-weight: bold;
-        -fx-font-size: 16px;
-        -fx-padding: 10 20;
-        -fx-background-radius: 25;
-        -fx-border-radius: 25;
-        -fx-cursor: hand;
-        """);
+        saveBtn.setStyle(
+        	    "-fx-background-color: linear-gradient(to bottom, #f44336, #d32f2f);" +
+        	    "-fx-text-fill: white;" +
+        	    "-fx-font-weight: bold;" +
+        	    "-fx-font-size: 16px;" +
+        	    "-fx-padding: 10 20;" +
+        	    "-fx-background-radius: 25;" +
+        	    "-fx-border-radius: 25;" +
+        	    "-fx-cursor: hand;"
+        	);
         saveBtn.setOnAction(e -> {
             String error = logic.validateMap();
             if (error != null) {
@@ -158,14 +158,14 @@ public class MapEditorSetting extends BorderPane {
         });
 
         Label title = new Label("Map Editor");
-        title.setStyle("""
-    -fx-font-size: 32px;
-     -fx-font-family: 'Trebuchet MS', 'Verdana', sans-serif;
-    -fx-text-fill: linear-gradient(to right, #444, #222);
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 4, 0.2, 2, 2);
-    -fx-padding: 10 20 10 20;
-    -fx-background-color: transparent;
-""");
+        title.setStyle(
+        	    "-fx-font-size: 32px;" +
+        	    "-fx-font-family: 'Trebuchet MS', 'Verdana', sans-serif;" +
+        	    "-fx-text-fill: linear-gradient(to right, #444, #222);" +
+        	    "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 4, 0.2, 2, 2);" +
+        	    "-fx-padding: 10 20 10 20;" +
+        	    "-fx-background-color: transparent;"
+    );
 
 
         Region leftSpacer = new Region();
@@ -196,11 +196,11 @@ public class MapEditorSetting extends BorderPane {
 
         ScrollPane tilePalette = createTileSelector();
         tilePalette.setPrefWidth(200);
-        tilePalette.setStyle("""
-        -fx-background-color: linear-gradient(to right, #6ed386, #ffffff);
-        -fx-border-color: #cfcfcf;
-        -fx-border-width: 1;
-        """);
+        tilePalette.setStyle(
+        		"-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);" +
+        		"-fx-border-color: #cfcfcf;" +
+        	    "-fx-border-width: 1;"
+        	);
 
         HBox layout = new HBox(canvasScroll, tilePalette);
         layout.setSpacing(10);
@@ -210,12 +210,13 @@ public class MapEditorSetting extends BorderPane {
         fullLayout.setStyle("-fx-background-color: linear-gradient(to right, #6ed386, #ffffff);");
         fullLayout.setSpacing(5);
         fullLayout.setAlignment(Pos.TOP_CENTER);
-        errorLabel.setStyle("""
-    -fx-text-fill: red;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 0 0 10 0;
-""");
+        errorLabel.setStyle(
+        	    "-fx-text-fill: red;" +
+        	    "-fx-font-size: 14px;" +
+        	    "-fx-font-weight: bold;" +
+        	    "-fx-padding: 0 0 10 0;"
+        	);
+
         errorLabel.setVisible(false); // hidden by default
 
         fullLayout.getChildren().add(1, errorLabel);
@@ -307,12 +308,12 @@ public class MapEditorSetting extends BorderPane {
 
     private Label makeHeader(String text) {
         Label header = new Label(text);
-        header.setStyle("""
-        -fx-font-size: 20px;
-        -fx-font-weight: bold;
-        -fx-font-family: 'Arial', sans-serif;
-        -fx-text-fill: #333;
-    """);
+        header.setStyle(
+        	    "-fx-font-size: 20px;" +
+        	    "-fx-font-weight: bold;" +
+        	    "-fx-font-family: 'Arial', sans-serif;" +
+        	    "-fx-text-fill: #333;"
+        	);
         return header;
     }
 
@@ -334,13 +335,13 @@ public class MapEditorSetting extends BorderPane {
         btn.setGraphic(tileBox);
         btn.setPrefWidth(160);
         btn.setTooltip(new Tooltip(tooltipText));
-        btn.setStyle("""
-        -fx-background-color: #ffffff;
-        -fx-border-color: #aaaaaa;
-        -fx-border-radius: 6;
-        -fx-background-radius: 6;
-        -fx-effect: dropshadow(gaussian, #bbbbbb, 2, 0, 0, 1);
-        """);
+        btn.setStyle(
+        	    "-fx-background-color: #ffffff;" +
+        	    "-fx-border-color: #aaaaaa;" +
+        	    "-fx-border-radius: 6;" +
+        	    "-fx-background-radius: 6;" +
+        	    "-fx-effect: dropshadow(gaussian, #bbbbbb, 2, 0, 0, 1);"
+        	);
 
         btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #6ed386; -fx-border-color: #888888;"));
         btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: #ffffff; -fx-border-color: #aaaaaa;"));
@@ -363,20 +364,21 @@ public class MapEditorSetting extends BorderPane {
     }
 
     private String getFriendlyName(Map_edit.TileType type) {
-        return switch (type) {
-            case PATH_HORIZONTAL -> "Horizontal Path";
-            case PATH_VERTICAL -> "Vertical Path";
-            case PATH_TOP_LEFT -> "Top-Left Curve";
-            case PATH_TOP_RIGHT -> "Top-Right Curve";
-            case PATH_BOTTOM_LEFT -> "Bottom-Left Curve";
-            case PATH_BOTTOM_RIGHT -> "Bottom-Right Curve";
-            case GRASS -> "Grass";
-            case TOWER_EMPTY -> "Tower Slot";
-            case ARCHER_TOWER -> "Archer Tower";
-            case MAGE_TOWER -> "Mage Tower";
-            case ARTILLERY_TOWER -> "Artillery Tower";
-            case DECORATIVE -> "Tree";
-        };
+        switch (type) {
+            case PATH_HORIZONTAL: return "Horizontal Path";
+            case PATH_VERTICAL: return "Vertical Path";
+            case PATH_TOP_LEFT: return "Top-Left Curve";
+            case PATH_TOP_RIGHT: return "Top-Right Curve";
+            case PATH_BOTTOM_LEFT: return "Bottom-Left Curve";
+            case PATH_BOTTOM_RIGHT: return "Bottom-Right Curve";
+            case GRASS: return "Grass";
+            case TOWER_EMPTY: return "Tower Slot";
+            case ARCHER_TOWER: return "Archer Tower";
+            case MAGE_TOWER: return "Mage Tower";
+            case ARTILLERY_TOWER: return "Artillery Tower";
+            case DECORATIVE: return "Tree";
+            default: return "Unknown";
+        }
     }
 
     private void handleTilePlacement(MouseEvent e) {
