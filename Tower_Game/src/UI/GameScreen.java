@@ -848,7 +848,10 @@ public class GameScreen extends Pane {
     }
 
     getChildren().addAll(pause, speedButton, optionsButton, createPause, optionsOverlay);
-
+    optionsButton.toFront(); 
+    pause.toFront();
+    speedButton.toFront();
+    
     pause.setOnAction(e -> {
         isPaused = !isPaused;
         createPause.setVisible(isPaused);
