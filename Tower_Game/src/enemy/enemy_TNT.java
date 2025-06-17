@@ -13,7 +13,7 @@ public class enemy_TNT extends Enemy {
 
     public enemy_TNT(List<Point> path,double speed) {
     	
-        super(path, 235, speed, 50); //drop 50 gold 
+        super(path, 50, speed, 50); //drop 50 gold 
 
         for (int i = 0; i < 6; i++) {
         	

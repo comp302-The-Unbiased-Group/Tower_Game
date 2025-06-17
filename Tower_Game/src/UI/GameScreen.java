@@ -272,12 +272,15 @@ public class GameScreen extends Pane {
         }
         manage_game.set_go_Listener(() -> {
             Platform.runLater(() -> {
-                GameOverScreen GameOverNow = new GameOverScreen(stage);
-                Scene GAME_OVER = GameOverNow.newScene();
-                stage.setScene(GAME_OVER);
+            	 GameOverScreen GameOverNow = new GameOverScreen(stage);
+                 Scene GAME_OVER = GameOverNow.newScene();
+                 stage.setScene(GAME_OVER);
+                 stage.setFullScreen(true);    
+                 stage.toFront();
+                 stage.requestFocus();
             });
         });
-
+      
         manage_game.set_gs_handler(enemy_total -> {
             Platform.runLater(() -> {
                 EndGameStats winScreen = new EndGameStats(stage, enemy_total);

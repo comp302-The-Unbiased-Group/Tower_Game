@@ -15,7 +15,7 @@ public class tower_ArtilleryUp extends tower_Artillery {
    
 
     public tower_ArtilleryUp(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.4 * tileWidth), 100, 18, 1, gameScreen);  //20% larger range and 20% more damage
+    	super(x, y, Tower.calculateRange((int)(3.6 * tileWidth)), 100, 24, 0.6, gameScreen);  //20% larger range and 20% more damage
         
     }
     

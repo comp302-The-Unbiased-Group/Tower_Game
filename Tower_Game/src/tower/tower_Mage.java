@@ -12,8 +12,12 @@ public class tower_Mage extends Tower {
 	
 	private long last_hit_time = 0;
 	
+	public tower_Mage(int x, int y, int range, int cost, int damage, double fire_rate, GameScreen gameScreen) {
+        super(x, y, range, cost, damage, fire_rate, gameScreen);
+    }
+	
     public tower_Mage(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), 50, 25, 1, gameScreen);
+    	super(x, y, Tower.calculateRange((int)(2.5 * tileWidth)), 50, 10, 0.9, gameScreen);
     }
 
     

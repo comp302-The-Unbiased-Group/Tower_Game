@@ -20,7 +20,7 @@ public class Enemy_Healer extends Enemy {
 
     public Enemy_Healer(List<Point> path,double speed) {
 
-        super(path, 75, speed, 50); 
+        super(path, 45, speed, 50); 
 
         for (int i = 0; i < 6; i++) {
 

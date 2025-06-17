@@ -107,8 +107,8 @@ public class Manage_game {
                 player.reduce_life();
                 enemy_iterator.remove();
 
-                if (player.get_lives() <= 0 && gameOverListener != null) {
-                   
+                if (player.get_lives() <= 0 && gameOverListener != null && !game_ended) {
+                	 game_ended = true;
                     gameOverListener.onGameOver();
 
 
