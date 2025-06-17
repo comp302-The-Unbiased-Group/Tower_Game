@@ -1,5 +1,5 @@
 package UI;
-import Meat.Meat_Drop;
+import Gold.Meat_Drop;
 import enemy.*;
 import game.Map;
 import game.Manage_game;
@@ -209,6 +209,9 @@ public class GameScreen extends Pane {
         
         map.set_tile(11, 5, new BuildableTile(11, 5));
         map.set_tile(12, 5, new BuildableTile(12, 5));
+        
+        map.set_tile(5, 8, new BuildableTile(5, 8));
+        map.set_tile(5, 9, new BuildableTile(5, 9));
         
         map.set_tile(8, 6, new DecorativeTile(8,6,"mushroom"));
         map.set_tile(13, 10, new DecorativeTile(13,10,"gold_mine"));

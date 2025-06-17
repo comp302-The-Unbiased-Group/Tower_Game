@@ -53,6 +53,7 @@ public class Manage_game {
     }
 
     public void startGame(Map map, int gold,int lives) {
+    	 
     	 this.map = map;
          initialize_player(gold, lives);
          wave_manager.setupWaves(map.get_path());
@@ -95,7 +96,7 @@ public class Manage_game {
                 if (current_enemy instanceof Barrel_Enemy && meatDropHandler != null) {
                     meatDropHandler.droping_meat(1,enemyX,enemyY);
                 }
-                if (Math.random() < 0.20 && goldDropHandler != null) {
+                if (Math.random() < 0.15 && goldDropHandler != null) {
 
                     int max = 25;
                     int goldAmount = 2 + (int)(Math.random() * (max));
@@ -134,5 +135,8 @@ public class Manage_game {
  public void addTower(Tower tower) {
      towers.add(tower);
  }
+ 
+ 
+
 
 }

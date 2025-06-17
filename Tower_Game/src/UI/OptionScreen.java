@@ -65,7 +65,7 @@ public class OptionScreen {
         // settings
         createOption(content, "Tower Range", Arrays.asList("Short", "Normal", "Long"));
         createOption(content, "Movement Speed", Arrays.asList("Low", "Normal", "Fast"));
-        createOption(content, "Wave Count", Arrays.asList("5", "8", "11"));
+        createOption(content, "Wave Count", Arrays.asList("2", "5", "8", "11"));
         createOption(content, "Delay between waves", Arrays.asList("No Delay", "Normal(4s)", "Long(10s)"));
         createOption(content, "Player Hit Point", Arrays.asList("10", "25", "50"));
         createOption(content, "Player Hit Damage", Arrays.asList("1", "2", "3"));
