@@ -1,15 +1,16 @@
 package UI;
-import application.*;
-import enemy.Enemy;
+import Gold.Meat_Drop;
+import enemy.*;
 import game.Map;
 import game.Manage_game;
-import tile.Tile;
+import tile.*;
 import tower.*;
-import tile.BuildableTile;
-import tile.DecorativeTile;
-import tile.PathTile;
+
+
 import enemy.enemy_Goblin;
 import enemy.enemy_Knight;
+import enemy.enemy_TNT;
+
 import utils.OptionsHandler;
 import game.TrackEnemyWave;
 
@@ -26,23 +27,27 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.awt.geom.Point2D;
 
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -54,6 +59,8 @@ import javafx.scene.Group;
 
 import Gold.Gold_Drop;
 
+import static tile.PathTile.PathType.*;
+
 public class GameScreen extends Pane {
  
        
@@ -63,6 +70,9 @@ public class GameScreen extends Pane {
     private double tileHeight;
     private double screenWidth;
     private double screenHeight;
+
+    
+   
 
     // core components of the game
     private Manage_game manage_game;
@@ -76,9 +86,15 @@ public class GameScreen extends Pane {
     private Map map;
     private Canvas canvas;
     private List<projectile> projectiles = new ArrayList<>();
+
     private List<Gold_Drop> goldDropList = new ArrayList<>();
+    private List<Meat_Drop> meatDropList = new ArrayList<>();
+
     private Group towerMenu;
     private BuildableTile hoveredTile;
+    private Tower hoveredTower = null;
+    private StackPane optionsOverlay;
+
     
     public void addProjectile(projectile p) {
         projectiles.add(p);
@@ -104,9 +120,9 @@ public class GameScreen extends Pane {
     // for special effects on enemies
     Image thunderIcon;
     Image snowIcon;
+    Image healIcon;
 
-    public GameScreen(Stage stage) {
-
+    public GameScreen(Stage stage, File file) {
         // set size of game screen and create canvas
     	Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     	this.screenWidth = screenBounds.getWidth();
@@ -124,6 +140,9 @@ public class GameScreen extends Pane {
         towers = new ArrayList<>();
 
         map = new Map(TILE_COLS, TILE_ROWS);
+        
+        if (file == null) {
+            // Default map setup for new game
        
         // horizontal: from (0,7) to (3,7)
         for (int x = 0; x <= 3; x++) {
@@ -132,7 +151,7 @@ public class GameScreen extends Pane {
         }
 
         //corner: (4,7) turning down
-        map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_BOTTOMLEFT));
+        map.set_tile(4, 7, new PathTile(4, 7, PathTile.PathType.CORNER_TOPRIGHT));
         map.add_path_point(new Point((int)(4 * tileWidth), (int)(7 * tileHeight)));
 
         // vertical: from (4,8) to (4,11)
@@ -141,7 +160,7 @@ public class GameScreen extends Pane {
         	map.add_path_point(new Point((int)(4 * tileWidth), (int)(y * tileHeight)));
         }
         // corner: (4,12) turning right
-        map.set_tile(4, 12, new PathTile(4, 12, PathTile.PathType.CORNER_TOPRIGHT));
+        map.set_tile(4, 12, new PathTile(4, 12, PathTile.PathType.CORNER_BOTTOMLEFT));
         map.add_path_point(new Point((int)(4 * tileWidth), (int)(12 * tileHeight)));
 
         // horizontal: from (5,12) to (8,12)
@@ -151,7 +170,7 @@ public class GameScreen extends Pane {
         }
 
         // corner: (9,12) turning up
-        map.set_tile(9, 12, new PathTile(9, 12, PathTile.PathType.CORNER_TOPLEFT));
+        map.set_tile(9, 12, new PathTile(9, 12, PathTile.PathType.CORNER_BOTTOMRIGHT));
         map.add_path_point(new Point((int)(9 * tileWidth), (int)(12 * tileHeight)));
 
        // vertical: (9,11) and (9,7)
@@ -161,7 +180,7 @@ public class GameScreen extends Pane {
         }
 
         // corner: (9,6) turning right
-        map.set_tile(9, 6, new PathTile(9, 6, PathTile.PathType.CORNER_BOTTOMRIGHT));
+        map.set_tile(9, 6, new PathTile(9, 6, PathTile.PathType.CORNER_TOPLEFT));
         map.add_path_point(new Point((int)(9 * tileWidth), (int)(6 * tileHeight)));
 
         // horizontal: from (10,6) to (14,6)
@@ -170,7 +189,7 @@ public class GameScreen extends Pane {
             map.add_path_point(new Point((int)(x * tileWidth), (int)(6 * tileHeight)));
         }
         //corner: (15,6)
-        map.set_tile(15, 6, new PathTile(15, 6, PathTile.PathType.CORNER_TOPLEFT));
+        map.set_tile(15, 6, new PathTile(15, 6, PathTile.PathType.CORNER_BOTTOMRIGHT));
         map.add_path_point(new Point((int)(15 * tileWidth), (int)(6 * tileHeight)));
         
      // vertical: (15,5) and (15,0)
@@ -191,13 +210,16 @@ public class GameScreen extends Pane {
         map.set_tile(11, 5, new BuildableTile(11, 5));
         map.set_tile(12, 5, new BuildableTile(12, 5));
         
+        map.set_tile(5, 8, new BuildableTile(5, 8));
+        map.set_tile(5, 9, new BuildableTile(5, 9));
+        
         map.set_tile(8, 6, new DecorativeTile(8,6,"mushroom"));
         map.set_tile(13, 10, new DecorativeTile(13,10,"gold_mine"));
         map.set_tile(12, 13, new DecorativeTile(12,13,"gold_mine"));
         map.set_tile(3, 4, new DecorativeTile(3,4,"castle"));
         map.set_tile(4, 4, new DecorativeTile(4,4,"tree"));
-        map.set_tile(7, 3, new DecorativeTile(4,4,"tree"));
-        map.set_tile(8, 3, new DecorativeTile(4,4,"tree"));
+        map.set_tile(7, 3, new DecorativeTile(7,3,"tree"));
+        map.set_tile(8, 3, new DecorativeTile(8,3,"tree"));
         map.set_tile(14, 14, new DecorativeTile(14,14,"skelaton"));
         map.set_tile(5, 4, new DecorativeTile(5,4,"tree"));
         map.set_tile(13, 13, new DecorativeTile(13,13,"tree"));
@@ -207,37 +229,100 @@ public class GameScreen extends Pane {
         map.set_tile(18, 12, new DecorativeTile(18,12,"skelaton"));
         map.set_tile(19, 12, new DecorativeTile(19,12,"skelaton"));
         
+        }
+        
+        else {
+            // Load map from file
+            try {
+                loadFromFile(file.getAbsolutePath(), map);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+        
         // start game logic
         manage_game = new Manage_game();
 
         manage_game.startGame(map,OptionsHandler.getInstance().getStartGold(), OptionsHandler.getInstance().getPlayerHP());
+        
+     // Load towers if file was provided
+        if (file != null) {
+            for (Map.TowerPlacement spawn : map.getTowerPlacements()) {
 
+
+            	Tower tower;
+            	switch (spawn.type) {
+            	    case "ARCHER_TOWER":
+            	        tower = new tower_Archer(spawn.x * (int) tileWidth, spawn.y * (int) tileHeight, (int) tileWidth, this);
+            	        break;
+            	    case "MAGE_TOWER":
+            	        tower = new tower_Mage(spawn.x * (int) tileWidth, spawn.y * (int) tileHeight, (int) tileWidth, this);
+            	        break;
+            	    case "ARTILLERY_TOWER":
+            	        tower = new tower_Artillery(spawn.x * (int) tileWidth, spawn.y * (int) tileHeight, (int) tileWidth, this);
+            	        break;
+            	    default:
+            	        tower = null;
+            	        break;
+            	}
+
+                if (tower != null) {
+                    manage_game.addTower(tower);
+                    towers.add(tower);
+                }
+            }
+        }
         manage_game.set_go_Listener(() -> {
             Platform.runLater(() -> {
-                GameOverScreen GameOverNow = new GameOverScreen(stage);
-                Scene GAME_OVER = GameOverNow.newScene();
-                stage.setScene(GAME_OVER);
+            	 GameOverScreen GameOverNow = new GameOverScreen(stage);
+                 Scene GAME_OVER = GameOverNow.newScene();
+                 stage.setScene(GAME_OVER);
+                 stage.setFullScreen(true);    
+                 stage.toFront();
+                 stage.requestFocus();
+            });
+        });
+      
+        manage_game.set_gs_handler(enemy_total -> {
+            Platform.runLater(() -> {
+                EndGameStats winScreen = new EndGameStats(stage, enemy_total);
+                stage.setScene(winScreen.newScene());
+                stage.setFullScreen(true);
+                stage.toFront();
+                stage.requestFocus();
             });
         });
 
-        manage_game.set_gs_handler(enemy_total -> {
-            Platform.runLater(() -> {
-                EndGameStats WinScreen = new EndGameStats(stage, enemy_total);
-                stage.setScene(WinScreen.newScene());
-            });
-        });
 
         manage_game.set_gold_handler((amount, x, y) -> {
 
             Gold_Drop drop = new Gold_Drop(amount, x, y,this, manage_game.getPlayer());
-            goldDropList.add(drop); // if you're tracking them
+            goldDropList.add(drop);
         });
+
+        manage_game.set_meat_handler((amount, x, y) -> {
+
+            Meat_Drop mdrop = new Meat_Drop(amount, x, y,this, manage_game.getPlayer());
+            meatDropList.add(mdrop);
+        });
+
+
         enemies = manage_game.enemies;
         
         // mouse clicking for placing towers
         canvas.addEventHandler(MouseEvent.MOUSE_MOVED, e -> {
         	int x = (int)(e.getX() / tileWidth);
             int y = (int)(e.getY() / tileHeight);
+            
+            Tower hover = towers.stream()
+                    .filter(t -> (int)(t.getX() / tileWidth) == x && (int)(t.getY() / tileHeight) == y)
+                    .findFirst().orElse(null);
+
+                if (hoveredTower != hover) {
+                    hoveredTower = hover;
+                    draw();
+                }
 
             Tile tile = map.get_tile(x, y);
             
@@ -253,10 +338,11 @@ public class GameScreen extends Pane {
                 // check if tower is already placed at that tile
             	boolean taken = towers.stream().anyMatch(t -> t.getX() == x && t.getY() == y);
                 // if tile is free and player has enough gold place a tower
-                if (!taken && manage_game.player.can_afford(50)) {
-                	
-                	showTower(x, y);
-                }
+            	
+            	if (!taken) {
+            	    showTower(x, y);
+            	}
+
             }
               
         });
@@ -300,6 +386,130 @@ public class GameScreen extends Pane {
          
          
      }
+    
+    public void loadFromFile(String path, game.Map map) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get(path));
+
+        if (lines.size() < 3) throw new IOException("Invalid map file");
+
+        String[] startParts = lines.get(0).replace("START:", "").trim().split(",");
+        String[] endParts = lines.get(1).replace("END:", "").trim().split(",");
+
+        Point start = new Point(Integer.parseInt(startParts[0]), Integer.parseInt(startParts[1]));
+        Point end = new Point(Integer.parseInt(endParts[0]), Integer.parseInt(endParts[1]));
+        map.set_start_point(start);
+        map.set_end_point(end);
+
+        // Step 1: Build tile grid
+        boolean[][] isPath = new boolean[TILE_COLS][TILE_ROWS];
+
+        for (int y = 0; y < TILE_ROWS; y++) {
+            String[] tokens = lines.get(y + 2).split(" ");
+            for (int x = 0; x < TILE_COLS && x < tokens.length; x++) {
+                String token = tokens[x].trim();
+
+                switch (token) {
+                case "PATH_HORIZONTAL":
+                    map.set_tile(x, y, new PathTile(x, y, HORIZONTAL));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_VERTICAL":
+                    map.set_tile(x, y, new PathTile(x, y, VERTICAL));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_TOP_LEFT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_TOPLEFT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_TOP_RIGHT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_TOPRIGHT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_BOTTOM_LEFT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMLEFT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "PATH_BOTTOM_RIGHT":
+                    map.set_tile(x, y, new PathTile(x, y, CORNER_BOTTOMRIGHT));
+                    isPath[x][y] = true;
+                    break;
+
+                case "ARCHER_TOWER":
+                case "MAGE_TOWER":
+                case "ARTILLERY_TOWER":
+                    map.getTowerPlacements().add(new Map.TowerPlacement(x, y, token));
+                    break;
+
+                case "TOWER_EMPTY":
+                    map.set_tile(x, y, new BuildableTile(x, y));
+                    break;
+
+                case "DECORATIVE":
+                    map.set_tile(x, y, new DecorativeTile(x, y, "tree"));
+                    break;
+
+                default:
+                    map.set_tile(x, y, new DecorativeTile(x, y, "grass"));
+                    break;
+                }
+            }
+        }
+
+        // Step 2: Rebuild path from start to end using BFS
+        Queue<Point> queue = new LinkedList<>();
+        Set<Point> visited = new HashSet<>();
+        java.util.Map<Point, Point> parent = new HashMap<>();
+
+        queue.add(start);
+        visited.add(start);
+
+        while (!queue.isEmpty()) {
+            Point curr = queue.poll();
+            if (curr.equals(end)) break;
+
+            int[][] dirs = {{0,1},{1,0},{0,-1},{-1,0}};
+            for (int[] d : dirs) {
+                int nx = curr.x + d[0];
+                int ny = curr.y + d[1];
+                if (nx >= 0 && ny >= 0 && nx < TILE_COLS && ny < TILE_ROWS && isPath[nx][ny]) {
+                    Point np = new Point(nx, ny);
+                    if (!visited.contains(np)) {
+                        visited.add(np);
+                        parent.put(np, curr);
+                        queue.add(np);
+                    }
+                }
+            }
+        }
+
+        // Step 3: Backtrack path from end to start
+        List<Point> pathTiles = new ArrayList<>();
+        Point p = end;
+        while (p != null && parent.containsKey(p)) {
+            pathTiles.add(p);
+            p = parent.get(p);
+        }
+        pathTiles.add(start);
+        Collections.reverse(pathTiles);
+
+        for (Point tile : pathTiles) {
+            int pixelX = (int)((tile.x ) * tileWidth);
+            int pixelY = (int)((tile.y ) * tileHeight);
+            map.add_path_point(new Point(pixelX, pixelY));
+        }
+
+        System.out.println("✔ Map loaded: Start=" + start + ", End=" + end + ", Path=" + map.get_path().size() + " points");
+    }
+
+    
+    	
+    
+    
     
     private void showTower(int x, int y) {
         if (towerMenu != null) {
@@ -358,36 +568,48 @@ public class GameScreen extends Pane {
             
             if (i == 0) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_0).png"));
+                int cost_tower = 50;
                 btn.setOnMouseClicked(event -> {
-                	towers.add(new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                    manage_game.player.add_gold(-50);
-                    draw();
-                    getChildren().remove(towerMenu);
-                    towerMenu = null;
-                    event.consume();
-                });
+                	if (manage_game.player.can_afford(cost_tower)) {
+                		Tower newTower = new tower_Archer(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+                		int cost = newTower.getCost();
+                		towers.add(newTower);
+                		manage_game.player.add_gold(-cost);
+                		draw();
+                		getChildren().remove(towerMenu);
+                		towerMenu = null;
+                		event.consume();
+                	} });
             } 
             else if (i == 1) {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_2).png"));
+                int cost_tower = 50;
                 btn.setOnMouseClicked(event -> {
-                	towers.add(new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                    manage_game.player.add_gold(-50);
-                    draw();
-                    getChildren().remove(towerMenu);
-                    towerMenu = null;
-                    event.consume();
-                });
+                	if (manage_game.player.can_afford(cost_tower)) {
+                		Tower newTower = new tower_Mage(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+                		int cost = newTower.getCost();
+                		towers.add(newTower);
+                    	manage_game.player.add_gold(-cost);
+                    	draw();
+                    	getChildren().remove(towerMenu);
+                    	towerMenu = null;
+                    	event.consume();
+                	}});
             } 
             else {
                 btn.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_3).png"));
+                int cost_tower = 50;
                 btn.setOnMouseClicked(event -> {
-                	towers.add(new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
-                    manage_game.player.add_gold(-50);
-                    draw();
-                    getChildren().remove(towerMenu);
-                    towerMenu = null;
-                    event.consume();
-                });
+                	if (manage_game.player.can_afford(cost_tower)) {
+                		Tower newTower = new tower_Artillery(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+                		int cost = newTower.getCost();
+                		towers.add(newTower);
+                		manage_game.player.add_gold(-cost);
+                		draw();
+                		getChildren().remove(towerMenu);
+                		towerMenu = null;
+                		event.consume();
+                	}});
             }
             
             towerMenu.getChildren().add(btn);
@@ -433,8 +655,10 @@ public class GameScreen extends Pane {
         if (existingTower instanceof tower_Archer) {
         	upgrade_button.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
         	upgrade_button.setOnMouseClicked(event -> {
+        		Tower upgraded = new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+        		int tower_cost = upgraded.getCost();
                 towers.remove(existingTower);
-                manage_game.player.add_gold(-75);
+                manage_game.player.add_gold(-tower_cost);
                 towers.add(new tower_ArcherUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                 closeTowerMenu();
             });
@@ -442,8 +666,10 @@ public class GameScreen extends Pane {
         else if (existingTower instanceof tower_Mage) {
         	upgrade_button.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
         	upgrade_button.setOnMouseClicked(event -> {
+        		Tower upgraded = new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+        		int tower_cost = upgraded.getCost();
                 towers.remove(existingTower);
-                manage_game.player.add_gold(-75);
+                manage_game.player.add_gold(-tower_cost);
                 towers.add(new tower_MageUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                 closeTowerMenu();
             });
@@ -451,8 +677,10 @@ public class GameScreen extends Pane {
         else if (existingTower instanceof tower_Artillery) {
         	upgrade_button.setImage(new Image("file:Tower_Game/UI_assets/buttons (2_1).png"));
         	upgrade_button.setOnMouseClicked(event -> {
+        		Tower upgraded = new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this);
+        		int tower_cost = upgraded.getCost();
                 towers.remove(existingTower);
-                manage_game.player.add_gold(-75);
+                manage_game.player.add_gold(-tower_cost);
                 towers.add(new tower_ArtilleryUp(x * (int)tileWidth, y * (int)tileHeight, (int)tileWidth, this));
                 closeTowerMenu();
             });
@@ -465,7 +693,7 @@ public class GameScreen extends Pane {
             closeTowerMenu();
         });
         
-        if (manage_game.player.get_gold() < 75) {
+        if (manage_game.player.get_gold() < 100) {
         	upgrade_button.setDisable(true);
         	upgrade_button.setOpacity(0.5);
         } else {
@@ -477,6 +705,7 @@ public class GameScreen extends Pane {
         getChildren().add(towerMenu);
     }
 
+
     private void closeTowerMenu() {
     	 if (towerMenu != null) {
     	        getChildren().remove(towerMenu);
@@ -485,145 +714,158 @@ public class GameScreen extends Pane {
     	    draw();
     	}
     
-    //PAUSE GAME STARTS
+  //PAUSE GAME STARTS
     private void pauseUI() {
-        getChildren().clear();
-        getChildren().add(canvas);
-        
-        HBox threeButtons = new HBox(10);
-        threeButtons.setAlignment(Pos.TOP_RIGHT);
-        threeButtons.setLayoutX(screenWidth - 160);
-        threeButtons.setLayoutY(10);
+    getChildren().clear();
+    getChildren().add(canvas);
 
-        if (pause == null) {
-            Image pauseImage = new Image("file:Tower_Game/UI_assets/pause_button.png");
-            pauseIcon = new ImageView(pauseImage);
-            Image resumeImage = new Image("file:Tower_Game/UI_assets/resume_button.png");
-            resumeIcon = new ImageView(resumeImage);
-            
-            pauseIcon.setFitWidth(30);
-            pauseIcon.setFitHeight(30);
-            resumeIcon.setFitWidth(30);
-            resumeIcon.setFitHeight(30);
-            
-            pause = new Button();
-            pause.setGraphic(pauseIcon);
-            pause.getStyleClass().add("pause-button");
-            pause.setPadding(Insets.EMPTY);
-        }
-        
-        if (speedButton == null) {
+    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    double screenWidth = screenBounds.getWidth();
+    double screenHeight = screenBounds.getHeight();
 
-            Image normal_speed = new Image("file:Tower_Game/UI_assets/speed.png");
-            Image fast = new Image("file:Tower_Game/UI_assets/resume_button.png");
+    if (pause == null) {
+        Image pauseImage = new Image("file:Tower_Game/UI_assets/pause_button.png");
+        pauseIcon = new ImageView(pauseImage);
+        Image resumeImage = new Image("file:Tower_Game/UI_assets/resume_button.png");
+        resumeIcon = new ImageView(resumeImage);
 
-            ImageView speedView = new ImageView(normal_speed);
-            speedView.setFitWidth(30);
-            speedView.setFitHeight(30);
+        pauseIcon.setFitWidth(30);
+        pauseIcon.setFitHeight(30);
+        resumeIcon.setFitWidth(30);
+        resumeIcon.setFitHeight(30);
 
-            speedButton = new Button();
-            speedButton.setGraphic(speedView);
-            speedButton.getStyleClass().add("speed-button");
-            speedButton.setPadding(Insets.EMPTY);
-            
-            speedButton.setOnAction(e -> {
+        pause = new Button();
+        pause.setGraphic(pauseIcon);
+        pause.getStyleClass().add("pause-button");
+        pause.setLayoutX(screenWidth - 100);
+        pause.setLayoutY(10);
+        pause.setPadding(Insets.EMPTY);
+        pause.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        pause.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+    }
 
-                if (speedMultiplier == OptionsHandler.getInstance().getspeedmultiplier()) {
+    if (speedButton == null) {
+        Image normalSpeed = new Image("file:Tower_Game/UI_assets/speed.png");
+        Image fastSpeed = new Image("file:Tower_Game/UI_assets/resume_button.png");
 
-                    speedMultiplier = speedMultiplier * 2.0;
-                    speedView.setImage(fast);
-                } else {
+        ImageView speedView = new ImageView(normalSpeed);
+        speedView.setFitWidth(30);
+        speedView.setFitHeight(30);
 
-                    speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
-                    speedView.setImage(normal_speed);
-                }
-            });
-        }
+        speedButton = new Button();
+        speedButton.setGraphic(speedView);
+        speedButton.getStyleClass().add("speed-button");
+        speedButton.setLayoutX(screenWidth - 150);
+        speedButton.setLayoutY(10);
+        speedButton.setPadding(Insets.EMPTY);
+        speedButton.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        speedButton.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
 
-        Image options = new Image("file:Tower_Game/UI_assets/options.png");
-        ImageView optionsView = new ImageView(options);
+        speedButton.setOnAction(e -> {
+            if (speedMultiplier == OptionsHandler.getInstance().getspeedmultiplier()) {
+                speedMultiplier *= 2.0;
+                speedView.setImage(fastSpeed);
+            } else {
+                speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
+                speedView.setImage(normalSpeed);
+            }
+        });
+    }
+
+    if (optionsOverlay == null) {
+        Rectangle dimBackground = new Rectangle(screenWidth, screenHeight);
+        dimBackground.setFill(Color.rgb(0, 0, 0, 0.6));
+
+        Button mainMenuButton = new Button("Main Menu");
+        String mainFont = "'Courier New'";
+        mainMenuButton.setFont(Font.font("Courier New", 30));
+        mainMenuButton.setTextFill(Color.WHITE);
+        mainMenuButton.setBackground(Background.EMPTY);
+        mainMenuButton.setBorder(Border.EMPTY);
+        mainMenuButton.setStyle("-fx-font-family: " + mainFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;");
+
+        mainMenuButton.setOnMouseEntered(e -> mainMenuButton.setStyle(
+                "-fx-font-family: " + mainFont + "; -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);"));
+        mainMenuButton.setOnMouseExited(e -> mainMenuButton.setStyle(
+                "-fx-font-family: " + mainFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;"));
+
+        mainMenuButton.setOnAction(e -> {
+            Stage currentStage = (Stage) mainMenuButton.getScene().getWindow();
+            MainMenu menu = new MainMenu(currentStage);
+            Scene menuScene = menu.newScene();
+            currentStage.setScene(menuScene);
+            currentStage.setFullScreen(true);
+            optionsOverlay.setVisible(false);
+        });
+
+        Button quitButton = new Button("Quit Game");
+        String quitFont = "'Courier New'";
+        quitButton.setFont(Font.font("Courier New", 30));
+        quitButton.setTextFill(Color.WHITE);
+        quitButton.setBackground(Background.EMPTY);
+        quitButton.setBorder(Border.EMPTY);
+        quitButton.setStyle("-fx-font-family: " + quitFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;");
+
+        quitButton.setOnMouseEntered(e -> quitButton.setStyle(
+                "-fx-font-family: " + quitFont + "; -fx-effect: dropshadow(gaussian, blue, 10, 0.5, 0, 0);"));
+        quitButton.setOnMouseExited(e -> quitButton.setStyle(
+                "-fx-font-family: " + quitFont + "; -fx-text-fill: white; -fx-font-size: 30px; -fx-background-color: transparent;"));
+
+        quitButton.setOnAction(e -> Platform.exit());
+
+        VBox buttonsBox = new VBox(15, mainMenuButton, quitButton);
+        buttonsBox.setAlignment(Pos.CENTER);
+
+        optionsOverlay = new StackPane(dimBackground, buttonsBox);
+        optionsOverlay.setVisible(false);
+    }
+
+    if (optionsButton == null) {
+        Image optionsImage = new Image("file:Tower_Game/UI_assets/options.png");
+        ImageView optionsView = new ImageView(optionsImage);
         optionsView.setFitWidth(30);
         optionsView.setFitHeight(30);
-        
+
         optionsButton = new Button();
         optionsButton.setGraphic(optionsView);
         optionsButton.getStyleClass().add("options-button");
+        optionsButton.setLayoutX(screenWidth - 50);
+        optionsButton.setLayoutY(10);
         optionsButton.setPadding(Insets.EMPTY);
-        
+        optionsButton.setMinSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+        optionsButton.setMaxSize(Button.USE_PREF_SIZE, Button.USE_PREF_SIZE);
+
         optionsButton.setOnAction(e -> {
-            isPaused = true;
-            pause.setGraphic(resumeIcon);
+        	boolean showing = !optionsOverlay.isVisible();
+            optionsOverlay.setVisible(showing);
             
-            Stage optionsStage = new Stage();
-            OptionScreen optionScreen = new OptionScreen();
-            Scene optionsScene = optionScreen.newScene(optionsStage);
-            
-            optionScreen.setSaveHandler(() -> {
-                optionsStage.close();
-                isPaused = false;
-                pause.setGraphic(pauseIcon);
-                speedMultiplier = OptionsHandler.getInstance().getspeedmultiplier();
-                if (speedMultiplier == OptionsHandler.getInstance().getspeedmultiplier()) {
-                    ((ImageView)speedButton.getGraphic()).setImage(
-                        new Image("file:Tower_Game/UI_assets/speed.png"));
-                }
-            });
-            
-            optionsStage.setScene(optionsScene);
-            optionsStage.initOwner(getScene().getWindow());
-            optionsStage.showAndWait();
+            isPaused = showing;
+            createPause.setVisible(showing);
+            pause.setGraphic(showing ? resumeIcon : pauseIcon);
         });
-        
-        threeButtons.getChildren().addAll(speedButton, pause, optionsButton );
-        
-        if (createPause == null) {
-            Rectangle overlay = new Rectangle(screenWidth, screenHeight, Color.rgb(0, 0, 0, 0.5));
-            overlay.setMouseTransparent(true);
+    }
 
-            VBox pauseMenuButtons = new VBox(20);
-            pauseMenuButtons.setAlignment(Pos.CENTER);
-            pauseMenuButtons.setLayoutX(screenWidth / 2 - 100);
-            pauseMenuButtons.setLayoutY(screenHeight / 2 - 50);
-            
-            Button mainMenuButton = new Button("Main Menu");
-            mainMenuButton.getStyleClass().add("pause-menu-button");
-            mainMenuButton.setOnAction(e -> {
-                Stage currentStage = (Stage) getScene().getWindow();
-                MainMenu mainMenu = new MainMenu(currentStage);
-                Scene mainMenuScene = mainMenu.newScene();
-                currentStage.setScene(mainMenuScene);
-                currentStage.setFullScreen(false);
-            });
-            
-            Button quitButton = new Button("Quit Game");
-            quitButton.getStyleClass().add("pause-menu-button");
-            quitButton.setOnAction(e -> {
-                Platform.exit();
-            });
-            
-            pauseMenuButtons.getChildren().addAll(mainMenuButton, quitButton);
-            
-            StackPane overlayContainer = new StackPane();
-            overlayContainer.getChildren().addAll(overlay, pauseMenuButtons);
-            overlayContainer.setVisible(false);
-            
-            createPause = overlayContainer;
-            createPause.getStyleClass().add("pause-overlay");  
-        }
+    if (createPause == null) {
+        Rectangle overlay = new Rectangle(screenWidth, screenHeight, Color.rgb(0, 0, 0, 0.5));
+        createPause = new StackPane(overlay);
+        createPause.setVisible(false);
+        createPause.getStyleClass().add("pause-overlay");
+        createPause.setMouseTransparent(true);
+    }
 
-        getChildren().addAll(createPause, threeButtons);
-        
-        pause.setOnAction(new EventHandler <ActionEvent>() {
-        	public void handle(ActionEvent arg0) {
-        		 isPaused = !isPaused;
-        	     createPause.setVisible(isPaused);
-        	     pause.setGraphic(isPaused ? resumeIcon : pauseIcon);
-        	}
-
-        });
-    } // PAUSE GAME ENDS
+    getChildren().addAll(pause, speedButton, optionsButton, createPause, optionsOverlay);
+    optionsButton.toFront(); 
+    pause.toFront();
+    speedButton.toFront();
     
-    
+    pause.setOnAction(e -> {
+        isPaused = !isPaused;
+        createPause.setVisible(isPaused);
+        pause.setGraphic(isPaused ? resumeIcon : pauseIcon);
+    });
+}
+ // PAUSE GAME ENDS
+        
     //GOLD LIFE SHIELD UI STARTS
     private void gold_life_shieldUI() {
     	Image coin = new Image("file:Tower_Game/UI_assets/coin.png");
@@ -647,7 +889,6 @@ public class GameScreen extends Pane {
         goldText = new Text("0");
         livesText = new Text("0");
         WaveCounterText = new Text("0");
-//        shieldsText = new Text(); will need after we write the shield thing
         
         goldText.setFill(Color.WHITE);
         livesText.setFill(Color.WHITE);
@@ -711,6 +952,7 @@ public class GameScreen extends Pane {
         GraphicsContext g = canvas.getGraphicsContext2D();
         g.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         
+        
       
 
      // drawing each tile on grid
@@ -748,9 +990,7 @@ public class GameScreen extends Pane {
                     }
                 }
 
-                // Draw tile border for all tiles
-                g.setStroke(Color.BLACK);
-                g.strokeRect(px, py, tileWidth, tileHeight);
+             
             }
         }
 
@@ -794,6 +1034,28 @@ public class GameScreen extends Pane {
 
                 g.drawImage(knight.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
             }
+            
+            if (enemy instanceof enemy_TNT) {
+                enemy_TNT tnt = (enemy_TNT) enemy;
+                tnt.updateAnimation(System.nanoTime());
+
+                g.drawImage(tnt.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+            if (enemy instanceof Enemy_Healer) {
+                Enemy_Healer heal = (Enemy_Healer) enemy;
+                heal.updateAnimation(System.nanoTime());
+
+                g.drawImage(heal.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+
+            if (enemy instanceof Barrel_Enemy) {
+
+                Barrel_Enemy barrel = (Barrel_Enemy) enemy;
+                barrel.updateAnimation(System.nanoTime());
+
+                g.drawImage(barrel.getCurrentImage(), enemy_x - tileWidth * 0.25, enemy_y - tileHeight * 0.25, tileWidth * 1.5, tileHeight * 1.5);
+            }
+
 
             // thunder icon
             if (enemy instanceof enemy_Knight && ((enemy_Knight) enemy).hasSynergy()) {
@@ -805,6 +1067,16 @@ public class GameScreen extends Pane {
                 g.drawImage(thunderIcon, enemy_x+ tileWidth/2.8, enemy_y - offsetY, thunderwidth, thunderheight);
 
             }
+            if (enemy instanceof Enemy_Healer && ((Enemy_Healer) enemy).isHealing_on()) {
+
+                healIcon = new Image("file:Tower_Game/Enemy_effects/health_icon.png");
+                double offsetY = tileHeight * 0.5;
+                double healwidth = tileWidth / 2.8;
+                double healheight = tileHeight / 2.8;
+                g.drawImage(healIcon, enemy_x+ tileWidth/2.8, enemy_y - offsetY, healwidth, healheight);
+
+            }
+
 
             // health bar
             int bar_width = (int)(tileWidth / 2);
@@ -816,15 +1088,20 @@ public class GameScreen extends Pane {
             double barX = enemy_x + (tileWidth - bar_width) / 2.5;
             double barY = enemy_y + tileHeight + 1.8;
 
+            g.setGlobalAlpha(1.0); 
             g.setFill(Color.GRAY);
             g.fillRect(barX, barY, bar_width, bar_height);
+
             g.setFill(Color.RED);
             g.fillRect(barX, barY, filled, bar_height);
+
             g.setStroke(Color.WHITE);
+            g.setLineWidth(1.0);
             g.strokeRect(barX, barY, bar_width, bar_height);
+
             
-            if (enemy instanceof enemy_Knight && enemy.isSlowed()) {
-                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snowflake2.png");
+            if  (enemy.isSlowed()) {
+                Image snowflake = new Image("file:Tower_Game/Enemy_effects/snow flake icon.png");
                 g.drawImage(snowflake, barX + bar_width + 3, barY - 9, 22, 22);
             }
         }
@@ -838,6 +1115,22 @@ public class GameScreen extends Pane {
 
             drop.update_goldAnimation(now,this);
 
+        }
+
+        for(Meat_Drop drop : meatDropList) {
+            drop.update_meatAnimation(now,this);
+        }
+        
+        if (hoveredTower != null) {
+            double centerX = hoveredTower.getX() + tileWidth / 2.0;
+            double centerY = hoveredTower.getY() + tileHeight / 2.0;
+            double rangeRadius = hoveredTower.getRange();
+            g.setGlobalAlpha(0.3); 
+            g.setStroke(Color.DEEPPINK);
+            g.setLineWidth(3);
+            g.strokeOval(centerX - rangeRadius, centerY - rangeRadius, rangeRadius * 2, rangeRadius * 2);
+            g.setGlobalAlpha(1.0);
+   
         }
     }
 }

@@ -1,10 +1,13 @@
 package game;
+import enemy.Barrel_Enemy;
 import enemy.Enemy;
+import enemy.Enemy_Healer;
 import enemy.enemy_Knight;
 import tower.Tower;
 import UI.GameOverListener;
 import utils.EndGameStatsHandler;
 import utils.GoldDropHandler;
+import utils.MeatDropHandler;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,12 +21,15 @@ public class Manage_game {
     private TrackEnemyWave wave_manager = new TrackEnemyWave();
     private int enemies_killed = 0;
     private int maxlives = 0;
+    private boolean game_ended = false;
+
 
 
     // listener interfaces
     private GameOverListener gameOverListener;
     private EndGameStatsHandler endGameStatsHandler;
     private GoldDropHandler goldDropHandler;
+    private MeatDropHandler meatDropHandler;
 
     public void set_go_Listener(GameOverListener listener) {
         this.gameOverListener = listener;
@@ -33,18 +39,25 @@ public class Manage_game {
         this.goldDropHandler = goldhandler;
     }
 
+    public void set_meat_handler(MeatDropHandler meathandler) {
+        this.meatDropHandler = meathandler;
+    }
+
     public void set_gs_handler(EndGameStatsHandler handler) {
         this.endGameStatsHandler = handler;
     }
+
+
     public void initialize_player(int initialGold, int initialLives) {
         player = new Player(initialGold, initialLives);
     }
 
     public void startGame(Map map, int gold,int lives) {
-        this.map = map;
-        initialize_player(gold, lives);
-        wave_manager.setupWaves(map.get_path());
-        this.maxlives = lives;
+    	 
+    	 this.map = map;
+         initialize_player(gold, lives);
+         wave_manager.setupWaves(map.get_path());
+         this.maxlives = lives;
     }
 
     public void updateGame(double speedMultiplier, double tileSize) {
@@ -55,9 +68,13 @@ public class Manage_game {
         for (Enemy enemy : enemies) {
             if (enemy instanceof enemy_Knight) {
                 ((enemy_Knight) enemy).move(speedMultiplier, enemies, tileSize);
-            } else {
-                enemy.move(speedMultiplier);
             }
+
+            else if (enemy instanceof Enemy_Healer) {
+                ((Enemy_Healer) enemy).movehealer(speedMultiplier,enemies,tileSize);
+            }
+            else {
+                enemy.move(speedMultiplier);}
         }
 
         for (Tower tower : towers) {
@@ -76,9 +93,12 @@ public class Manage_game {
                 player.add_gold(current_enemy.getGoldValue());
                 enemies_killed++;
 
-                if (Math.random() < 0.96 && goldDropHandler != null) {
+                if (current_enemy instanceof Barrel_Enemy && meatDropHandler != null) {
+                    meatDropHandler.droping_meat(1,enemyX,enemyY);
+                }
+                if (Math.random() < 0.15 && goldDropHandler != null) {
 
-                    int max = 30; // half of level 1 archer tower
+                    int max = 25;
                     int goldAmount = 2 + (int)(Math.random() * (max));
 
                     goldDropHandler.droping_gold(goldAmount, enemyX, enemyY);
@@ -88,17 +108,22 @@ public class Manage_game {
                 player.reduce_life();
                 enemy_iterator.remove();
 
-                if (player.get_lives() <= 0 && gameOverListener != null) {
+                if (player.get_lives() <= 0 && gameOverListener != null && !game_ended) {
+                	 game_ended = true;
                     gameOverListener.onGameOver();
+
+
                     return;
                 }
             }
 
         }
 
-        if (wave_manager.check_if_last_wave() && player.get_lives() > 0 && endGameStatsHandler != null) {
-            endGameStatsHandler.onVictory(enemies_killed);
-        }
+        if (!game_ended && wave_manager.check_if_last_wave() && enemies.isEmpty() && player.get_lives() > 0 && endGameStatsHandler != null) {
+        		game_ended = true;
+        	    endGameStatsHandler.onVictory(enemies_killed);
+        	}
+
     }
 
  public int get_maxlives(){
@@ -107,5 +132,11 @@ public class Manage_game {
  public Player getPlayer(){
         return player;
  }
+ public void addTower(Tower tower) {
+     towers.add(tower);
+ }
+ 
+ 
+
 
 }

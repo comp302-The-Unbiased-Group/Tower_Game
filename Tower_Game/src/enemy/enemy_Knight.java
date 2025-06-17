@@ -19,15 +19,15 @@ public class enemy_Knight extends Enemy {
     private boolean synergy_on;
     
 
-    public enemy_Knight(List<Point> path) {
-        super(path, 60, 2.5, 10);
+    public enemy_Knight(List<Point> path,double speed) {
+        super(path, 70, speed, 10);
 
 
         for (int i = 0; i < 6; i++) {
             frames[i] = new Image("file:Tower_Game/Enemies/knight_" + i + ".png");
         }
-        this.base_speed = OptionsHandler.getInstance().getbaseknight_speed_multiplier();
-        this.synergyboost = (OptionsHandler.getInstance().getbasegoblin_speed_multiplier() + OptionsHandler.getInstance().getbaseknight_speed_multiplier()) / 2.0;
+        this.base_speed = OptionsHandler.getInstance().getKnightSpeed();
+        this.synergyboost = (OptionsHandler.getInstance().getGoblinSpeed() + OptionsHandler.getInstance().getKnightSpeed()) / 2.0;
         this.synergy_on = false;
     }
 

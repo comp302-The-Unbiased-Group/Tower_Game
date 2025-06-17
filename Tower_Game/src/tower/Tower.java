@@ -6,6 +6,7 @@ import java.util.List;
 
 import UI.GameScreen;
 import javafx.scene.image.Image;
+import utils.OptionsHandler;
 
 public abstract class Tower {
     public int x, y;
@@ -13,11 +14,11 @@ public abstract class Tower {
     protected int cost;
     protected int damage;
     protected double fire_rate;
-    protected GameScreen gameScreen;
+	protected GameScreen gameScreen;
     
     
 
-    public Tower(int x, int y, int range, int cost, int damage, int fire_rate, GameScreen gameScreen) {
+    public Tower(int x, int y, int range, int cost, int damage, double fire_rate, GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.range = range;
@@ -61,10 +62,35 @@ public abstract class Tower {
     public int getDamage() { 
     	return damage; 
     	}
+    public double getFire_rate() {
+		return fire_rate;
+	}
 
+	public void setFire_rate(double fire_rate) {
+		this.fire_rate = fire_rate;
+	}
+	
+	
+	
+	 public void setRange(int range) {
+		 this.range = range;
+		 }
+	 
+	 public static int calculateRange(int baseRange) {
+		    String rangeOption = OptionsHandler.getInstance().getTowerRange();
+		    if (rangeOption == null) {
+		        return baseRange;
+		    }
 
-
-
+		    switch (rangeOption) {
+		        case "Short":
+		            return (int)(baseRange * 0.75);
+		        case "Long":
+		            return (int)(baseRange * 1.3);
+		        default:
+		            return baseRange;
+		    }
+		}
 }
 
 	

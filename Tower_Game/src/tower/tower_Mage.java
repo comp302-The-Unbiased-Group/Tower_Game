@@ -12,35 +12,48 @@ public class tower_Mage extends Tower {
 	
 	private long last_hit_time = 0;
 	
+	public tower_Mage(int x, int y, int range, int cost, int damage, double fire_rate, GameScreen gameScreen) {
+        super(x, y, range, cost, damage, fire_rate, gameScreen);
+    }
+	
     public tower_Mage(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, (int)(2.0 * tileWidth), 60, 2, 1, gameScreen);
+    	super(x, y, Tower.calculateRange((int)(2.5 * tileWidth)), 50, 10, 0.9, gameScreen);
     }
 
     
     @Override
     public void attack(List<Enemy> enemies) {
-    	
         long now = System.nanoTime();
+        if ((now - last_hit_time) < (1_000_000_000 / fire_rate)) 
+            return;
+
+        Enemy target = null;
+        int maxPathIndex = -1;
+        double maxSegmentProgress = -1;
+
         
-        if ((now - last_hit_time) < (1_000_000_000 / fire_rate)) return;
-
         for (Enemy enemy : enemies) {
-        	
             if (enemy.is_alive() && is_enemyInRange(enemy)) {
-            	
-                Point2D.Double start = new Point2D.Double(x + 32, y + 32);
-                Image img = new Image("file:Tower_Game/Effects/fireball1.png");
-                projectile p = new projectile(start, enemy, 14.0, 8, img, "mage", null,this);
-                gameScreen.addProjectile(p);
-                last_hit_time = now;
+                int pi = enemy.path_index;
+                double prog = enemy.getProgressOnCurrentSegment();
 
-                if (enemy.is_alive()){
-                   if(Math.random() < 0.33) {
-                    enemy.teleportback();
-                }}
-
-                break;
+                if (pi > maxPathIndex || (pi == maxPathIndex && prog > maxSegmentProgress)) {
+                    target = enemy;
+                    maxPathIndex = pi;
+                    maxSegmentProgress = prog;
+                }
             }
+        }
+
+        if (target != null) {
+            Point2D.Double start = new Point2D.Double(x + 32, y + 32);
+            Image img = new Image("file:Tower_Game/Effects/fireball1.png");
+            int projectile_damage = this.getDamage();
+            projectile p = new projectile(start, target, 14.0, projectile_damage, img, "mage", null, this);
+            gameScreen.addProjectile(p);
+            last_hit_time = now;
+
+            
         }
     }
     

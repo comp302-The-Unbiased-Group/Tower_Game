@@ -25,13 +25,13 @@ public class PathTile extends Tile {
             case VERTICAL:
                 return new Image("file:Tower_Game/Tiles/vertical_path.png");
             case CORNER_TOPLEFT:
-                return new Image("file:Tower_Game/Tiles/top_left.png");
-            case CORNER_TOPRIGHT:
-                return new Image("file:Tower_Game/Tiles/top_right.png");
-            case CORNER_BOTTOMLEFT:
-                return new Image("file:Tower_Game/Tiles/bottom_left.png");
-            case CORNER_BOTTOMRIGHT:
                 return new Image("file:Tower_Game/Tiles/bottom_right.png");
+            case CORNER_TOPRIGHT:
+                return new Image("file:Tower_Game/Tiles/bottom_left.png");
+            case CORNER_BOTTOMLEFT:
+                return new Image("file:Tower_Game/Tiles/top_right.png");
+            case CORNER_BOTTOMRIGHT:
+                return new Image("file:Tower_Game/Tiles/top_left.png");
             default:
                 return null;
         }

@@ -1,0 +1,125 @@
+
+package UI;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+public class MapSelectionWindow extends VBox {
+
+    public MapSelectionWindow(Stage stage, Consumer<File> callback) {
+        setSpacing(15);
+        setPadding(new Insets(30));
+        setAlignment(Pos.CENTER);
+        setStyle("-fx-background-color: linear-gradient(to bottom, #2c3e50, #3498db);");
+
+        Label title = new Label("Select a Map to Start");
+        title.setStyle("-fx-font-size: 26px; -fx-text-fill: white;");
+
+      
+        Button defaultMapButton = new Button("Play Default Map");
+        defaultMapButton.setPrefWidth(300);
+        defaultMapButton.setStyle(
+            "-fx-background-color: #27ae60;" +
+            "-fx-font-size: 18px;" +
+            "-fx-font-weight: bold;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-radius: 12;"
+        );
+        defaultMapButton.setOnAction(e -> {
+            callback.accept(null);
+        });
+
+       
+        File mapDir = new File("saved_maps");
+        File[] maps = mapDir.listFiles((dir, name) -> name.endsWith(".txt"));
+
+        TextField filterField = new TextField();
+        filterField.setPromptText("Filter maps by name...");
+
+        ListView<File> mapListView = new ListView<>();
+        mapListView.setPrefHeight(300);
+
+        if (maps != null && maps.length > 0) {
+            Arrays.sort(maps, Comparator.comparing(File::getName));
+            mapListView.getItems().addAll(maps);
+        }
+
+        mapListView.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(File file, boolean empty) {
+                super.updateItem(file, empty);
+                setText(empty || file == null ? null : file.getName());
+            }
+        });
+
+        filterField.textProperty().addListener((obs, oldText, newText) -> {
+            if (maps != null) {
+                mapListView.getItems().setAll(Arrays.stream(maps)
+                        .filter(f -> f.getName().toLowerCase().contains(newText.toLowerCase()))
+                        .collect(Collectors.toList()));
+            }
+        });
+
+        Button playButton = new Button("Start Game With Selected Map");
+        playButton.setPrefWidth(300);
+        playButton.setStyle("-fx-font-size: 16px;");
+        playButton.setOnAction(e -> {
+            File selected = mapListView.getSelectionModel().getSelectedItem();
+            if (selected != null) {
+                callback.accept(selected);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("No Map Selected");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select a map from the list or use 'Play Default Map'.");
+                alert.showAndWait();
+            }
+        });
+
+        Button backButton = new Button("Back to Menu");
+        backButton.setPrefWidth(200);
+        backButton.setStyle("-fx-font-size: 14px;");
+        backButton.setOnAction(e -> {
+            MainMenu mainMenu = new MainMenu(stage);
+            Scene menuScene = new Scene(mainMenu, stage.getWidth(), stage.getHeight());
+            stage.setScene(menuScene);
+            stage.setFullScreen(true);
+        });
+
+        HBox buttonBox = new HBox(20, playButton, backButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        
+        if (maps == null || maps.length == 0) {
+            Label noMaps = new Label("No saved maps found. You can still play the default map!");
+            noMaps.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+            getChildren().addAll(
+                title,
+                defaultMapButton,
+                noMaps,
+                backButton
+            );
+        } else {
+            getChildren().addAll(
+                title,
+                defaultMapButton,
+                filterField,
+                mapListView,
+                buttonBox
+            );
+        }
+    }
+}
+

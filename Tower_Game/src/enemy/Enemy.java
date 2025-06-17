@@ -13,11 +13,12 @@ public abstract class Enemy {
     protected double base_speed;
     protected Point2D.Double position;
     protected int gold_value;
-    protected int path_index;
+    public int path_index;
     protected List<Point> path;
     protected boolean fastMode = false; //for toggle enemy speed in the game
     private boolean slowed_enemy = false;
     private long slowed_end_time = 0;
+    private boolean healed = false;
 
 
     public Enemy(List<Point> path, int hp, double base_speed, int gold_value) {
@@ -69,6 +70,11 @@ public abstract class Enemy {
 
     public void take_damage(int damage) {
         hp -= damage;
+    }
+
+    public void healed(int heal){
+        hp += heal;
+
     }
 
     public boolean is_alive() {
@@ -134,4 +140,20 @@ public abstract class Enemy {
         this.position = new Point2D.Double(path.get(0).x, path.get(0).y);
         this.path_index = 0;
     }
+    public double getProgressOnCurrentSegment() {
+        if (path_index == 0) 
+        	return 0.0;
+        Point start = path.get(path_index - 1);
+        double distance_x = position.x - start.x;
+        double distance_y = position.y - start.y;
+        return Math.sqrt((distance_x * distance_x) + (distance_y * distance_y));
+    }
+
+    public boolean hasbeenHealed() {
+        return healed;
+    }
+    public void setHealed() {
+        this.healed = true;
+    }
+
 }

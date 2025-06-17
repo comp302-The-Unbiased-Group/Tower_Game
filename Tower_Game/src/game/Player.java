@@ -19,9 +19,14 @@ public class Player {
         gold += amount;
     }
 
-    public void reduce_life() {
-        lives = lives - OptionsHandler.getInstance().getPlayerDamage();
+    public void add_lives(int amount) {
+        lives += amount;
     }
+
+    public void reduce_life() {
+        lives = Math.max(0, lives - OptionsHandler.getInstance().getPlayerDamage());
+    }
+
 
     public int get_lives() {
         return lives;
