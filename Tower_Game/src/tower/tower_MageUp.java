@@ -10,15 +10,14 @@ import javafx.scene.image.Image;
 
 
 
-public class tower_MageUp extends tower_Mage {
-	
-	private long last_hit_time = 0;
-	
-    public tower_MageUp(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), gameScreen);
-        this.fire_rate = 1; //same as level 1
-        this.cost = 100;
-    }
+	public class tower_MageUp extends tower_Mage {
+		
+		private long last_hit_time = 0;
+		
+		public tower_MageUp(int x, int y, int tileWidth, GameScreen gameScreen) {
+	        super(x, y, Tower.calculateRange((int)(3.0 * tileWidth)), 100, 13, 0.9, gameScreen);
+		
+		}
 
     
     @Override

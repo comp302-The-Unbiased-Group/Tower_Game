@@ -95,7 +95,7 @@ public class OptionScreen {
             MainMenu mainMenu = new MainMenu(stage);
             Scene mainMenuScene = mainMenu.newScene();
             stage.setScene(mainMenuScene);
-            stage.setFullScreen(false);
+            stage.setFullScreen(true);
         });
         
      

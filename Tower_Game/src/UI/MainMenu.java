@@ -68,6 +68,7 @@ public class MainMenu extends StackPane {
             OptionScreen optionScreen = new OptionScreen();
             Scene optionScene = optionScreen.newScene(primaryStage);
             primaryStage.setScene(optionScene);
+            primaryStage.setFullScreen(true);
         });
         
         

@@ -20,9 +20,13 @@ public class tower_Archer extends Tower {
 	public void setLast_hit_time(long last_hit_time) {
 		this.last_hit_time = last_hit_time;
 	}
+	
+	public tower_Archer(int x, int y, int range, int cost, int damage, double fire_rate, GameScreen gameScreen) {
+        super(x, y, range, cost, damage, fire_rate, gameScreen);
+    }
 
 	public tower_Archer(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), 50, 20, 1, gameScreen);
+    	super(x, y, Tower.calculateRange((int)(3.0 * tileWidth)), 50, 7, 1.2, gameScreen);
     }
     
     /**

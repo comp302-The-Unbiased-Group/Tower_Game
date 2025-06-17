@@ -14,8 +14,6 @@ public class OptionsHandler {
     protected int PlayerHP = 20;
     protected String towerRange = "Normal";
     protected int playerDamage = 1;
-    protected String EnemySpeed;
-    protected int earnedGold= 10;
     protected int startGold = 100;
     protected double goblinSpeed = 3.5;
     protected double knightSpeed = 2.5;
@@ -80,10 +78,7 @@ public class OptionsHandler {
                 }
             }
         
-            else if (key1.equals("Gold Amount Earned")) {
-
-                this.earnedGold = Integer.parseInt(value);
-            } else if (key1.equals("Gold Amount Start")) {
+            else if (key1.equals("Gold Amount Start")) {
                 this.startGold = Integer.parseInt(value);
             }
         }
@@ -111,12 +106,10 @@ public class OptionsHandler {
     
 
     public String getMovementSpeed() {
-        return EnemySpeed;
+        return movementSpeed;
     }
 
-    public int getEarnedGold() {
-        return earnedGold;
-    }
+    
 
     public int getStartGold() {
         return startGold;
@@ -167,13 +160,13 @@ public class OptionsHandler {
     
     public void resetToDefaults() {
         waveCount = 8;
-        delay = "Short(4s)";
+        delay = "Normal(4s)";
         PlayerHP = 25;
         towerRange = "Normal";
         playerDamage = 1;
-        earnedGold = 10;
         startGold = 100;
-        EnemySpeed = "Normal";
+        movementSpeed = "Normal";
+        speedmultiplier = 1.0;
         saveToFile();
     }
     
@@ -185,9 +178,8 @@ public class OptionsHandler {
             props.setProperty("PlayerHP", String.valueOf(PlayerHP));
             props.setProperty("towerRange", towerRange);
             props.setProperty("playerDamage", String.valueOf(playerDamage));
-            props.setProperty("earnedGold", String.valueOf(earnedGold));
             props.setProperty("startGold", String.valueOf(startGold));
-            props.setProperty("EnemySpeed", EnemySpeed);
+            props.setProperty("movementSpeed", movementSpeed);
             props.store(out, "Game Options");
         } catch (Exception e) { e.printStackTrace(); }
     }
@@ -199,13 +191,17 @@ public class OptionsHandler {
             java.util.Properties props = new java.util.Properties();
             props.load(in);
             waveCount = Integer.parseInt(props.getProperty("waveCount", "8"));
-            delay = props.getProperty("delay", "Short(5s)");
+            delay = props.getProperty("delay", "Normal(4s)");
             PlayerHP = Integer.parseInt(props.getProperty("PlayerHP", "25"));
             towerRange = props.getProperty("towerRange", "Normal");
             playerDamage = Integer.parseInt(props.getProperty("playerDamage", "1"));
-            earnedGold = Integer.parseInt(props.getProperty("earnedGold", "10"));
             startGold = Integer.parseInt(props.getProperty("startGold", "100"));
-            EnemySpeed = props.getProperty("EnemySpeed", "Normal");
+            movementSpeed = props.getProperty("movementSpeed", "Normal");
+            speedmultiplier = switch (movementSpeed) {
+            	case "Low" -> 0.7;
+            	case "Fast" -> 1.5;
+            default -> 1.0;
+        };
         } catch (Exception e) { e.printStackTrace(); }
     }
 

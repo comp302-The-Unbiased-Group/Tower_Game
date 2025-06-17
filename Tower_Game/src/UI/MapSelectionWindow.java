@@ -95,6 +95,7 @@ public class MapSelectionWindow extends VBox {
             MainMenu mainMenu = new MainMenu(stage);
             Scene menuScene = new Scene(mainMenu, stage.getWidth(), stage.getHeight());
             stage.setScene(menuScene);
+            stage.setFullScreen(true);
         });
 
         HBox buttonBox = new HBox(20, playButton, backButton);

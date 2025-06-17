@@ -12,11 +12,11 @@ import javafx.scene.image.Image;
 public class tower_ArcherUp extends tower_Archer {
 
    
-
+	
     public tower_ArcherUp(int x, int y,int tileWidth, GameScreen gameScreen) {
-    	super(x, y, Tower.calculateRange((int)(2.0 * tileWidth)), gameScreen);
-    	this.range = (int)(1.5 * this.range);  // 50% range increase
-        this.fire_rate = 2 * this.fire_rate;
+    	super(x, y, Tower.calculateRange((int)(3.6 * tileWidth)), 100, 7, 2.4, gameScreen);
+    	
+      
         this.cost = 100;
     }
     

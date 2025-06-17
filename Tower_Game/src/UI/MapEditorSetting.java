@@ -149,8 +149,11 @@ public class MapEditorSetting extends BorderPane {
 
 
                     MainMenu mainMenu = new MainMenu(stage);
-                    Scene scene = new Scene(mainMenu, 800, 600);
+                    double screenWidth = javafx.stage.Screen.getPrimary().getBounds().getWidth();
+                    double screenHeight = javafx.stage.Screen.getPrimary().getBounds().getHeight();
+                    Scene scene = new Scene(mainMenu, screenWidth, screenHeight);
                     stage.setScene(scene);
+                    stage.setFullScreen(true); 
                 } else if (file != null) {
                     showError("Failed to save map.");
                 }

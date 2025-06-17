@@ -18,7 +18,7 @@ public abstract class Tower {
     
     
 
-    public Tower(int x, int y, int range, int cost, int damage, int fire_rate, GameScreen gameScreen) {
+    public Tower(int x, int y, int range, int cost, int damage, double fire_rate, GameScreen gameScreen) {
         this.x = x;
         this.y = y;
         this.range = range;
